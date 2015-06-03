@@ -1,3 +1,6 @@
-<h2 id="title">Welcome to Ember.js</h2>
-
 {{outlet}}
+<ul>
+  {{#each model as |user|}}
+    <li>{{user.firstName}} {{user.lastName}} - {{user.gender}}</li>
+  {{/each}}
+</ul>

@@ -1,10 +1,14 @@
 export default [
   {
     id: 1,
-    name: 'Zelda'
+    firstName: 'Zelda',
+    lastName: 'Ogge',
+    gender: 'male'
   },
   {
     id: 2,
-    name: 'Link'
+    firstName: 'Zelda-2',
+    lastName: 'Ogge-2',
+    gender: 'male'
   },
 ];

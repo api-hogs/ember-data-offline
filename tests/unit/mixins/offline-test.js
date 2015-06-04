@@ -9,19 +9,15 @@ import { goOnline, goOffline } from '../../helpers/offline';
 const { Object: emberObject } = Ember;
 
 var AdapterMock;
-var RESTAdapterMock = emberObject.create({
-
-});
 var LSAdapterMock = emberObject.create({
-
 });
 
 module('Unit | Mixin | offline',  {
     beforeEach: function(){
       AdapterMock = Ember.Object.extend(OfflineMixin, {
-       onlineAdapter: RESTAdapterMock,
        offlineAdapter: LSAdapterMock,
       });
+      goOnline();
     },
     afterEach: function(){
       AdapterMock = null;

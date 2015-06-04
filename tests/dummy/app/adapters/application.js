@@ -1,4 +1,9 @@
 import DS from 'ember-data';
-import OfflineAdapter from 'ember-data-offline/adapters/main';
+import offlineMixin from 'ember-data-offline/mixins/offline';
 
-export default OfflineAdapter.extend({});
+var localAdapter = DS.LSAdapter.extend({
+    namespace: 'dummy'
+});
+export default DS.RESTAdapter.extend(offlineMixin, {
+  offlineAdapter: localAdapter.create({}),
+});

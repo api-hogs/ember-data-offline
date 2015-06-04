@@ -4,24 +4,18 @@ const { Mixin, $, on, assert, computed, get } = Ember;
 export default Mixin.create({
   isOffline: computed.not('isOnline'),
 
-  checkOnline: function() {
-    let isOnline = window.navigator.onLine;
-    this.set('isOnline', isOnline);
-  },
-
   assertRunner: on('init', function() {
     assert('[ember-data-offline] You should set offline adapter', get(this, 'offlineAdapter'));
-    assert('[ember-data-offline] You should set online adapter', get(this, 'onlineAdapter'));
   }),
     
   setup: on('init', function() {
     $(window).on('online', () => {
-      this.checkOnline();
+      this.set('isOnline', true);
     });
     $(window).on('offline', () => {
-      this.checkOnline();
+      this.set('isOnline', false);
     });
-    this.checkOnline();
+    this.set('isOnline', window.navigator.onLine);
   }),
 
   teardown: on('willDestroy', function() {

@@ -7,17 +7,23 @@ const { Object: emberObject } = Ember;
 
 var Job;
 Job = Ember.Object.create({needRetry: false, retryCount: 0});
+var queue;
 
 module('Unit | Queue',  {
     beforeEach: function(){
+      queue = Subject.create({
+        retryOnFailureDelay: 0,
+        delay: 0
+      });
     },
     afterEach: function(){
+      queue = null;
     }
 });
 
 test('base setup success', function(assert) {
   assert.expect(4);
-  let queue = Subject.create();
+  // let queue = Subject.create();
   assert.ok(queue);
   assert.equal(queue.get('pendingJobs').length, 0);
   assert.equal(queue.get('faltureJobs').length, 0);
@@ -25,23 +31,25 @@ test('base setup success', function(assert) {
 });
 
 test('retry job in queue', function(assert){
-  // assert.expect(2);
+  assert.expect(2);
   let queue = Subject.create({
-    retryOnFailureDelay: 0,
-    delay: 0
+        delay: 100,
+        retryOnFailureDelay: 150,
   });
-  let job = Ember.Object.create({needRetry: true});
-  job.reopen({
+  let jobKlass = Ember.Object.extend({
     perform: function(){
-      return new Ember.RSVP.Promise((resolve, reject) => {
-        reject();
-      });
+      return Ember.RSVP.Promise.reject();
     }
   });
-  stop();
+  let job = jobKlass.create({needRetry: true, retryCount: 1});
+  
   queue.add(job);
+
   assert.equal(queue.get('pendingJobs').length, 1);
-  start();
-  //TODO
-  assert.equal(queue.get('retryJobs').length, 1);
+
+  stop();
+  Ember.run.later(() => {
+    assert.equal(queue.get('retryJobs').length, 1);
+    start();
+  }, 150);
 });

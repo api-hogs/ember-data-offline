@@ -11,8 +11,6 @@ export default Ember.Object.extend({
   init: function(){
     return this._super();
   },
-    
-  // currentJob: Ember.computed.alias('pendingJobs.l')
 
   add: function(job){
     this.get('pendingJobs').pushObject(job);
@@ -32,7 +30,7 @@ export default Ember.Object.extend({
         this.get('retryJobs').removeObject(job);
       }, () => {
 
-        if (job.get('needRetry') && job.get('retryCount') > 0){
+        if (job.get('needRetry')){
           job.decrementProperty('retryCount');
           queue.get('retryJobs').pushObject(job);
           Ember.run.later(() => {

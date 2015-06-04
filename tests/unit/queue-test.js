@@ -23,7 +23,6 @@ module('Unit | Queue',  {
 
 test('base setup success', function(assert) {
   assert.expect(4);
-  // let queue = Subject.create();
   assert.ok(queue);
   assert.equal(queue.get('pendingJobs').length, 0);
   assert.equal(queue.get('faltureJobs').length, 0);
@@ -42,11 +41,8 @@ test('retry job in queue', function(assert){
     }
   });
   let job = jobKlass.create({needRetry: true, retryCount: 1});
-  
   queue.add(job);
-
   assert.equal(queue.get('pendingJobs').length, 1);
-
   stop();
   Ember.run.later(() => {
     assert.equal(queue.get('retryJobs').length, 1);

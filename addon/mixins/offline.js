@@ -7,7 +7,6 @@ export default Mixin.create({
   checkOnline: function() {
     let isOnline = window.navigator.onLine;
     this.set('isOnline', isOnline);
-    return isOnline;
   },
 
   assertRunner: on('init', function() {

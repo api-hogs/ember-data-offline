@@ -1,3 +1,6 @@
+/* global start */
+/* global stop */
+
 import Ember from 'ember';
 import OfflineMixin from 'ember-data-offline/mixins/offline';
 import { module, test } from 'qunit';
@@ -35,15 +38,15 @@ test('it works', function(assert) {
 });
 
 test('it checks online', function(assert) {
+  assert.expect(3);
+
   var subject = AdapterMock.create();
 
   assert.equal(subject.get('isOnline'), true, 'isOnline true when navigator is online');
-
+  stop();
   goOffline().then(() => {
     assert.equal(subject.get('isOffline'), true, 'isOffline true when navigator is offline');
     assert.equal(subject.get('isOnline'), false, 'isOnline false when navigator is offline');
-    return true;
-  }).then(() => {
-    goOnline();
+    start();
   });
 });

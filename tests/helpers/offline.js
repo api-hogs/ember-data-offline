@@ -3,8 +3,8 @@ const { RSVP } = Ember;
 
 var goOffline = function goOffline() {
   return new RSVP.Promise(resolve => {
-    $(window).trigger('offline');
     window.navigator.__defineGetter__('onLine', function () { return false; });
+    $(window).trigger('offline');
     resolve();
   });
 };

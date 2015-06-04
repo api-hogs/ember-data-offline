@@ -6,5 +6,3 @@ export default Model.extend({
   lastName: attr('string'),
   gender: attr('string'),
 });
-
-

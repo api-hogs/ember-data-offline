@@ -4,9 +4,9 @@ export default Ember.Object.extend({
   name: 'normal',
   retryOnFailureDelay: 10000,
   delay: 5000,
-  pendingJobs: [],
-  faltureJobs: [],
-  retryJobs: [],
+  pendingJobs: Ember.A(),
+  faltureJobs: Ember.A(),
+  retryJobs: Ember.A(),
 
   init: function(){
     return this._super();
@@ -24,20 +24,21 @@ export default Ember.Object.extend({
   },
 
   process: function(job){
+      let queue = this;
       this.get('pendingJobs').removeObject(job);
       job.perform().then(() => {
         this.get('retryJobs').removeObject(job);
-      }, ()=>{
+      }, () => {
         if (job.get('needRetry')){
           job.decrementProperty('retryCount');
-          this.get('retryJobs').pushObject(job);
+          queue.get('retryJobs').pushObject(job);
           Ember.run.later(() => {
-            this.perform();
-          }, this.get('retryOnFailureDelay'));
+            queue.process();
+          }, queue.get('retryOnFailureDelay'));
         }
         else{
-          this.get('retryJobs').removeObject(job);
-          this.get('faltureJobs').pushObject(job);
+          queue.get('retryJobs').removeObject(job);
+          queue.get('faltureJobs').pushObject(job);
         }
       });
   }

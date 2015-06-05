@@ -1,4 +1,7 @@
 {{outlet}}
+<h4>status: {{status}}</h4>
+<button {{action 'goOnline'}}>set online</button>
+<button {{action 'goOffline'}}>set offline</button>
 <ul>
   {{#each model as |user|}}
     <li>{{user.firstName}} {{user.lastName}} - {{user.gender}}</li>

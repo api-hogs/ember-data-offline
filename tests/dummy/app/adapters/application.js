@@ -5,5 +5,7 @@ var localAdapter = DS.LSAdapter.extend({
     namespace: 'dummy'
 });
 export default DS.RESTAdapter.extend(offlineMixin, {
-  offlineAdapter: localAdapter.create({}),
+  offlineAdapter: localAdapter.create({
+    serializer: DS.LSSerializer.extend({}).create({}),
+  }),
 });

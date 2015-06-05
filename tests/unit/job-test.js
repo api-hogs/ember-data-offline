@@ -43,7 +43,7 @@ test('#perform returns resolving Promise on default', function(assert) {
 });
 
 test('#perform runs task function', function(assert) {
-  assert.expect(4);
+  assert.expect(6);
 
   let passThisTest = function() {
     assert.ok(true, 'calls from success task');
@@ -70,6 +70,20 @@ test('#perform runs task function', function(assert) {
   stop();
   failJob.perform().catch(() => {
     assert.ok(true, 'task fails');
+    start();
+  });
+
+  let returnValue = function() {
+    assert.ok(true, 'calls from value task');
+    return RSVP.Promise.resolve('value');
+  };
+  let returnValueJob = Job.create({
+    task: returnValue, 
+  });
+
+  stop();
+  returnValueJob.perform().then(val => {
+    assert.equal('value', val);
     start();
   });
 });

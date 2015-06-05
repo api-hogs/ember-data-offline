@@ -3,6 +3,7 @@
 
 import Ember from 'ember';
 import OfflineMixin from 'ember-data-offline/mixins/offline';
+import Queue from 'ember-data-offline/queue';
 import { module, test } from 'qunit';
 import { goOnline, goOffline } from '../../helpers/offline';
 
@@ -16,6 +17,13 @@ module('Unit | Mixin | offline',  {
     beforeEach: function(){
       AdapterMock = Ember.Object.extend(OfflineMixin, {
        offlineAdapter: LSAdapterMock,
+       container: {
+         lookup: function(name) {
+           return {
+             queue: Queue.create({}),
+           };
+         },
+       },
       });
       goOnline();
     },
@@ -45,4 +53,26 @@ test('it checks online', function(assert) {
     assert.equal(subject.get('isOnline'), false, 'isOnline false when navigator is offline');
     start();
   });
+});
+
+test('it gets store', function(assert) {
+  assert.expect(1);
+
+  var subject = AdapterMock.create();
+  assert.ok(subject.get('store'));
+});
+
+test('it gets queue', function(assert) {
+  assert.expect(3);
+
+  var adapterWithDefaultQueue = AdapterMock.create();
+  assert.ok(adapterWithDefaultQueue.get('_workingQueue'));
+
+  var adapterWithCustomQueue = AdapterMock.create({
+    queue: Queue.create({
+      delay: 10,
+    }),
+  });
+  assert.ok(adapterWithCustomQueue.get('_workingQueue'));
+  assert.equal(adapterWithCustomQueue.get('_workingQueue.delay'), 10);
 });

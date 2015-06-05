@@ -49,3 +49,25 @@ test('retry job in queue', function(assert){
     start();
   }, 150);
 });
+
+test('fail job in queue', function(assert){
+  assert.expect(2);
+  let queue = Subject.create({
+        delay: 100,
+        retryOnFailureDelay: 150,
+  });
+  let jobKlass = Ember.Object.extend({
+    perform: function(){
+      return Ember.RSVP.Promise.reject();
+    }
+  });
+  let job = jobKlass.create({needRetry: false});
+  queue.add(job);
+  assert.equal(queue.get('pendingJobs').length, 1);
+  stop();
+  Ember.run.later(() => {
+    assert.equal(queue.get('faltureJobs').length, 1);
+    start();
+  }, 150);
+
+});

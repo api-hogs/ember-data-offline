@@ -4,7 +4,7 @@ export function initialize(instance) {
   store.reopen({
     queue: queue,
   });
-}
+};
 
 export default {
   name: 'queue-in-store',

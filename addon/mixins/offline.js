@@ -20,6 +20,20 @@ export default Mixin.create({
     }
   }),
 
+/*
+   * `find()`
+    * `createRecord()`
+    * `updateRecord()`
+    * `deleteRecord()`
+    * `findAll()`
+    * `findQuery()`
+*/
+
+  findAll: function() {
+          
+    this._super.apply(this, arguments);
+  },
+
   assertRunner: on('init', function() {
     assert('[ember-data-offline] You should set offline adapter', get(this, 'offlineAdapter'));
   }),

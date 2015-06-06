@@ -14,21 +14,22 @@ export default Ember.Object.extend(jobMixin, {
 
   find(store, typeClass, id, snapshot, onlineResp){
     let adapter = this;
+    let offlineAdapter = adapter.get('offlineAdapter');
     //check offline storage
     Ember.RSVP.resolve().then(() => {
-      return this.get('offlineAdapter').find(store, typeClass, id, snapshot);
+      return offlineAdapter.find(store, typeClass, id, snapshot);
     }).then(offineRecord => {
       if (Ember.isEmpty(offineRecord)) {
         return onlineResp;
       }
     }).then(onlineRecord => {
       if (!Ember.isEmpty(onlineRecord)) {
-        this.persistData(typeClass, onlineRecord);
+        offlineAdapter.persistData(typeClass, onlineRecord);
       }
     }).catch(() => {
         onlineResp.then(onlineRecord => {
           if (!Ember.isEmpty(onlineRecord)) {
-            adapter.persistData(typeClass, onlineRecord);
+            offlineAdapter.persistData(typeClass, onlineRecord);
           }
         });
     });

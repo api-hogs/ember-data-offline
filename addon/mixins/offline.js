@@ -51,6 +51,35 @@ export default Mixin.create({
     return adapterResp;
   },
 
+  find: function(store, type, id, snapshot) {
+    if (this.get('isOnline')) {
+      let onlineResp = this._super.apply(this, arguments);
+      let adapter = this;
+      //check offline storage
+      Ember.RSVP.resolve().then(() => {
+        return this.get('offlineAdapter').find(store, type, id, snapshot);
+      }).then(offineRecord => {
+        if (Ember.isEmpty(offineRecord)) {
+          return adapterResp;
+        }
+      }).then(onlineRecord => {
+        if (!Ember.isEmpty(onlineRecord)) {
+          this.get('offlineAdapter').persistData(typeClass, onlineRecord);
+        }
+      }).catch(() => {
+          onlineResp.then(onlineRecord => {
+            if (!Ember.isEmpty(onlineRecord)) {
+              adapter.get('offlineAdapter').persistData(typeClass, onlineRecord);
+            }
+          });
+      });
+
+      return onlineResp;
+    } else {
+      return this.get('offlineAdapter').find(store, type, id, snapshot);
+    }
+  },
+
   assertRunner: on('init', function() {
     assert('[ember-data-offline] You should set offline adapter', get(this, 'offlineAdapter'));
   }),

@@ -2,8 +2,8 @@ import Ember from 'ember';
 import jobMixin from 'ember-data-offline/mixins/job';
 
 export default Ember.Object.extend(jobMixin, {
-  perform (){
-    this[this.get('method')].apply(this.get('adapter'), this.get('params'));
+  task() {
+    return this[this.get('method')].apply(this.get('adapter'), this.get('params'));
   },
 
   findAll(store, typeClass, sinceToken, adapterResp){

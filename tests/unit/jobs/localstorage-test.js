@@ -2,24 +2,13 @@
 /* global stop */
 
 import Ember from 'ember';
-import LocalstorageJob from 'ember-data-offline/jobs/localstorage';
 import { module, test } from 'qunit';
+import { mockJob } from '../../helpers/job';
+import LocalstorageJob from 'ember-data-offline/jobs/localstorage';
 
 const { RSVP } = Ember;
 
 var subject;
-var storeMock = Ember.Object.create({
-});
-var snapshotMock = Ember.Object.create({
-});
-var adapterKlass = Ember.Object.extend({
-  find: function() {
-    return RSVP.Promise.resolve();
-  },
-  persistData: function() {
-    return true;
-  },
-});
 
 module('Unit | Job | Localstorage',  {
     beforeEach: function(){
@@ -31,21 +20,7 @@ module('Unit | Job | Localstorage',  {
 test('it pass when there is record from offline storage', function(assert) {
   assert.expect(1);
 
-  let adapterMock = adapterKlass.create({
-    offlineAdapter: adapterKlass.create({
-      find() {
-        return RSVP.Promise.resolve({id: 2});
-      },
-      persistData() {
-        assert.ok(true);
-      },
-    }),
-  });
-  let job = LocalstorageJob.create({
-    adapter: adapterMock,
-  });
-  job.set('method', 'find');
-  job.set('params', [storeMock, 'bar', 1, snapshotMock, null]);
+  let job = mockJob(RSVP.Promise.resolve({id: 2}), null, assert);
 
   stop();
   job.perform().then(() => {
@@ -57,22 +32,7 @@ test('it pass when there is record from offline storage', function(assert) {
 test('it persists when there is record from online storage that absent in offline', function(assert) {
   assert.expect(2);
 
-  let adapterMock = adapterKlass.create({
-    offlineAdapter: adapterKlass.create({
-      find() {
-        return RSVP.Promise.resolve(null);
-      },
-      persistData() {
-        assert.ok(true);
-      },
-    }),
-  });
-  let job = LocalstorageJob.create({
-    adapter: adapterMock,
-  });
-  let onlineRespMock = RSVP.Promise.resolve({id: 'foo'});
-  job.set('method', 'find');
-  job.set('params', [storeMock, 'bar', 1, snapshotMock, onlineRespMock]);
+  let job = mockJob(RSVP.Promise.resolve(null), {id: 'foo'}, assert);
 
   stop();
   job.perform().then(() => {
@@ -84,21 +44,7 @@ test('it persists when there is record from online storage that absent in offlin
 test('it pass when empty response from online', function(assert) {
   assert.expect(1);
 
-  let adapterMock = adapterKlass.create({
-    offlineAdapter: adapterKlass.create({
-      find() {
-        return RSVP.Promise.resolve(null);
-      },
-      persistData() {
-        assert.ok(true);
-      },
-    }),
-  });
-  let job = LocalstorageJob.create({
-    adapter: adapterMock,
-  });
-  job.set('method', 'find');
-  job.set('params', [storeMock, 'bar', 1, snapshotMock, null]);
+  let job = mockJob(RSVP.Promise.resolve(null), null, assert);
 
   stop();
   job.perform().then(() => {
@@ -110,21 +56,7 @@ test('it pass when empty response from online', function(assert) {
 test('it pass when error in offline and no online record', function(assert) {
   assert.expect(1);
 
-  let adapterMock = adapterKlass.create({
-    offlineAdapter: adapterKlass.create({
-      find() {
-        return RSVP.Promise.reject();
-      },
-      persistData() {
-        assert.ok(true);
-      },
-    }),
-  });
-  let job = LocalstorageJob.create({
-    adapter: adapterMock,
-  });
-  job.set('method', 'find');
-  job.set('params', [storeMock, 'bar', 1, snapshotMock, RSVP.Promise.resolve(null)]);
+  let job = mockJob(RSVP.Promise.reject(), RSVP.Promise.resolve(null), assert);
 
   stop();
   job.perform().then(() => {
@@ -136,21 +68,7 @@ test('it pass when error in offline and no online record', function(assert) {
 test('it persists when error in offline and found online record', function(assert) {
   assert.expect(2);
 
-  let adapterMock = adapterKlass.create({
-    offlineAdapter: adapterKlass.create({
-      find() {
-        return RSVP.Promise.reject();
-      },
-      persistData() {
-        assert.ok(true);
-      },
-    }),
-  });
-  let job = LocalstorageJob.create({
-    adapter: adapterMock,
-  });
-  job.set('method', 'find');
-  job.set('params', [storeMock, 'bar', 1, snapshotMock, RSVP.Promise.resolve({id: 1})]);
+  let job = mockJob(RSVP.Promise.reject(), RSVP.Promise.resolve({id: 'foo'}), assert);
 
   stop();
   job.perform().then(() => {

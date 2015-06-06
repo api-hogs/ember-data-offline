@@ -20,6 +20,8 @@ export default Mixin.create({
     }
   }),
 
+  populatedLog: Ember.Object.create({}),
+
   /*
    * `find()`
    * `createRecord()`
@@ -32,14 +34,14 @@ export default Mixin.create({
   findAll: function(store, typeClass, sinceToken) {
     if (this.get('isOnline')) {
       let adapterResp = this._super.apply(this, arguments);
-      let isPopulated = this.get('isPopulated');
+      let isPopulated = this.get(`populatedLog.${typeClass}`);
       let adapter = this;
 
       if (!isPopulated) {
         run.once(() => {
           adapterResp.then(records => {
             adapter.get('offlineAdapter').persistData(typeClass, records);
-            this.set('isPopulated', true);
+            this.set(`populatedLog.${typeClass}`, true);
           });
         });
       }

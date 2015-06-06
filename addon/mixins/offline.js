@@ -1,6 +1,6 @@
 import Ember from 'ember';
-import DS from 'ember-data';
-const { Mixin, $, on, assert, computed, get, isPresent, run } = Ember;
+// import DS from 'ember-data';
+const { Mixin, $, on, assert, computed, get, isPresent } = Ember;
 
 export default Mixin.create({
   isOffline: computed.not('isOnline'),
@@ -21,6 +21,9 @@ export default Mixin.create({
   }),
 
   populatedLog: Ember.Object.create({}),
+  persistData(typeClass, records){
+    this.get('offlineAdapter').persistData(typeClass, records);
+  },
 
   /*
    * `find()`
@@ -32,23 +35,19 @@ export default Mixin.create({
    */
 
   findAll: function(store, typeClass, sinceToken) {
-    if (this.get('isOnline')) {
-      let adapterResp = this._super.apply(this, arguments);
-      let isPopulated = this.get(`populatedLog.${typeClass}`);
-      let adapter = this;
-
-      if (!isPopulated) {
-        run.once(() => {
-          adapterResp.then(records => {
-            adapter.get('offlineAdapter').persistData(typeClass, records);
-            this.set(`populatedLog.${typeClass}`, true);
-          });
-        });
-      }
-      return adapterResp;
-    } else {
+    if (this.get('isOffline')) {
       return this.get('offlineAdapter').findAll(store, typeClass, sinceToken);
     }
+    let adapterResp = this._super.apply(this, arguments);
+
+    if (this.get('isPopulated')) {
+      return adapterResp;
+    }
+    adapterResp.then(records => {
+      this.persistData(typeClass, records);
+      this.set('isPopulated', true);
+    });
+    return adapterResp;
   },
 
   assertRunner: on('init', function() {

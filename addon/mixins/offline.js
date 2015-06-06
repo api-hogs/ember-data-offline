@@ -29,36 +29,23 @@ export default Mixin.create({
    * `findQuery()`
    */
 
-  findAll: function(store, type, ...others) {
+  findAll: function(store, typeClass, sinceToken) {
     if (this.get('isOnline')) {
       let adapterResp = this._super.apply(this, arguments);
-      let typeClass = type.modelName;
-      let adapter = this;
       let isPopulated = this.get('isPopulated');
+      let adapter = this;
 
       if (!isPopulated) {
         run.once(() => {
-          console.log("Populate offline store")
           adapterResp.then(records => {
-            let serializer = store.serializerFor(type.modelName);
-            // TODO let serializedRecords = records[serializer.modelNameFromPayloadKey(typeClass)];
-            for (var prop in records) {
-              var modelName = prop;
-              let array = records[modelName];
-              array.forEach(record => {
-                let storeRecord = store.createRecord(typeClass, record);
-                let snapshot = new DS.Snapshot(storeRecord);
-
-                adapter.get('offlineAdapter').createRecord(store, type, snapshot);
-              });
-            }
+            adapter.get('offlineAdapter').persistData(typeClass, records);
             this.set('isPopulated', true);
           });
         });
       }
       return adapterResp;
     } else {
-      return this.get('offlineAdapter').findAll(arguments);
+      return this.get('offlineAdapter').findAll(store, typeClass, sinceToken);
     }
   },
 

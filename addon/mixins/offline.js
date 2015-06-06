@@ -71,7 +71,7 @@ export default Mixin.create({
       return this.get('offlineAdapter').find(store, typeClass, id, snapshot);
     }
     let onlineResp = this._super.apply(this, arguments);
-    this.createOfflineJob('findAll', [store, typeClass, id, snapshot, onlineResp]);
+    this.createOfflineJob('find', [store, typeClass, id, snapshot, onlineResp]);
     return onlineResp;
   },
 

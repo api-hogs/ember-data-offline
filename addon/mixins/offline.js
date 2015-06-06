@@ -1,10 +1,13 @@
 import Ember from 'ember';
 import onlineJob from 'ember-data-offline/jobs/online';
+import offlineJob from 'ember-data-offline/jobs/localstorage';
 // import DS from 'ember-data';
 const { Mixin, $, on, assert, computed, get, isPresent } = Ember;
 
 export default Mixin.create({
   isOffline: computed.not('isOnline'),
+  onlineJob: onlineJob,
+  offlineJob: offlineJob,
 
   store: computed({
     get() {
@@ -21,21 +24,26 @@ export default Mixin.create({
     }
   }),
 
-  populatedLog: Ember.Object.create({}),
-  persistData(typeClass, records){
-    this.get('offlineAdapter').persistData(typeClass, records);
+  addToQueue(job){
+    console.log(job);
   },
 
   createOnlineJob(method, params){
-    onlineJob.create({
+    let job = this.get('onlineJob').create({
       adapter: this,
       method: method,
       params: params
     });
+    this.addToQueue(job);
   },
 
-  createOfflineJob(){
-    //for create, update...or maybe this we don't need
+  createOfflineJob(method, params){
+    let job = this.get('offlineJob').create({
+      adapter: this.get('offlineAdapter'),
+      method: method,
+      params: params
+    });
+    this.addToQueue(job);
   },
 
   /*
@@ -48,21 +56,13 @@ export default Mixin.create({
    */
 
   findAll: function(store, typeClass, sinceToken) {
-    let isPopulated = this.get(`populatedLog.${typeClass}`);
     if (this.get('isOffline')) {
       this.createOnlineJob('findAll', [store, typeClass, sinceToken]);
       return this.get('offlineAdapter').findAll(store, typeClass, sinceToken);
     }
 
     let adapterResp = this._super.apply(this, arguments);
-
-    if (isPopulated){
-      return adapterResp;
-    }
-    adapterResp.then(records => {
-      this.persistData(typeClass, records);
-      this.set(`populatedLog.${typeClass}`, true);
-    });
+    this.createOfflineJob('findAll', [store, typeClass, sinceToken, adapterResp]);
     return adapterResp;
   },
 
@@ -71,25 +71,7 @@ export default Mixin.create({
       return this.get('offlineAdapter').find(store, typeClass, id, snapshot);
     }
     let onlineResp = this._super.apply(this, arguments);
-    let adapter = this;
-    //check offline storage
-    Ember.RSVP.resolve().then(() => {
-      return this.get('offlineAdapter').find(store, typeClass, id, snapshot);
-    }).then(offineRecord => {
-      if (Ember.isEmpty(offineRecord)) {
-        return onlineResp;
-      }
-    }).then(onlineRecord => {
-      if (!Ember.isEmpty(onlineRecord)) {
-        this.get('offlineAdapter').persistData(typeClass, onlineRecord);
-      }
-    }).catch(() => {
-        onlineResp.then(onlineRecord => {
-          if (!Ember.isEmpty(onlineRecord)) {
-            adapter.get('offlineAdapter').persistData(typeClass, onlineRecord);
-          }
-        });
-    });
+    this.createOfflineJob('findAll', [store, typeClass, id, snapshot, onlineResp]);
     return onlineResp;
   },
 

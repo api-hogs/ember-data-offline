@@ -13,7 +13,7 @@ var adapterKlass = Ember.Object.extend({
     return true;
   },
 });
-var mockJob = function(offlineAdapterResponse, onlineAdapterResponse, assert) {
+var mockJob = function(offlineAdapterResponse, onlineAdapterResponse, assert, method='find') {
   let adapterMock = adapterKlass.create({
     offlineAdapter: adapterKlass.create({
       find() {
@@ -27,8 +27,13 @@ var mockJob = function(offlineAdapterResponse, onlineAdapterResponse, assert) {
   let job = LocalstorageJob.create({
     adapter: adapterMock,
   });
-  job.set('method', 'find');
+  job.set('method', method);
+
   job.set('params', [storeMock, 'bar', 1, snapshotMock, onlineAdapterResponse]);
+
+  if (method === 'findAll') {
+    job.set('params', [storeMock, 'bar', 'sinceToken', onlineAdapterResponse]);
+  }
 
   return job;
 };

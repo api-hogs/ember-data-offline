@@ -17,7 +17,7 @@ module('Unit | Job | Localstorage',  {
     }
 });
 
-test('it pass when there is record from offline storage', function(assert) {
+test('#find pass when there is record from offline storage', function(assert) {
   assert.expect(1);
 
   let job = mockJob(RSVP.Promise.resolve({id: 2}), null, assert);
@@ -29,7 +29,7 @@ test('it pass when there is record from offline storage', function(assert) {
   });
 });
 
-test('it persists when there is record from online storage that absent in offline', function(assert) {
+test('#find persists when there is record from online storage that absent in offline', function(assert) {
   assert.expect(2);
 
   let job = mockJob(RSVP.Promise.resolve(null), {id: 'foo'}, assert);
@@ -41,7 +41,7 @@ test('it persists when there is record from online storage that absent in offlin
   });
 });
 
-test('it pass when empty response from online', function(assert) {
+test('#find pass when empty response from online', function(assert) {
   assert.expect(1);
 
   let job = mockJob(RSVP.Promise.resolve(null), null, assert);
@@ -53,7 +53,7 @@ test('it pass when empty response from online', function(assert) {
   });
 });
 
-test('it pass when error in offline and no online record', function(assert) {
+test('#find pass when error in offline and no online record', function(assert) {
   assert.expect(1);
 
   let job = mockJob(RSVP.Promise.reject(), RSVP.Promise.resolve(null), assert);
@@ -65,10 +65,34 @@ test('it pass when error in offline and no online record', function(assert) {
   });
 });
 
-test('it persists when error in offline and found online record', function(assert) {
+test('#find persists when error in offline and found online record', function(assert) {
   assert.expect(2);
 
   let job = mockJob(RSVP.Promise.reject(), RSVP.Promise.resolve({id: 'foo'}), assert);
+
+  stop();
+  job.perform().then(() => {
+    assert.ok(true);
+    start();
+  });
+});
+
+test('#findAll persists when there are online records', function(assert) {
+  assert.expect(2);
+
+  let job = mockJob(null, RSVP.Promise.resolve({id: 'foo'}), assert, 'findAll');
+
+  stop();
+  job.perform().then(() => {
+    assert.ok(true);
+    start();
+  });
+});
+
+test('#findAll pass when there are not online records', function(assert) {
+  assert.expect(1);
+
+  let job = mockJob(null, RSVP.Promise.resolve(null), assert, 'findAll');
 
   stop();
   job.perform().then(() => {

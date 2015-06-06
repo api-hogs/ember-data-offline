@@ -35,17 +35,18 @@ export default Mixin.create({
    */
 
   findAll: function(store, typeClass, sinceToken) {
+    let isPopulated = this.get(`populatedLog.${typeClass}`);
     if (this.get('isOffline')) {
       return this.get('offlineAdapter').findAll(store, typeClass, sinceToken);
     }
     let adapterResp = this._super.apply(this, arguments);
 
-    if (this.get('isPopulated')) {
+    if (isPopulated){
       return adapterResp;
     }
     adapterResp.then(records => {
       this.persistData(typeClass, records);
-      this.set('isPopulated', true);
+      this.set(`populatedLog.${typeClass}`, true);
     });
     return adapterResp;
   },

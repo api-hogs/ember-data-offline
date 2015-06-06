@@ -1,4 +1,5 @@
 import Ember from 'ember';
+import onlineJob from 'ember-data-offline/jobs/online';
 // import DS from 'ember-data';
 const { Mixin, $, on, assert, computed, get, isPresent } = Ember;
 
@@ -25,6 +26,18 @@ export default Mixin.create({
     this.get('offlineAdapter').persistData(typeClass, records);
   },
 
+  createOnlineJob(method, params){
+    onlineJob.create({
+      adapter: this,
+      method: method,
+      params: params
+    });
+  },
+
+  createOfflineJob(){
+    //for create, update...or maybe this we don't need
+  },
+
   /*
    * `find()`
    * `createRecord()`
@@ -37,8 +50,10 @@ export default Mixin.create({
   findAll: function(store, typeClass, sinceToken) {
     let isPopulated = this.get(`populatedLog.${typeClass}`);
     if (this.get('isOffline')) {
+      this.createOnlineJob('findAll', [store, typeClass, sinceToken]);
       return this.get('offlineAdapter').findAll(store, typeClass, sinceToken);
     }
+
     let adapterResp = this._super.apply(this, arguments);
 
     if (isPopulated){

@@ -2,14 +2,14 @@
 /* global stop */
 
 import Ember from 'ember';
-import Job from 'ember-data-offline/job';
+import Job from 'ember-data-offline/jobs/online';
 import { module, test } from 'qunit';
 
 const { RSVP } = Ember;
 
 var subject;
 
-module('Unit | Job',  {
+module('Unit | Mixin | Job',  {
     beforeEach: function(){
       subject = Job.create({
         retryCount: 1,
@@ -50,7 +50,7 @@ test('#perform runs task function', function(assert) {
     return true;
   };
   let successJob = Job.create({
-    task: passThisTest, 
+    task: passThisTest,
   });
 
   stop();
@@ -64,9 +64,9 @@ test('#perform runs task function', function(assert) {
     return RSVP.Promise.reject();
   };
   let failJob = Job.create({
-    task: failedTask, 
+    task: failedTask,
   });
-  
+
   stop();
   failJob.perform().catch(() => {
     assert.ok(true, 'task fails');
@@ -78,7 +78,7 @@ test('#perform runs task function', function(assert) {
     return RSVP.Promise.resolve('value');
   };
   let returnValueJob = Job.create({
-    task: returnValue, 
+    task: returnValue,
   });
 
   stop();

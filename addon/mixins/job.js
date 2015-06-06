@@ -1,7 +1,7 @@
 import Ember from 'ember';
 const { computed, RSVP } = Ember;
 
-export default Ember.Object.extend({
+export default Ember.Mixin.create({
   retryCount: 0,
 
   needRetry: computed.gt('retryCount', 0),
@@ -10,6 +10,7 @@ export default Ember.Object.extend({
     return true;
   },
   perform() {
+    //guard
     return RSVP.Promise.resolve().then(() => {
       return this.task();
     });

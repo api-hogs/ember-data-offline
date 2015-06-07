@@ -49,7 +49,7 @@ test('retry job in queue', function(assert){
   Ember.run.later(() => {
     assert.equal(queue.get('retryJobs').length, 1);
     start();
-  }, 130);
+  }, 150);
 });
 
 test('fail job in queue', function(assert){
@@ -71,6 +71,6 @@ test('fail job in queue', function(assert){
   Ember.run.later(() => {
     assert.equal(queue.get('faltureJobs').length, 1);
     start();
-  }, 130);
+  }, 150);
 
 });

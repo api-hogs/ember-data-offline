@@ -37,7 +37,7 @@ export default Ember.Object.extend({
     return pendingJob || retryJob;
   },
 
-  pendingJobObserver: Ember.observer('pendingJobs.[]', function() {
+  pendingJobObserver: Ember.observer('pendingJobs.[]','activeJobs.[]', function() {
     if (this.get('pendingJobs.length') <= 0) {
       return;
     }

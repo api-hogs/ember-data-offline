@@ -22,8 +22,9 @@ module('Unit | Queue',  {
 });
 
 test('base setup success', function(assert) {
-  assert.expect(4);
+  assert.expect(5);
   assert.ok(queue);
+  assert.equal(queue.get('activeJobs').length, 0);
   assert.equal(queue.get('pendingJobs').length, 0);
   assert.equal(queue.get('faltureJobs').length, 0);
   assert.equal(queue.get('retryJobs').length, 0);
@@ -36,6 +37,7 @@ test('retry job in queue', function(assert){
         retryOnFailureDelay: 150,
   });
   let jobKlass = Ember.Object.extend({
+    adapter: Ember.Object.create({}),
     perform: function(){
       return Ember.RSVP.Promise.reject();
     }
@@ -47,7 +49,7 @@ test('retry job in queue', function(assert){
   Ember.run.later(() => {
     assert.equal(queue.get('retryJobs').length, 1);
     start();
-  }, 150);
+  }, 130);
 });
 
 test('fail job in queue', function(assert){
@@ -57,6 +59,7 @@ test('fail job in queue', function(assert){
         retryOnFailureDelay: 150,
   });
   let jobKlass = Ember.Object.extend({
+    adapter: Ember.Object.create({}),
     perform: function(){
       return Ember.RSVP.Promise.reject();
     }
@@ -68,6 +71,6 @@ test('fail job in queue', function(assert){
   Ember.run.later(() => {
     assert.equal(queue.get('faltureJobs').length, 1);
     start();
-  }, 150);
+  }, 130);
 
 });

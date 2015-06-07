@@ -5,13 +5,19 @@ export default Ember.Object.extend({
   retryOnFailureDelay: 10000,
   delay: 5000,
   workers: 5,
-  activeJobs: Ember.A(),
-  pendingJobs: Ember.A(),
-  faltureJobs: Ember.A(),
-  retryJobs: Ember.A(),
+  activeJobs: null,
+  pendingJobs: null,
+  faltureJobs: null,
+  retryJobs: null,
 
   init: function(){
-    return this._super();
+    this.setProperties({
+      activeJobs: Ember.A(),
+      pendingJobs: Ember.A(),
+      faltureJobs: Ember.A(),
+      retryJobs: Ember.A(),
+    });
+    this._super.apply(this, arguments);
   },
 
   runJob(job){
@@ -32,8 +38,8 @@ export default Ember.Object.extend({
     return pendingJob || retryJob;
   },
 
-  pendingJobObserver: Ember.on('init', Ember.observer('pendingJobs.[]',function(){
-    if (this.get('pendingJobs.length')<= 0){
+  pendingJobObserver: Ember.observer('pendingJobs.[]',function(){
+    if (this.get('pendingJobs.length') <= 0){
       return;
     }
     if (this.get('activeJobs').length < this.get('workers')){
@@ -42,7 +48,7 @@ export default Ember.Object.extend({
         this.runJob(job);
       }
     }
-  })),
+  }),
 
   add: function(job){
     if (!this.isJobExist(job)){

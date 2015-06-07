@@ -12,11 +12,27 @@ export default Ember.Object.extend({
     return this._super();
   },
 
-  add: function(job){
-    this.get('pendingJobs').pushObject(job);
+  runJob(job){
     Ember.run.later(() => {
       this.process(job);
     }, this.get('delay'));
+  },
+
+  isJobExist(job){
+    let pendingJob = this.get('pendingJobs').find((item) => {
+      return item.get('adapter') === job.get('adapter') && item.get('method') === job.get('method');
+    });
+    let retryJob =  this.get('retryJobs').find((item) => {
+      return item.get('adapter') === job.get('adapter') && item.get('method') === job.get('method');
+    });
+    return pendingJob || retryJob;
+  },
+
+  add: function(job){
+    if (!this.isJobExist(job)){
+      this.get('pendingJobs').pushObject(job);
+      this.runJob(job);
+    }
   },
 
   remove: function(job){

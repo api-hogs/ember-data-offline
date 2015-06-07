@@ -61,7 +61,7 @@ test('fail job in queue', function(assert){
       return Ember.RSVP.Promise.reject();
     }
   });
-  let job = jobKlass.create({needRetry: false});
+  let job = jobKlass.create({needRetry: false, method: 'test', adapter: '1'});
   queue.add(job);
   assert.equal(queue.get('pendingJobs').length, 1);
   stop();

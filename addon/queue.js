@@ -16,6 +16,7 @@ export default Ember.Object.extend({
 
   runJob(job){
     this.get('activeJobs').pushObject(job);
+    this.process(job);
     Ember.run.later(() => {
       this.process(job);
     }, this.get('delay'));
@@ -31,7 +32,7 @@ export default Ember.Object.extend({
     return pendingJob || retryJob;
   },
 
-  pendingJobObserver: Ember.on('init', Ember.observer('pendingJobs.length',function(){
+  pendingJobObserver: Ember.on('init', Ember.observer('pendingJobs.[]',function(){
     if (this.get('pendingJobs.length')<= 0){
       return;
     }
@@ -54,7 +55,6 @@ export default Ember.Object.extend({
   },
 
   process: function(job){
-    console.log('process');
       let queue = this;
       job.perform().then(() => {
         this.get('activeJobs').removeObject(job);
@@ -67,8 +67,6 @@ export default Ember.Object.extend({
           job.decrementProperty('retryCount');
           queue.get('retryJobs').pushObject(job);
           Ember.run.later(() => {
-            console.log('retry');
-
             queue.process(job);
           }, queue.get('retryOnFailureDelay'));
         }

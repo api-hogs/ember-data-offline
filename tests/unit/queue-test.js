@@ -42,7 +42,7 @@ test('retry job in queue', function(assert){
   });
   let job = jobKlass.create({needRetry: true, retryCount: 1});
   queue.add(job);
-  assert.equal(queue.get('pendingJobs').length, 1);
+  assert.equal(queue.get('activeJobs').length, 1);
   stop();
   Ember.run.later(() => {
     assert.equal(queue.get('retryJobs').length, 1);
@@ -63,7 +63,7 @@ test('fail job in queue', function(assert){
   });
   let job = jobKlass.create({needRetry: false, method: 'test', adapter: '1'});
   queue.add(job);
-  assert.equal(queue.get('pendingJobs').length, 1);
+  assert.equal(queue.get('activeJobs').length, 1);
   stop();
   Ember.run.later(() => {
     assert.equal(queue.get('faltureJobs').length, 1);

@@ -4,6 +4,8 @@ export default Ember.Object.extend({
   name: 'normal',
   retryOnFailureDelay: 10000,
   delay: 5000,
+  workers: 5,
+  activeJobs: Ember.A(),
   pendingJobs: Ember.A(),
   faltureJobs: Ember.A(),
   retryJobs: Ember.A(),
@@ -13,6 +15,7 @@ export default Ember.Object.extend({
   },
 
   runJob(job){
+    this.get('activeJobs').pushObject(job);
     Ember.run.later(() => {
       this.process(job);
     }, this.get('delay'));
@@ -28,10 +31,21 @@ export default Ember.Object.extend({
     return pendingJob || retryJob;
   },
 
+  pendingJobObserver: Ember.on('init', Ember.observer('pendingJobs.length',function(){
+    if (this.get('pendingJobs.length')<= 0){
+      return;
+    }
+    if (this.get('activeJobs').length < this.get('workers')){
+      let job = this.get('pendingJobs').pop();
+      if (job){
+        this.runJob(job);
+      }
+    }
+  })),
+
   add: function(job){
     if (!this.isJobExist(job)){
       this.get('pendingJobs').pushObject(job);
-      this.runJob(job);
     }
   },
 
@@ -40,16 +54,20 @@ export default Ember.Object.extend({
   },
 
   process: function(job){
+    console.log('process');
       let queue = this;
-      this.get('pendingJobs').removeObject(job);
       job.perform().then(() => {
+        this.get('activeJobs').removeObject(job);
         this.get('retryJobs').removeObject(job);
       }, () => {
+        this.get('activeJobs').removeObject(job);
+        queue.get('retryJobs').removeObject(job);
 
         if (job.get('needRetry')){
           job.decrementProperty('retryCount');
           queue.get('retryJobs').pushObject(job);
           Ember.run.later(() => {
+            console.log('retry');
 
             queue.process(job);
           }, queue.get('retryOnFailureDelay'));

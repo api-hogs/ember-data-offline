@@ -1,7 +1,6 @@
 import Ember from 'ember';
 import onlineJob from 'ember-data-offline/jobs/online';
 import offlineJob from 'ember-data-offline/jobs/localstorage';
-// import DS from 'ember-data';
 const { Mixin, $, on, assert, computed, get, isPresent } = Ember;
 
 export default Mixin.create({
@@ -78,33 +77,37 @@ export default Mixin.create({
   },
 
   createRecord(store, type, snapshot) {
-    //TODO check difference between online/offline there
     if (this.get('isOffline')) {
+      //think about merge id....very important. maybe unload Record, and push Record...
       this.createOnlineJob('createRecord', [store, type, snapshot], store);
       return this.get('offlineAdapter').createRecord(store, type, snapshot);
     }
-    this.createOnlineJob('createRecord', [store, type, snapshot], store);
-    return this.get('offlineAdapter').createRecord(store, type, snapshot);
+
+    let onlineResp = this._super.apply(this, arguments);
+    this.createOfflineJob('createRecord', [store, type, snapshot, onlineResp], store);
+    return onlineResp;
   },
 
   updateRecord(store, type, snapshot) {
-    //TODO check difference between online/offline there
     if (this.get('isOffline')) {
       this.createOnlineJob('updateRecord', [store, type, snapshot], store);
       return this.get('offlineAdapter').updateRecord(store, type, snapshot);
     }
-    this.createOnlineJob('updateRecord', [store, type, snapshot], store);
-    return this.get('offlineAdapter').updateRecord(store, type, snapshot);
+
+    let onlineResp = this._super.apply(this, arguments);
+    this.createOfflineJob('updateRecord', [store, type, snapshot, onlineResp], store);
+    return onlineResp;
   },
 
   deleteRecord(store, type, snapshot) {
-    //TODO check difference between online/offline there
     if (this.get('isOffline')) {
       this.createOnlineJob('deleteRecord', [store, type, snapshot], store);
       return this.get('offlineAdapter').deleteRecord(store, type, snapshot);
     }
-    this.createOnlineJob('deleteRecord', [store, type, snapshot], store);
-    return this.get('offlineAdapter').deleteRecord(store, type, snapshot);
+
+    let onlineResp = this._super.apply(this, arguments);
+    this.createOfflineJob('deleteRecord', [store, type, snapshot, onlineResp], store);
+    return onlineResp;
   },
 
   assertRunner: on('init', function() {

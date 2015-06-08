@@ -5,11 +5,11 @@ const { isEmpty, RSVP } = Ember;
 
 export default Ember.Object.extend(jobMixin, {
   task() {
-    return this[this.get('method')].apply(this.get('adapter'), this.get('params'));
+    return this[this.get('method')].apply(this, this.get('params'));
   },
 
-  findAll(store, typeClass, sinceToken, adapterResp){
-    let offlineAdapter = this.get('offlineAdapter');
+  findAll(store, typeClass, sinceToken, adapterResp) {
+    let offlineAdapter = this.get('adapter');
     adapterResp.then(records => {
       if (!isEmpty(records)) {
         offlineAdapter.persistData(typeClass, records);
@@ -17,12 +17,11 @@ export default Ember.Object.extend(jobMixin, {
     });
   },
 
-  find(store, typeClass, id, snapshot, onlineResp){
-    let adapter = this;
-    let offlineAdapter = adapter.get('offlineAdapter');
+  _findWithCheck: function(onlineResp, store, typeClass, ...params) {
+    let offlineAdapter = this.get('adapter');
 
     RSVP.resolve().then(() => {
-      return offlineAdapter.find(store, typeClass, id, snapshot);
+      return offlineAdapter.find(store, typeClass, ...params);
     }).then(offineRecord => {
       if (isEmpty(offineRecord)) {
         return onlineResp;
@@ -32,57 +31,23 @@ export default Ember.Object.extend(jobMixin, {
         offlineAdapter.persistData(typeClass, onlineRecord);
       }
     }).catch(() => {
-        onlineResp.then(onlineRecord => {
-          if (!isEmpty(onlineRecord)) {
-            offlineAdapter.persistData(typeClass, onlineRecord);
-          }
-        });
+      onlineResp.then(onlineRecord => {
+        if (!isEmpty(onlineRecord)) {
+          offlineAdapter.persistData(typeClass, onlineRecord);
+        }
+      });
     });
   },
 
-  findQuery(store, typeClass, query, onlineResp){
-    let adapter = this;
-    let offlineAdapter = adapter.get('offlineAdapter');
-
-    RSVP.resolve().then(() => {
-      return offlineAdapter.find(store, typeClass, query);
-    }).then(offineRecord => {
-      if (isEmpty(offineRecord)) {
-        return onlineResp;
-      }
-    }).then(onlineRecord => {
-      if (!isEmpty(onlineRecord)) {
-        offlineAdapter.persistData(typeClass, onlineRecord);
-      }
-    }).catch(() => {
-        onlineResp.then(onlineRecord => {
-          if (!isEmpty(onlineRecord)) {
-            offlineAdapter.persistData(typeClass, onlineRecord);
-          }
-        });
-    });
+  find(store, typeClass, id, snapshot, onlineResp) {
+    this._findWithCheck(onlineResp, store, typeClass, id, snapshot);
   },
 
-  findMany(store, typeClass, ids, snapshots, onlineResp){
-    let adapter = this;
-    let offlineAdapter = adapter.get('offlineAdapter');
+  findQuery(store, typeClass, query, onlineResp) {
+    this._findWithCheck(onlineResp, store, typeClass, query);
+  },
 
-    RSVP.resolve().then(() => {
-      return offlineAdapter.find(store, typeClass, ids, snapshots);
-    }).then(offineRecord => {
-      if (isEmpty(offineRecord)) {
-        return onlineResp;
-      }
-    }).then(onlineRecord => {
-      if (!isEmpty(onlineRecord)) {
-        offlineAdapter.persistData(typeClass, onlineRecord);
-      }
-    }).catch(() => {
-        onlineResp.then(onlineRecord => {
-          if (!isEmpty(onlineRecord)) {
-            offlineAdapter.persistData(typeClass, onlineRecord);
-          }
-        });
-    });
+  findMany(store, typeClass, ids, snapshots, onlineResp) {
+    this._findWithCheck(onlineResp, store, typeClass, ids, snapshots);
   },
 });

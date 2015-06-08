@@ -38,5 +38,51 @@ export default Ember.Object.extend(jobMixin, {
           }
         });
     });
-  }
+  },
+
+  findQuery(store, typeClass, query, onlineResp){
+    let adapter = this;
+    let offlineAdapter = adapter.get('offlineAdapter');
+
+    RSVP.resolve().then(() => {
+      return offlineAdapter.find(store, typeClass, query);
+    }).then(offineRecord => {
+      if (isEmpty(offineRecord)) {
+        return onlineResp;
+      }
+    }).then(onlineRecord => {
+      if (!isEmpty(onlineRecord)) {
+        offlineAdapter.persistData(typeClass, onlineRecord);
+      }
+    }).catch(() => {
+        onlineResp.then(onlineRecord => {
+          if (!isEmpty(onlineRecord)) {
+            offlineAdapter.persistData(typeClass, onlineRecord);
+          }
+        });
+    });
+  },
+
+  findMany(store, typeClass, ids, snapshots, onlineResp){
+    let adapter = this;
+    let offlineAdapter = adapter.get('offlineAdapter');
+
+    RSVP.resolve().then(() => {
+      return offlineAdapter.find(store, typeClass, ids, snapshots);
+    }).then(offineRecord => {
+      if (isEmpty(offineRecord)) {
+        return onlineResp;
+      }
+    }).then(onlineRecord => {
+      if (!isEmpty(onlineRecord)) {
+        offlineAdapter.persistData(typeClass, onlineRecord);
+      }
+    }).catch(() => {
+        onlineResp.then(onlineRecord => {
+          if (!isEmpty(onlineRecord)) {
+            offlineAdapter.persistData(typeClass, onlineRecord);
+          }
+        });
+    });
+  },
 });

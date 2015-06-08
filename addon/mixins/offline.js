@@ -47,11 +47,9 @@ export default Mixin.create({
   },
 
   /*
-   * `find()`
    * `createRecord()`
    * `updateRecord()`
    * `deleteRecord()`
-   * `findAll()` -- done some
    * `findQuery()`
    */
 
@@ -72,6 +70,24 @@ export default Mixin.create({
     }
     let onlineResp = this._super.apply(this, arguments);
     this.createOfflineJob('find', [store, typeClass, id, snapshot, onlineResp]);
+    return onlineResp;
+  },
+
+  findQuery: function(store, type, query) {
+    if (this.get('isOffline')) {
+      return this.get('offlineAdapter').findQuery(store, type, query);
+    }
+    let onlineResp = this._super.apply(this, arguments);
+    this.createOfflineJob('findQuery', [store, type, query, onlineResp]);
+    return onlineResp;
+  },
+
+  findMany: function(store, type, ids, snapshots) {
+    if (this.get('isOffline')) {
+      return this.get('offlineAdapter').find(store, type, ids, snapshots);
+    }
+    let onlineResp = this._super.apply(this, arguments);
+    this.createOfflineJob('find', [store, type, ids, snapshots, onlineResp]);
     return onlineResp;
   },
 

@@ -25,7 +25,7 @@ export default Mixin.create({
   }),
 
   addToQueue(job){
-    console.log(job);
+    this.get('_workingQueue').add(job);
   },
 
   createOnlineJob(method, params){

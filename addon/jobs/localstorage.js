@@ -50,4 +50,16 @@ export default Ember.Object.extend(jobMixin, {
   findMany(store, typeClass, ids, snapshots, onlineResp) {
     this._findWithCheck(onlineResp, store, typeClass, ids, snapshots);
   },
+
+  createRecord(store, type, snapshot, onlineRes){
+    //TODO
+  },
+
+  updateRecord(store, type, snapshot, onlineResp){
+    //TODO
+  },
+
+  deleteRecord(store, type, snapshot, onlineRes){
+    //TODO
+  }
 });

@@ -9,57 +9,44 @@ export default Mixin.create({
   onlineJob: onlineJob,
   offlineJob: offlineJob,
 
-  store: computed({
-    get() {
-      return this.container.lookup('store:main');
+  _workingQueue(store){
+    if (isPresent(get(this, 'queue'))) {
+      return get(this, 'queue');
+    } else {
+      return get(store, 'queue');
     }
-  }),
-  _workingQueue: computed('queue', {
-    get() {
-      if (isPresent(get(this, 'queue'))) {
-        return get(this, 'queue');
-      } else {
-        return get(this, 'store.queue');
-      }
-    }
-  }),
-
-  addToQueue(job){
-    this.get('_workingQueue').add(job);
   },
 
-  createOnlineJob(method, params){
+  addToQueue(job, store){
+    this._workingQueue(store).add(job);
+  },
+
+  createOnlineJob(method, params, store){
     let job = this.get('onlineJob').create({
       adapter: this,
       method: method,
       params: params
     });
-    this.addToQueue(job);
+    this.addToQueue(job, store);
   },
 
-  createOfflineJob(method, params){
+  createOfflineJob(method, params, store){
     let job = this.get('offlineJob').create({
       adapter: this.get('offlineAdapter'),
       method: method,
       params: params
     });
-    this.addToQueue(job);
+    this.addToQueue(job, store);
   },
-
-  /*
-   * `createRecord()`
-   * `updateRecord()`
-   * `deleteRecord()`
-   */
 
   findAll: function(store, typeClass, sinceToken) {
     if (this.get('isOffline')) {
-      this.createOnlineJob('findAll', [store, typeClass, sinceToken]);
+      this.createOnlineJob('findAll', [store, typeClass, sinceToken], store);
       return this.get('offlineAdapter').findAll(store, typeClass, sinceToken);
     }
 
     let adapterResp = this._super.apply(this, arguments);
-    this.createOfflineJob('findAll', [store, typeClass, sinceToken, adapterResp]);
+    this.createOfflineJob('findAll', [store, typeClass, sinceToken, adapterResp], store);
     return adapterResp;
   },
 
@@ -68,7 +55,7 @@ export default Mixin.create({
       return this.get('offlineAdapter').find(store, typeClass, id, snapshot);
     }
     let onlineResp = this._super.apply(this, arguments);
-    this.createOfflineJob('find', [store, typeClass, id, snapshot, onlineResp]);
+    this.createOfflineJob('find', [store, typeClass, id, snapshot, onlineResp], store);
     return onlineResp;
   },
 
@@ -77,7 +64,7 @@ export default Mixin.create({
       return this.get('offlineAdapter').findQuery(store, type, query);
     }
     let onlineResp = this._super.apply(this, arguments);
-    this.createOfflineJob('findQuery', [store, type, query, onlineResp]);
+    this.createOfflineJob('findQuery', [store, type, query, onlineResp], store);
     return onlineResp;
   },
 
@@ -86,40 +73,40 @@ export default Mixin.create({
       return this.get('offlineAdapter').find(store, type, ids, snapshots);
     }
     let onlineResp = this._super.apply(this, arguments);
-    this.createOfflineJob('find', [store, type, ids, snapshots, onlineResp]);
+    this.createOfflineJob('find', [store, type, ids, snapshots, onlineResp], store);
     return onlineResp;
   },
 
   createRecord(store, type, snapshot) {
     //TODO check difference between online/offline there
     if (this.get('isOffline')) {
-      this.createOnlineJob('createRecord', [store, type, snapshot]);
+      this.createOnlineJob('createRecord', [store, type, snapshot], store);
       return this.get('offlineAdapter').createRecord(store, type, snapshot);
     }
-    this.createOnlineJob('createRecord', [store, type, snapshot]);
+    this.createOnlineJob('createRecord', [store, type, snapshot], store);
     return this.get('offlineAdapter').createRecord(store, type, snapshot);
   },
 
   updateRecord(store, type, snapshot) {
     //TODO check difference between online/offline there
     if (this.get('isOffline')) {
-      this.createOnlineJob('updateRecord', [store, type, snapshot]);
+      this.createOnlineJob('updateRecord', [store, type, snapshot], store);
       return this.get('offlineAdapter').updateRecord(store, type, snapshot);
     }
-    this.createOnlineJob('updateRecord', [store, type, snapshot]);
+    this.createOnlineJob('updateRecord', [store, type, snapshot], store);
     return this.get('offlineAdapter').updateRecord(store, type, snapshot);
   },
 
   deleteRecord(store, type, snapshot) {
     //TODO check difference between online/offline there
     if (this.get('isOffline')) {
-      this.createOnlineJob('deleteRecord', [store, type, snapshot]);
+      this.createOnlineJob('deleteRecord', [store, type, snapshot], store);
       return this.get('offlineAdapter').deleteRecord(store, type, snapshot);
     }
-    this.createOnlineJob('deleteRecord', [store, type, snapshot]);
+    this.createOnlineJob('deleteRecord', [store, type, snapshot], store);
     return this.get('offlineAdapter').deleteRecord(store, type, snapshot);
   },
-    
+
   assertRunner: on('init', function() {
     assert('[ember-data-offline] You should set offline adapter', get(this, 'offlineAdapter'));
   }),

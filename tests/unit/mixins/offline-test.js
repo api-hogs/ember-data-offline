@@ -54,25 +54,3 @@ test('it checks online', function(assert) {
     start();
   });
 });
-
-test('it gets store', function(assert) {
-  assert.expect(1);
-
-  var subject = AdapterMock.create();
-  assert.ok(subject.get('store'));
-});
-
-test('it gets queue', function(assert) {
-  assert.expect(3);
-
-  var adapterWithDefaultQueue = AdapterMock.create();
-  assert.ok(adapterWithDefaultQueue.get('_workingQueue'));
-
-  var adapterWithCustomQueue = AdapterMock.create({
-    queue: Queue.create({
-      delay: 10,
-    }),
-  });
-  assert.ok(adapterWithCustomQueue.get('_workingQueue'));
-  assert.equal(adapterWithCustomQueue.get('_workingQueue.delay'), 10);
-});

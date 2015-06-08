@@ -2,7 +2,7 @@
 /* global stop */
 
 import Ember from 'ember';
-import Job from 'ember-data-offline/jobs/online';
+import JobMixin from 'ember-data-offline/mixins/job';
 import { module, test } from 'qunit';
 
 const { RSVP } = Ember;
@@ -11,7 +11,7 @@ var subject;
 
 module('Unit | Mixin | Job',  {
     beforeEach: function(){
-      subject = Job.create({
+      subject = Ember.Object.createWithMixins(JobMixin, {
         retryCount: 1,
       });
     },
@@ -49,7 +49,7 @@ test('#perform runs task function', function(assert) {
     assert.ok(true, 'calls from success task');
     return true;
   };
-  let successJob = Job.create({
+  let successJob = Ember.Object.createWithMixins(JobMixin, {
     task: passThisTest,
   });
 
@@ -63,7 +63,7 @@ test('#perform runs task function', function(assert) {
     assert.ok(true, 'calls from failing task');
     return RSVP.Promise.reject();
   };
-  let failJob = Job.create({
+  let failJob = Ember.Object.createWithMixins(JobMixin, {
     task: failedTask,
   });
 
@@ -77,7 +77,7 @@ test('#perform runs task function', function(assert) {
     assert.ok(true, 'calls from value task');
     return RSVP.Promise.resolve('value');
   };
-  let returnValueJob = Job.create({
+  let returnValueJob = Ember.Object.createWithMixins(JobMixin, {
     task: returnValue,
   });
 

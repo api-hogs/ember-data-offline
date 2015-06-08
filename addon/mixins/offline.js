@@ -50,7 +50,6 @@ export default Mixin.create({
    * `createRecord()`
    * `updateRecord()`
    * `deleteRecord()`
-   * `findQuery()`
    */
 
   findAll: function(store, typeClass, sinceToken) {
@@ -91,6 +90,36 @@ export default Mixin.create({
     return onlineResp;
   },
 
+  createRecord(store, type, snapshot) {
+    //TODO check difference between online/offline there
+    if (this.get('isOffline')) {
+      this.createOnlineJob('createRecord', [store, type, snapshot]);
+      return this.get('offlineAdapter').createRecord(store, type, snapshot);
+    }
+    this.createOnlineJob('createRecord', [store, type, snapshot]);
+    return this.get('offlineAdapter').createRecord(store, type, snapshot);
+  },
+
+  updateRecord(store, type, snapshot) {
+    //TODO check difference between online/offline there
+    if (this.get('isOffline')) {
+      this.createOnlineJob('updateRecord', [store, type, snapshot]);
+      return this.get('offlineAdapter').updateRecord(store, type, snapshot);
+    }
+    this.createOnlineJob('updateRecord', [store, type, snapshot]);
+    return this.get('offlineAdapter').updateRecord(store, type, snapshot);
+  },
+
+  deleteRecord(store, type, snapshot) {
+    //TODO check difference between online/offline there
+    if (this.get('isOffline')) {
+      this.createOnlineJob('deleteRecord', [store, type, snapshot]);
+      return this.get('offlineAdapter').deleteRecord(store, type, snapshot);
+    }
+    this.createOnlineJob('deleteRecord', [store, type, snapshot]);
+    return this.get('offlineAdapter').deleteRecord(store, type, snapshot);
+  },
+    
   assertRunner: on('init', function() {
     assert('[ember-data-offline] You should set offline adapter', get(this, 'offlineAdapter'));
   }),

@@ -51,15 +51,21 @@ export default Ember.Object.extend(jobMixin, {
     this._findWithCheck(onlineResp, store, typeClass, ids, snapshots);
   },
 
-  createRecord(store, type, snapshot, onlineRes){
-    //TODO
+  createRecord(store, type, snapshot, onlineResp){
+    onlineResp.then(createdFromOnline => {
+      return this.get('adapter').persistData(type, createdFromOnline);
+    }).catch(console.log.bind(console));
   },
 
   updateRecord(store, type, snapshot, onlineResp){
-    //TODO
+    onlineResp.then(updatedFromOnline => {
+      return this.get('adapter').persistData(type, updatedFromOnline);
+    }).catch(console.log.bind(console));
   },
 
-  deleteRecord(store, type, snapshot, onlineRes){
-    //TODO
-  }
+  deleteRecord(store, type, snapshot, onlineResp){
+    onlineResp.then(() => {
+      return this.get('adapter').deleteRecord(store, type, snapshot);
+    }).catch(console.log.bind(console));
+  },
 });

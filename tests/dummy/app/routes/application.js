@@ -19,6 +19,14 @@ export default Ember.Route.extend({
       $(window).trigger('offline');
       this.set('controller.status', 'Offline');
     },
+    createUser(){
+      let newUser = this.store.createRecord('user', {
+        firstName: "igor",
+      });
+      newUser.save().then(() => {
+        this.set('controller.username', null);
+      });
+    },
   },
   setupController: function(controller, model) {
     controller.set('status', 'Online');

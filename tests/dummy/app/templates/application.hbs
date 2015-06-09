@@ -7,3 +7,6 @@
     <li>{{user.firstName}} {{user.lastName}} - {{user.gender}}</li>
   {{/each}}
 </ul>
+<h4>Add user</h4>
+{{input value=usename}}
+<button {{action 'createUser'}}>Create User</button>

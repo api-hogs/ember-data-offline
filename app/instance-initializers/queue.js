@@ -3,6 +3,13 @@ export function initialize(instance) {
   let queue = instance.container.lookup('queue:main');
   store.reopen({
     queue: queue,
+    adapterFor: function() {
+      let superResp = this._super.apply(this, arguments);
+      if(superResp.get('isOffline')) {
+        return superResp.get('offlineAdapter');
+      }
+      return superResp;
+    }
   });
 };
 

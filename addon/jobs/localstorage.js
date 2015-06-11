@@ -5,7 +5,6 @@ const { isEmpty, RSVP } = Ember;
 
 export default Ember.Object.extend(jobMixin, {
   task() {
-    console.log('run....');
     return this[this.get('method')].apply(this, this.get('params'));
   },
 
@@ -30,7 +29,7 @@ export default Ember.Object.extend(jobMixin, {
       return record.id === onlineRecord[typeClass.modelName].id;
     });
     let snapshot = recordFromStore._createSnapshot();
-    this.get('adapter').createRecord(store, typeClass, snapshot);
+    this.get('adapter').createRecord(store, typeClass, snapshot, true);
   },
 
   _persistMany(store, typeClass){
@@ -40,7 +39,7 @@ export default Ember.Object.extend(jobMixin, {
     }
     fromStore.forEach(record => {
       let snapshot = record._createSnapshot();
-      this.get('adapter').createRecord(store, typeClass, snapshot);
+      this.get('adapter').createRecord(store, typeClass, snapshot, true);
     });
   },
 

@@ -1,135 +1,54 @@
 import Ember from 'ember';
-import onlineJob from 'ember-data-offline/jobs/online';
-import offlineJob from 'ember-data-offline/jobs/localstorage';
-const { Mixin, $, on, assert, computed, get, isPresent } = Ember;
+import baseMixin from 'ember-data-offline/mixins/base';
 
-export default Mixin.create({
-  isOffline: computed.not('isOnline'),
-  onlineJob: onlineJob,
-  offlineJob: offlineJob,
-
-  _workingQueue(store){
-    if (isPresent(get(this, 'queue'))) {
-      return get(this, 'queue');
-    } else {
-      return get(store, 'queue');
+export default Ember.Mixin.create(baseMixin,{
+  findAll: function(store, typeClass, sinceToken, fromJob) {
+    if (!fromJob){
+      this.createOnlineJob('findAll', [store, typeClass, sinceToken, true], store);
     }
+    return this.findAll(store, typeClass, sinceToken);
   },
 
-  addToQueue(job, store){
-    this._workingQueue(store).add(job);
-  },
-
-  createOnlineJob(method, params, store){
-    console.log('create online job', params, method);
-    let job = this.get('onlineJob').create({
-      adapter: this,
-      method: method,
-      params: params
-    });
-    this.addToQueue(job, store);
-  },
-
-  createOfflineJob(method, params, store){
-    let job = this.get('offlineJob').create({
-      adapter: this.get('offlineAdapter'),
-      store: store,
-      method: method,
-      params: params,
-        delay: 20,
-    });
-    this.addToQueue(job, store);
-  },
-
-  findAll: function(store, typeClass, sinceToken) {
-    if (this.get('isOffline')) {
-      this.createOnlineJob('findAll', [store, typeClass, sinceToken], store);
-      return this.get('offlineAdapter').findAll(store, typeClass, sinceToken);
+  find: function(store, typeClass, id, snapshot, fromJob) {
+    if (!fromJob){
+      this.createOnlineJob('find', [store, typeClass, id, snapshot, true], store);
     }
-
-    let adapterResp = this._super.apply(this, arguments);
-    this.createOfflineJob('findAll', [store, typeClass, sinceToken, adapterResp], store);
-    return adapterResp;
+    return this.find(store, typeClass, id, snapshot);
   },
 
-  find: function(store, typeClass, id, snapshot) {
-    if (this.get('isOffline')) {
-      return this.get('offlineAdapter').find(store, typeClass, id, snapshot);
+  findQuery: function(store, type, query, fromJob) {
+    if (!fromJob){
+      this.createOnlineJob('findQuery', [store, type, query, true], store);
     }
-    let onlineResp = this._super.apply(this, arguments);
-    this.createOfflineJob('find', [store, typeClass, id, snapshot, onlineResp], store);
-    return onlineResp;
+    return this.findQuery(store, type, query);
   },
 
-  findQuery: function(store, type, query) {
-    console.log('findQuery')
-    if (this.get('isOffline')) {
-      return this.get('offlineAdapter').findQuery(store, type, query);
+  findMany: function(store, type, ids, snapshots, fromJob) {
+    if (!fromJob){
+      this.createOnlineJob('findMany', [store, type, ids, snapshots, true], store);
     }
-    let onlineResp = this._super.apply(this, arguments);
-    this.createOfflineJob('findQuery', [store, type, query, onlineResp], store);
-    return onlineResp;
+    return this.find(store, type, ids, snapshots);
   },
 
-  findMany: function(store, type, ids, snapshots) {
-    if (this.get('isOffline')) {
-      return this.get('offlineAdapter').find(store, type, ids, snapshots);
+  createRecord(store, type, snapshot, fromJob) {
+    //think about merge id....very important. maybe unload Record, and push Record...
+    if (!fromJob){
+      this.createOnlineJob('createRecord', [store, type, snapshot, true], store);
     }
-    let onlineResp = this._super.apply(this, arguments);
-    this.createOfflineJob('find', [store, type, ids, snapshots, onlineResp], store);
-    return onlineResp;
+    return this.createRecord(store, type, snapshot);
   },
 
-  createRecord(store, type, snapshot) {
-    if (this.get('isOffline')) {
-      //think about merge id....very important. maybe unload Record, and push Record...
-      this.createOnlineJob('createRecord', [store, type, snapshot], store);
-      return this.get('offlineAdapter').createRecord(store, type, snapshot);
+  updateRecord(store, type, snapshot, fromJob) {
+    if (!fromJob){
+      this.createOnlineJob('updateRecord', [store, type, snapshot, true], store);
     }
-
-    let onlineResp = this._super.apply(this, arguments);
-    this.createOfflineJob('createRecord', [store, type, snapshot, onlineResp], store);
-    return onlineResp;
+    return this.updateRecord(store, type, snapshot);
   },
 
-  updateRecord(store, type, snapshot) {
-    if (this.get('isOffline')) {
-      this.createOnlineJob('updateRecord', [store, type, snapshot], store);
-      return this.get('offlineAdapter').updateRecord(store, type, snapshot);
+  deleteRecord(store, type, snapshot, fromJob) {
+    if (!fromJob){
+      this.createOnlineJob('deleteRecord', [store, type, snapshot, true], store);
     }
-
-    let onlineResp = this._super.apply(this, arguments);
-    this.createOfflineJob('updateRecord', [store, type, snapshot, onlineResp], store);
-    return onlineResp;
-  },
-
-  deleteRecord(store, type, snapshot) {
-    if (this.get('isOffline')) {
-      this.createOnlineJob('deleteRecord', [store, type, snapshot], store);
-      return this.get('offlineAdapter').deleteRecord(store, type, snapshot);
-    }
-
-    let onlineResp = this._super.apply(this, arguments);
-    this.createOfflineJob('deleteRecord', [store, type, snapshot, onlineResp], store);
-    return onlineResp;
-  },
-
-  // assertRunner: on('init', function() {
-  //   assert('[ember-data-offline] You should set offline adapter', get(this, 'offlineAdapter'));
-  // }),
-
-  setup: on('init', function() {
-    $(window).on('online', () => {
-      this.set('isOnline', true);
-    });
-    $(window).on('offline', () => {
-      this.set('isOnline', false);
-    });
-    this.set('isOnline', window.navigator.onLine);
-  }),
-
-  teardown: on('willDestroy', function() {
-    $(window).off('online');
-    $(window).off('offline');
-  }),
+    return this.deleteRecord(store, type, snapshot);
+  }
 });

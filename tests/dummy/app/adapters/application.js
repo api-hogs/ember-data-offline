@@ -7,7 +7,7 @@ var localAdapter = DS.LSAdapter.extend({
 });
 export default DS.RESTAdapter.extend(offlineMixin, {
   offlineAdapter: Ember.computed(function() {
-    return localAdapter.create({
+    return localAdapter.extend(offlineMixin).create({
       container: this.container,
       serializer: DS.LSSerializer.extend().create({
         container: this.container,

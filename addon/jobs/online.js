@@ -3,6 +3,7 @@ import jobMixin from 'ember-data-offline/mixins/job';
 
 export default Ember.Object.extend(jobMixin, {
   task() {
+    console.log('sync');
     return this[this.get('method')].apply(this, this.get('params'));
   },
 

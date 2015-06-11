@@ -5,12 +5,13 @@ const { isEmpty, RSVP } = Ember;
 
 export default Ember.Object.extend(jobMixin, {
   task() {
+    console.log('run....');
     return this[this.get('method')].apply(this, this.get('params'));
   },
 
   persistOffline(store, typeClass, onlineResp, method) {
     if (Ember.isEmpty(onlineResp)) {
-     return; 
+     return;
     }
     if (method === 'find') {
      this._persistOne(store, typeClass, onlineResp);

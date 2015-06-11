@@ -18,6 +18,6 @@
     "Faker": "~2.1.3"
   },
   "devDependencies": {
-    "ember-localstorage-adapter": "mylen/ember-localstorage-adapter"
+    "ember-localstorage-adapter": "api-hogs/ember-localstorage-adapter"
   }
 }

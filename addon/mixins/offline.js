@@ -21,6 +21,7 @@ export default Mixin.create({
   },
 
   createOnlineJob(method, params, store){
+    console.log('create online job', params, method);
     let job = this.get('onlineJob').create({
       adapter: this,
       method: method,
@@ -61,6 +62,7 @@ export default Mixin.create({
   },
 
   findQuery: function(store, type, query) {
+    console.log('findQuery')
     if (this.get('isOffline')) {
       return this.get('offlineAdapter').findQuery(store, type, query);
     }
@@ -112,9 +114,9 @@ export default Mixin.create({
     return onlineResp;
   },
 
-  assertRunner: on('init', function() {
-    assert('[ember-data-offline] You should set offline adapter', get(this, 'offlineAdapter'));
-  }),
+  // assertRunner: on('init', function() {
+  //   assert('[ember-data-offline] You should set offline adapter', get(this, 'offlineAdapter'));
+  // }),
 
   setup: on('init', function() {
     $(window).on('online', () => {

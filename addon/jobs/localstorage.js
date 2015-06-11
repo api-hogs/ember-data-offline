@@ -62,7 +62,6 @@ export default Ember.Object.extend(jobMixin, {
   },
 
   findAll(store, typeClass, sinceToken, adapterResp) {
-    let offlineAdapter = this.get('adapter');
     adapterResp.then(records => {
       this.persistOffline(store, typeClass, records, 'findAll');
     });
@@ -81,13 +80,13 @@ export default Ember.Object.extend(jobMixin, {
   },
 
   createRecord(store, type, snapshot, onlineResp){
-    onlineResp.then(createdFromOnline => {
+    onlineResp.then(() => {
       return this.get('adapter').createRecord(store, type, snapshot);
     }).catch(console.log.bind(console));
   },
 
   updateRecord(store, type, snapshot, onlineResp){
-    onlineResp.then(updatedFromOnline => {
+    onlineResp.then(() => {
       return this.get('adapter').updateRecord(store, type, snapshot);
     }).catch(console.log.bind(console));
   },

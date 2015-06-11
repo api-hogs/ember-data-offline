@@ -18,6 +18,10 @@ export default Ember.Route.extend({
       });
       $(window).trigger('offline');
       this.set('controller.status', 'Offline');
+      this.store.unloadAll('user');
+    },
+    findFromLocal() {
+      this.store.find('user');
     },
     createUser(){
       let newUser = this.store.createRecord('user', {

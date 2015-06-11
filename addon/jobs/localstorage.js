@@ -21,6 +21,17 @@ export default Ember.Object.extend(jobMixin, {
     });
   },
 
+  _persistOne(store, typeClass, onlineRecord){
+    let fromStore = store.all(typeClass);
+    if (!Ember.isEmpty(fromStore)) {
+      let recordFromStore = fromStore.find(record => {
+        return record.id === onlineRecord[typeClass.modelName].id;
+      });
+      let snapshot = recordFromStore._createSnapshot();
+      this.get('adapter').createRecord(store, typeClass, snapshot);
+    }
+  },
+
   _findWithCheck: function(onlineResp, store, typeClass, ...params) {
     let offlineAdapter = this.get('adapter');
 
@@ -31,14 +42,10 @@ export default Ember.Object.extend(jobMixin, {
         return onlineResp;
       }
     }).then(onlineRecord => {
-      if (!isEmpty(onlineRecord)) {
-        offlineAdapter.persistData(typeClass, onlineRecord);
-      }
+      this._persistOne(store, typeClass, onlineRecord);
     }).catch(() => {
       onlineResp.then(onlineRecord => {
-        if (!isEmpty(onlineRecord)) {
-          offlineAdapter.persistData(typeClass, onlineRecord);
-        }
+        this._persistOne(store, typeClass, onlineRecord);
       });
     });
   },

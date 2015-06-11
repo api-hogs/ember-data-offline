@@ -21,7 +21,7 @@ export default Ember.Route.extend({
       this.store.unloadAll('user');
     },
     findFromLocal() {
-      this.store.find('user');
+      this.store.find('user', {});
     },
     createUser(){
       let newUser = this.store.createRecord('user', {

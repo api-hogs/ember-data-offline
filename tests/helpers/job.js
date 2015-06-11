@@ -2,8 +2,18 @@ import Ember from 'ember';
 import LocalstorageJob from 'ember-data-offline/jobs/localstorage';
 
 const { RSVP } = Ember;
-
-var storeMock = Ember.Object.create({});
+var emberModelMock = Ember.Object.extend({
+  _createSnapshot(){
+    return {};
+  }
+});
+var storeMock = Ember.Object.create({
+  all(){
+    return Ember.A([
+      emberModelMock.create({id: 'foo'})
+    ]);
+  }
+});
 var snapshotMock = Ember.Object.create({});
 var adapterKlass = Ember.Object.extend({
   find: function() {
@@ -13,12 +23,19 @@ var adapterKlass = Ember.Object.extend({
     return true;
   },
 });
-var mockLocastorageJob = function(offlineAdapterResponse, onlineAdapterResponse, assert, method = 'find') {
+var typeClassMock = {
+  modelName: 'bar',
+  typeKey: 'bar',
+};
+var mockLocastorageJob = function(offlineAdapterResponse, onlineAdapterResp, assert, method = 'find') {
   let offlineAdapter = adapterKlass.create({
       find() {
         return offlineAdapterResponse;
       },
       persistData() {
+        assert.ok(true);
+      },
+      createRecord() {
         assert.ok(true);
       },
   });
@@ -27,18 +44,20 @@ var mockLocastorageJob = function(offlineAdapterResponse, onlineAdapterResponse,
   });
   job.set('method', method);
 
-  job.set('params', [storeMock, 'bar', 1, snapshotMock, onlineAdapterResponse]);
+  let onlineAdapterResponse = RSVP.Promise.resolve(onlineAdapterResp);
+
+  job.set('params', [storeMock, typeClassMock, 1, snapshotMock, onlineAdapterResponse]);
 
   if (method === 'findAll') {
-    job.set('params', [storeMock, 'bar', 'sinceToken', onlineAdapterResponse]);
+    job.set('params', [storeMock, typeClassMock, 'sinceToken', onlineAdapterResponse]);
   }
 
   if (method === 'findQuery') {
-    job.set('params', [storeMock, 'bar', {name: 'foo'}, onlineAdapterResponse]);
+    job.set('params', [storeMock, typeClassMock, {name: 'foo'}, onlineAdapterResponse]);
   }
 
   if (method === 'findMany') {
-    job.set('params', [storeMock, 'bar', [1,2,3], 'sinceToken', onlineAdapterResponse]);
+    job.set('params', [storeMock, typeClassMock, [1,2,3], 'sinceToken', onlineAdapterResponse]);
   }
 
   return job;

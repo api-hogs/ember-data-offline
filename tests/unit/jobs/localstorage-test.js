@@ -32,7 +32,7 @@ test('#find pass when there is record from offline storage', function(assert) {
 test('#find persists when there is record from online storage that absent in offline', function(assert) {
   assert.expect(2);
 
-  let job = mockLocastorageJob(RSVP.Promise.resolve(null), {id: 'foo'}, assert);
+  let job = mockLocastorageJob(RSVP.Promise.resolve(null), RSVP.Promise.resolve({bar: {id: 'foo'}}), assert);
 
   stop();
   job.perform().then(() => {
@@ -68,7 +68,7 @@ test('#find pass when error in offline and no online record', function(assert) {
 test('#find persists when error in offline and found online record', function(assert) {
   assert.expect(2);
 
-  let job = mockLocastorageJob(RSVP.Promise.reject(), RSVP.Promise.resolve({id: 'foo'}), assert);
+  let job = mockLocastorageJob(RSVP.Promise.reject(), RSVP.Promise.resolve({bar: {id: 'foo'}}), assert);
 
   stop();
   job.perform().then(() => {

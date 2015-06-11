@@ -11,8 +11,12 @@ export default Ember.Object.extend(jobMixin, {
   findAll(store, typeClass, sinceToken, adapterResp) {
     let offlineAdapter = this.get('adapter');
     adapterResp.then(records => {
-      if (!isEmpty(records)) {
-        offlineAdapter.persistData(typeClass, records);
+      let fromStore = store.all(typeClass);
+      if (!Ember.isEmpty(fromStore)) {
+        fromStore.forEach(record => {
+          let snapshot = record._createSnapshot();
+          offlineAdapter.createRecord(store, typeClass, snapshot);
+        });
       }
     });
   },

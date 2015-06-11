@@ -8,13 +8,6 @@ export default Ember.Object.extend(jobMixin, {
     return this[this.get('method')].apply(this, this.get('params'));
   },
 
-  findAll(store, typeClass, sinceToken, adapterResp) {
-    let offlineAdapter = this.get('adapter');
-    adapterResp.then(records => {
-      this.persistOffline(store, typeClass, records, 'findAll');
-    });
-  },
-
   persistOffline(store, typeClass, onlineResp, method) {
     if (Ember.isEmpty(onlineResp)) {
      return; 
@@ -68,6 +61,13 @@ export default Ember.Object.extend(jobMixin, {
     });
   },
 
+  findAll(store, typeClass, sinceToken, adapterResp) {
+    let offlineAdapter = this.get('adapter');
+    adapterResp.then(records => {
+      this.persistOffline(store, typeClass, records, 'findAll');
+    });
+  },
+
   find(store, typeClass, id, snapshot, onlineResp) {
     this._findWithCheck('find', onlineResp, store, typeClass, id, snapshot);
   },
@@ -82,13 +82,13 @@ export default Ember.Object.extend(jobMixin, {
 
   createRecord(store, type, snapshot, onlineResp){
     onlineResp.then(createdFromOnline => {
-      return this.get('adapter').persistData(type, createdFromOnline);
+      return this.get('adapter').createRecord(store, type, snapshot);
     }).catch(console.log.bind(console));
   },
 
   updateRecord(store, type, snapshot, onlineResp){
     onlineResp.then(updatedFromOnline => {
-      return this.get('adapter').persistData(type, updatedFromOnline);
+      return this.get('adapter').updateRecord(store, type, snapshot);
     }).catch(console.log.bind(console));
   },
 

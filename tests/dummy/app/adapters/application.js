@@ -7,7 +7,25 @@ var localAdapter = DS.LSAdapter.extend({
   namespace: 'dummy'
 });
 var adapter = DS.RESTAdapter.extend(onlineMixin, {
+  ajaxError: function(jqXHR, responseText, errorThrown) {
+    var isObject = jqXHR !== null && typeof jqXHR === 'object';
+
+    console.log('NDKKDKDKDKD')
+    if (isObject) {
+      jqXHR.then = null;
+      if (!jqXHR.errorThrown) {
+        if (typeof errorThrown === 'string') {
+          jqXHR.errorThrown = new Error(errorThrown);
+        } else {
+          jqXHR.errorThrown = errorThrown;
+        }
+      }
+    }
+
+    return jqXHR;
+  },
   offlineAdapter: Ember.computed(function() {
+    let adapter = this;
     return localAdapter.extend(offlineMixin).create({
       onlineAdapter: adapter,
       container: this.container,

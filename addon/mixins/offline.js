@@ -33,8 +33,10 @@ export default Ember.Mixin.create(baseMixin,{
   createRecord(store, type, snapshot, fromJob) {
     //think about merge id....very important. maybe unload Record, and push Record...
     if (!fromJob){
+      console.log('MMZMZMZMZ')
       this.createOnlineJob('createRecord', [store, type, snapshot, true], store);
     }
+      console.log('PQPPQQPQP')
     return this._super.apply(this, arguments);
   },
 

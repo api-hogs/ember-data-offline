@@ -61,6 +61,7 @@ export default Ember.Object.extend({
 
   process: function(job) {
     let queue = this;
+    console.log('DBDBDBD', job)
     job.perform().then(() => {
       this.get('activeJobs').removeObject(job);
       this.get('retryJobs').removeObject(job);

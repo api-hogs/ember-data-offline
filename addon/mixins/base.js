@@ -24,7 +24,8 @@ export default Mixin.create({
     let job = this.get('onlineJob').create({
       adapter: this.get('onlineAdapter'),
       method: method,
-      params: params
+      params: params,
+      retryCount: 3,
     });
     this.addToQueue(job, store);
   },
@@ -35,7 +36,7 @@ export default Mixin.create({
       store: store,
       method: method,
       params: params,
-        delay: 20,
+      delay: 20,
     });
     this.addToQueue(job, store);
   },

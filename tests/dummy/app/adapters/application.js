@@ -19,7 +19,6 @@ var adapter = DS.RESTAdapter.extend(onlineMixin, {
         var _results = this.query(namespace.records, query);
 
         let results = Ember.A(_results);
-        console.log("PWPWPWPWPW", results)
 
         if (results.get('length')) {
           return this.loadRelationshipsForMany(type, results);

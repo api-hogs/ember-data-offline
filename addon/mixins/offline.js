@@ -7,17 +7,13 @@ export default Ember.Mixin.create(baseMixin,{
       this.createOnlineJob('findAll', [store, typeClass, sinceToken, true], store);
     }
     return this._super.apply(this, arguments);
-    // return this.findAll(store, typeClass, sinceToken);
   },
 
   find: function(store, typeClass, id, snapshot, fromJob) {
-    console.log("MCMCM")
     if (!fromJob){
-      console.log("SWSWSWSW")
       this.createOnlineJob('find', [store, typeClass, id, snapshot, true], store);
     }
     return this._super.apply(this, arguments);
-    // return this.find(store, typeClass, id, snapshot);
   },
 
   findQuery: function(store, type, query, fromJob) {
@@ -25,7 +21,6 @@ export default Ember.Mixin.create(baseMixin,{
       this.createOnlineJob('findQuery', [store, type, query, true], store);
     }
     return this._super.apply(this, arguments);
-    // return this.findQuery(store, type, query);
   },
 
   findMany: function(store, type, ids, snapshots, fromJob) {
@@ -33,16 +28,13 @@ export default Ember.Mixin.create(baseMixin,{
       this.createOnlineJob('findMany', [store, type, ids, snapshots, true], store);
     }
     return this._super.apply(this, arguments);
-    // return this.find(store, type, ids, snapshots);
   },
 
   createRecord(store, type, snapshot, fromJob) {
-    console.log('WIWW', fromJob)
     //think about merge id....very important. maybe unload Record, and push Record...
     if (!fromJob){
       this.createOnlineJob('createRecord', [store, type, snapshot, true], store);
     }
-    // return this.createRecord(store, type, snapshot);
     return this._super.apply(this, arguments);
   },
 
@@ -50,7 +42,6 @@ export default Ember.Mixin.create(baseMixin,{
     if (!fromJob){
       this.createOnlineJob('updateRecord', [store, type, snapshot, true], store);
     }
-    // return this.updateRecord(store, type, snapshot);
     return this._super.apply(this, arguments);
   },
 
@@ -58,7 +49,6 @@ export default Ember.Mixin.create(baseMixin,{
     if (!fromJob){
       this.createOnlineJob('deleteRecord', [store, type, snapshot, true], store);
     }
-    // return this.deleteRecord(store, type, snapshot);
     return this._super.apply(this, arguments);
   }
 });

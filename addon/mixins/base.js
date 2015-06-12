@@ -26,12 +26,10 @@ export default Mixin.create({
       method: method,
       params: params
     });
-    console.log('OOOPOPO', job)
     this.addToQueue(job, store);
   },
 
   createOfflineJob(method, params, store){
-    console.log('PPPPPP', this)
     let job = this.get('offlineJob').create({
       adapter: this.get('offlineAdapter'),
       store: store,

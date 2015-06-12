@@ -1,7 +1,6 @@
 export default function() {
   this.get('/users', function(db, req){
     if (req.queryParams.bar) {
-    console.log('WIWIW', req.queryParams)
       let users = db.users.map((user, index) => {
         user.id = index + 100;
         return user;

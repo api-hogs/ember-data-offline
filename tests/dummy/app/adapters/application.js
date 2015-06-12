@@ -1,21 +1,4 @@
-import DS from 'ember-data';
-import Ember from 'ember';
-import offlineMixin from 'ember-data-offline/mixins/offline';
-import onlineMixin from 'ember-data-offline/mixins/online';
+import baseAdapter from 'ember-data-offline/adapters/base';
 
-var localAdapter = DS.LSAdapter.extend({
-  namespace: 'dummy'
+export default baseAdapter.extend({
 });
-var adapter = DS.RESTAdapter.extend(onlineMixin, {
-  offlineAdapter: Ember.computed(function() {
-    let adapter = this;
-    return localAdapter.extend(offlineMixin).create({
-      onlineAdapter: adapter,
-      container: this.container,
-      serializer: DS.LSSerializer.extend().create({
-        container: this.container,
-      }),
-    });
-  }),
-});
-export default adapter;

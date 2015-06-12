@@ -26,6 +26,7 @@ export default Mixin.create({
       method: method,
       params: params
     });
+    console.log('OOOPOPO', job)
     this.addToQueue(job, store);
   },
 

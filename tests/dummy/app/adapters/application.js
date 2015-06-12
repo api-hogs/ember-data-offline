@@ -14,6 +14,19 @@ var adapter = DS.RESTAdapter.extend(onlineMixin, {
       serializer: DS.LSSerializer.extend().create({
         container: this.container,
       }),
+      findQuery: function (store, type, query, recordArray) {
+        var namespace = this._namespaceForType(type);
+        var _results = this.query(namespace.records, query);
+
+        let results = Ember.A(_results);
+        console.log("PWPWPWPWPW", results)
+
+        if (results.get('length')) {
+          return this.loadRelationshipsForMany(type, results);
+        } else {
+          return Ember.RSVP.reject();
+        }
+      },
     });
   }),
 });

@@ -35,20 +35,23 @@ export default Ember.Mixin.create(baseMixin,{
     if (!fromJob){
       this.createOnlineJob('createRecord', [store, type, snapshot, true], store);
     }
-    return this.createRecord(store, type, snapshot);
+    // return this.createRecord(store, type, snapshot);
+    return this._super.apply(this, arguments);
   },
 
   updateRecord(store, type, snapshot, fromJob) {
     if (!fromJob){
       this.createOnlineJob('updateRecord', [store, type, snapshot, true], store);
     }
-    return this.updateRecord(store, type, snapshot);
+    // return this.updateRecord(store, type, snapshot);
+    return this._super.apply(this, arguments);
   },
 
   deleteRecord(store, type, snapshot, fromJob) {
     if (!fromJob){
       this.createOnlineJob('deleteRecord', [store, type, snapshot, true], store);
     }
-    return this.deleteRecord(store, type, snapshot);
+    // return this.deleteRecord(store, type, snapshot);
+    return this._super.apply(this, arguments);
   }
 });

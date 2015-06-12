@@ -5,7 +5,9 @@ export default Ember.Mixin.create(baseMixin,{
 
   findAll: function(store, typeClass, sinceToken, fromJob) {
     let adapterResp = this._super.apply(this, arguments);
+    console.log('WWOWO')
     if (!fromJob){
+      console.log('OWWOWOWOW')
       this.createOfflineJob('findAll', [store, typeClass, sinceToken, adapterResp, true], store);
     }
     return adapterResp;

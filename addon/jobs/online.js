@@ -17,7 +17,7 @@ export default Ember.Object.extend(jobMixin, {
     return adapter.updateRecord(store, type, snapshot, fromJob);
   },
 
-  deleteRecord(store, type, snapshot) {
+  deleteRecord(store, type, snapshot, fromJob) {
     let adapter = this.get('adapter');
     return adapter.deleteRecord(store, type, snapshot, fromJob);
   },

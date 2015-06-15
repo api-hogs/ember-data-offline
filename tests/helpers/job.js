@@ -12,7 +12,12 @@ var storeMock = Ember.Object.create({
     return Ember.A([
       emberModelMock.create({id: 'foo'})
     ]);
-  }
+  },
+  serializerFor(){
+    return {
+      primaryKey: 'id'
+    };
+  },
 });
 var snapshotMock = Ember.Object.create({});
 var adapterKlass = Ember.Object.extend({

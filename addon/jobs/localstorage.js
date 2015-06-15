@@ -9,7 +9,6 @@ export default Ember.Object.extend(jobMixin, {
   },
 
   persistOffline(store, typeClass, onlineResp, method) {
-    console.log('iewoeiwo', store.serializerFor(typeClass).primaryKey)
     if (Ember.isEmpty(onlineResp)) {
      return;
     }

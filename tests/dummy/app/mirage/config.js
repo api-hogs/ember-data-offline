@@ -5,14 +5,13 @@ export default function() {
         user._id = index + 100;
         return user;
       });
-      // return {users: users};
-      return {users: users.map(user => {
-        user._id = id;
-        delete user.id;
-        return user;
-      })};
+      return {users: users};
     }
-    return {users: db.users};
+    return {users: db.users.map(user => {
+      user._id = user.id;
+      delete user.id;
+      return user;
+    })};
   });
   this.get('/users/:id', function(db, req){
     let user = db.users[0];

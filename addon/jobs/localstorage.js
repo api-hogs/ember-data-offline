@@ -9,6 +9,7 @@ export default Ember.Object.extend(jobMixin, {
   },
 
   persistOffline(store, typeClass, onlineResp, method) {
+    console.log('iewoeiwo', store.serializerFor(typeClass).primaryKey)
     if (Ember.isEmpty(onlineResp)) {
      return;
     }
@@ -26,7 +27,8 @@ export default Ember.Object.extend(jobMixin, {
       return;
     }
     let recordFromStore = fromStore.find(record => {
-      return record.id === onlineRecord[typeClass.modelName].id;
+      let primaryKey = store.serializerFor(typeClass).primaryKey;
+      return record.id === onlineRecord[typeClass.modelName][primaryKey];
     });
     let snapshot = recordFromStore._createSnapshot();
     this.get('adapter').createRecord(store, typeClass, snapshot, true);

@@ -2,10 +2,15 @@ export default function() {
   this.get('/users', function(db, req){
     if (req.queryParams.bar) {
       let users = db.users.map((user, index) => {
-        user.id = index + 100;
+        user._id = index + 100;
         return user;
       });
-      return {users: users};
+      // return {users: users};
+      return {users: users.map(user => {
+        user._id = id;
+        delete user.id;
+        return user;
+      })};
     }
     return {users: db.users};
   });

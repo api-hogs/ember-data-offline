@@ -5,7 +5,10 @@ const { isEmpty, RSVP } = Ember;
 
 export default Ember.Object.extend(jobMixin, {
   task() {
-    return this[this.get('method')].apply(this, this.get('params'));
+    if (this[this.get('method')]){
+      return this[this.get('method')].apply(this, this.get('params'));
+    }
+    return this.get('adapter')[this.get('method')].apply(this.get('adapter'), this.get('params'));
   },
 
   persistOffline(store, typeClass, onlineResp, method) {

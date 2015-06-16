@@ -5,7 +5,7 @@ export default Ember.Mixin.create({
     let json = this._super.apply(this, arguments);
     if (json._id) {
       json.id = json._id;
-      delete json._id;
+      // delete json._id;
     }
     return json;
   },

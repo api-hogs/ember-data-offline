@@ -10,16 +10,27 @@ var localAdapter = DS.LSAdapter.extend({
 export default DS.RESTAdapter.extend(onlineMixin, {
   offlineAdapter: Ember.computed(function() {
     let adapter = this;
+    let serializer = DS.LSSerializer.extend().create({
+      container: this.container,
+    });
+    let serializerPrimaryKey = this.get('serializerPrimaryKey');
+    if (serializerPrimaryKey) {
+     serializer.set('primaryKey', serializerPrimaryKey); 
+    }
     let defaults = {
       onlineAdapter: adapter,
       container: this.container,
-      serializer: DS.LSSerializer.extend().create({
-        container: this.container,
-      }),
+      serializer: serializer,
     };
     if (adapter.offlineNamespace) {
       defaults.namespace = adapter.offlineNamespace;
     }
-    return localAdapter.extend(offlineMixin).create(defaults);
+    return localAdapter.extend(offlineMixin, {
+      extractArray: function(store, model, payload) {
+        return payload.map(function(json) {
+          return this.extractSingle(store, model, json);
+        }, this);
+      }
+    }).create(defaults);
   }),
 });

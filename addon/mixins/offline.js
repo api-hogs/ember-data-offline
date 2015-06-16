@@ -3,10 +3,23 @@ import baseMixin from 'ember-data-offline/mixins/base';
 
 export default Ember.Mixin.create(baseMixin,{
   findAll: function(store, typeClass, sinceToken, fromJob) {
+    // console.log("WJWWJWJ", this._super.apply(this, arguments))
     if (!fromJob){
       this.createOnlineJob('findAll', [store, typeClass, sinceToken, true], store);
     }
     return this._super.apply(this, arguments);
+    
+    // temp fix
+    // let res = this._super.apply(this, arguments).then(resp => {
+    //   return resp.map(item => {
+    //     let primaryKey = store.serializerFor(typeClass).primaryKey;
+    //     item[primaryKey] = item.id;
+    //     delete item.id;
+    //     return item;
+    //   });
+    // });
+    // console.log("OWOWO", res);
+    // return res;
   },
 
   find: function(store, typeClass, id, snapshot, fromJob) {

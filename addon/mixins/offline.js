@@ -3,9 +3,9 @@ import baseMixin from 'ember-data-offline/mixins/base';
 
 export default Ember.Mixin.create(baseMixin, {
   findAll: function(store, typeClass, sinceToken, fromJob) {
-    store.get('requestRegistry').registerReq(typeClass.modelName);
+    store.get('requestRegistry').registerReq(typeClass.modelName, 'findAll');
     if (!fromJob) {
-      if (store.isFirstRequestFor(typeClass.modelName)) {
+      if (store.isFirstRequestFor(typeClass.modelName, 'findAll')) {
         this.createOnlineJob('findAll', [store, typeClass, sinceToken, true], store);
       }
     }

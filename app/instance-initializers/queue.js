@@ -6,15 +6,23 @@ var promiseArray = function(promise, label) {
 };
 
 var registry = Ember.Object.create({
-  isFirstRequestFor(modelName) {
-    return this.get(modelName).length <= 1;
-  },
-  registerReq(modelName) {
-    this.get(modelName);
-    if (Ember.isEmpty(this.get(modelName))) {
-      this.set(modelName, Ember.A());
+  genKey(modelName, method, params) {
+    let baseKey = `${modelName}$${method}`;
+    if (Ember.isEmpty(params)) {
+     return baseKey; 
     }
-    this.get(modelName).pushObject(new Date());
+    return `${baseKey}$${params}`;
+  },
+  isFirstRequestFor(modelName, method, params) {
+    let key = this.genKey(modelName, method, params);
+    return this.get(key).length <= 1;
+  },
+  registerReq(modelName, method, params) {
+    let key = this.genKey(modelName, method, params);
+    if (Ember.isEmpty(this.get(key))) {
+      this.set(key, Ember.A());
+    }
+    this.get(key).pushObject(new Date());
   }
 });
 
@@ -25,8 +33,8 @@ export function initialize(instance) {
     queue: queue,
 
     requestRegistry: registry,
-    isFirstRequestFor(modelName) {
-      return this.get('requestRegistry').isFirstRequestFor(modelName);
+    isFirstRequestFor(modelName, method, params) {
+      return this.get('requestRegistry').isFirstRequestFor(modelName, method, params);
     },
 
     adapterFor: function(typeClass) {

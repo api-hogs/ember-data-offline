@@ -5,6 +5,7 @@ const { isEmpty, RSVP } = Ember;
 
 export default Ember.Object.extend(jobMixin, {
   task() {
+    console.log('sync offline');
     if (this[this.get('method')]){
       return this[this.get('method')].apply(this, this.get('params'));
     }

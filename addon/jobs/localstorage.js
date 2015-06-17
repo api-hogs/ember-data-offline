@@ -29,8 +29,9 @@ export default Ember.Object.extend(jobMixin, {
       return;
     }
     let recordFromStore = fromStore.find(record => {
-      let primaryKey = store.serializerFor(typeClass).primaryKey;
-      return record.id === onlineRecord[typeClass.modelName][primaryKey];
+      // let primaryKey = store.serializerFor(typeClass).primaryKey;
+      // return record.id === onlineRecord[typeClass.modelName][primaryKey];
+      return record.id === onlineRecord[typeClass.modelName].id;
     });
     let snapshot = recordFromStore._createSnapshot();
     this.get('adapter').createRecord(store, typeClass, snapshot, true);

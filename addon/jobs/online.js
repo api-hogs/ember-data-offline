@@ -38,7 +38,7 @@ export default Ember.Object.extend(jobMixin, {
 
     adapterResp.then(adapterPayload => {
       //TODO think about unload
-      store.pushPayload(typeClass, adapterPayload);
+      store.pushPayload(type, adapterPayload);
     });
 
     return adapterResp;
@@ -49,7 +49,7 @@ export default Ember.Object.extend(jobMixin, {
 
     adapterResp.then(adapterPayload => {
       //TODO think about unload
-      store.pushPayload(typeClass, adapterPayload);
+      store.pushPayload(type, adapterPayload);
     });
 
     return adapterResp;

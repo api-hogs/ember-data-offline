@@ -4,7 +4,7 @@ export default Ember.Object.extend({
   name: 'normal',
   retryOnFailureDelay: 10000,
   delay: 5000,
-  workers: 5,
+  workers: 1,
   activeJobs: null,
   pendingJobs: null,
   faltureJobs: null,

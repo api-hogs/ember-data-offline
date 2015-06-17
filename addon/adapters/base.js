@@ -26,11 +26,7 @@ export default DS.RESTAdapter.extend(onlineMixin, {
       defaults.namespace = adapter.offlineNamespace;
     }
     return localAdapter.extend(offlineMixin, {
-      extractArray: function(store, model, payload) {
-        return payload.map(function(json) {
-          return this.extractSingle(store, model, json);
-        }, this);
-      }
+
     }).create(defaults);
   }),
 });

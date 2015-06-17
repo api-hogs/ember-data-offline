@@ -15,7 +15,7 @@ export default Ember.Object.extend(jobMixin, {
 
     adapterResp.then(adapterPayload => {
       store.unloadAll(typeClass);
-      console.log("WPPWPWPWPWPW", typeClass, adapterPayload)
+      console.log("findAll from online", typeClass, adapterPayload)
       store.pushPayload(typeClass, adapterPayload);
     });
 

@@ -13,6 +13,8 @@ export default Ember.Mixin.create({
     //guard
     return RSVP.Promise.resolve().then(() => {
       return this.task();
+    }).catch(err => {
+      console.log('Error was occurred')
     });
   },
 });

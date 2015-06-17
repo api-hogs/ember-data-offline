@@ -5,39 +5,34 @@ var promiseArray = function(promise, label) {
   });
 };
 
+var registry = Ember.Object.create({
+  isFirstRequestFor(modelName) {
+    return this.get(modelName).length <= 1;
+  },
+  registerReq(modelName) {
+    this.get(modelName);
+    if (Ember.isEmpty(this.get(modelName))) {
+      this.set(modelName, Ember.A());
+    }
+    this.get(modelName).pushObject(new Date());
+  }
+});
+
 export function initialize(instance) {
   let store = instance.container.lookup('store:main');
   let queue = instance.container.lookup('queue:main');
   store.reopen({
     queue: queue,
-    requestRegistry: {}, 
 
-    adapterFor: function(modelName) {
+    requestRegistry: registry,
+    isFirstRequestFor(modelName) {
+      return this.get('requestRegistry').isFirstRequestFor(modelName);
+    },
+
+    adapterFor: function(typeClass) {
       let superResp = this._super.apply(this, arguments);
 
-      // let currentModelRegistry = this.get('requestRegistry')[modelName];
-      // if (Ember.isEmpty(currentModelRegistry)) {
-      //   currentModelRegistry = [];       
-      // }
-      // currentModelRegistry.push(new Date());
-
-      // let firstOfflineRequest = currentModelRegistry.length === 1;
-
-      // if (firstOfflineRequest) {
-      //    if (superResp.get('isOnline')) {
-      // console.log('IWWIWIW', firstOfflineRequest)
-      //      return superResp.get('offlineAdapter');
-      //    }
-      //    return superResp; 
-      // }
-
-      if(superResp.get('isOffline')) {
-        console.log('WPPWPW')
-        return superResp.get('offlineAdapter');
-      }
-
       return superResp.get('offlineAdapter');
-      // return superResp;
     }
   });
 };

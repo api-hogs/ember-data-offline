@@ -10,6 +10,17 @@ export default Ember.Object.extend(jobMixin, {
     return this.get('adapter')[this.get('method')].apply(this.get('adapter'), this.get('params'));
   },
 
+  findAll(store, typeClass, sinceToken, fromJob) {
+    let adapterResp = this.get('adapter').findAll(store, typeClass, sinceToken);
+
+    adapterResp.then(adapterPayload => {
+      store.unloadAll(typeClass);
+      store.pushPayload(typeClass, adapterPayload);
+    });
+
+    return adapterResp;
+  },
+
   createRecord(store, type, snapshot, fromJob) {
     let adapter = this.get('adapter');
     return adapter.createRecord(store, type, snapshot, fromJob);

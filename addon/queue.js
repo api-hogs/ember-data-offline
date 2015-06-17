@@ -42,7 +42,7 @@ export default Ember.Object.extend({
       return;
     }
     if (this.get('activeJobs').length < this.get('workers')) {
-      let job = this.get('pendingJobs').pop();
+      let job = this.get('pendingJobs').unshift();
       if (job) {
         this.runJob(job);
       }

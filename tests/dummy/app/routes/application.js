@@ -2,7 +2,11 @@ import Ember from 'ember';
 
 export default Ember.Route.extend({
   model(){
-    return this.store.find('user');
+    return Ember.RSVP.hash({
+      users: this.store.find('user'),
+      cars: this.store.find('car')
+    });
+    // return this.store.find('user');
   },
   actions: {
     goOnline(){

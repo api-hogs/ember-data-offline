@@ -23,4 +23,7 @@ export default function() {
     attrs.id = db.users.length + 1;
     return {user: attrs};
   });
+  this.get('/cars', function(db, req){
+    return {cars: db.cars}; 
+  });
 }

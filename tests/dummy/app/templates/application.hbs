@@ -3,10 +3,17 @@
 <button {{action 'goOnline'}}>set online</button>
 <button {{action 'goOffline'}}>set offline</button>
 <button {{action 'findFromLocal'}}>find</button>
+<h2>Users</h2>
 <ul>
-  {{#each model as |user|}}
+  {{#each model.users as |user|}}
     <li>{{user.firstName}} {{user.lastName}} - {{user.gender}}</li>
   {{/each}}
 </ul>
 <h4>Add user</h4>
 <button {{action 'createUser'}}>Create User</button>
+<h2>Cars</h2>
+<ul>
+  {{#each model.cars as |car|}}
+    <li>{{car.name}}</li>
+  {{/each}}
+</ul>

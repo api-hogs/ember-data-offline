@@ -8,6 +8,7 @@ export default Ember.Mixin.create(baseMixin, {
     if (!fromJob) {
       this.createOfflineJob('findAll', [store, typeClass, sinceToken, adapterResp, true], store);
     }
+    console.log('findAll from online adapter', typeClass);
     return adapterResp;
   },
 

@@ -21,6 +21,39 @@ export default Ember.Object.extend(jobMixin, {
     return adapterResp;
   },
 
+  find: function(store, typeClass, id, snapshot, fromJob) {
+    let adapterResp = this.get('adapter').find(store, typeClass, id, snapshot);
+
+    adapterResp.then(adapterPayload => {
+      store.unloadRecord(typeClass, id);
+      store.pushPayload(typeClass, adapterPayload);
+    });
+
+    return adapterResp;
+  },
+
+  findQuery(store, type, query, fromJob) {
+    let adapterResp = this.get('adapter').findQuery(store, type, query);
+
+    adapterResp.then(adapterPayload => {
+      //TODO think about unload
+      store.pushPayload(typeClass, adapterPayload);
+    });
+
+    return adapterResp;
+  },
+
+  findMany(store, type, ids, snapshots, fromJob) {
+    let adapterResp = this.get('adapter').findMany(store, type, ids, snapshots);
+
+    adapterResp.then(adapterPayload => {
+      //TODO think about unload
+      store.pushPayload(typeClass, adapterPayload);
+    });
+
+    return adapterResp;
+  },
+
   createRecord(store, type, snapshot, fromJob) {
     let adapter = this.get('adapter');
     return adapter.createRecord(store, type, snapshot, fromJob);

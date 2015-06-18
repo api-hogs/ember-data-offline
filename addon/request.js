@@ -1,3 +1,4 @@
+/* global localstorage */
 import Ember from 'ember';
 import baseMixin from 'ember-data-offline/mixins/base';
 import jobMixin from 'ember-data-offline/mixins/job';
@@ -62,7 +63,7 @@ export default Ember.Object.createWithMixin(baseMixin, {
     return onlineResp;
   },
 
-  peek(url, method, data) {
+  peek(url, method, data, store) {
     let offlineResp = this.requestOffline(url, method, data);
     this.createOnlineJob(url, method, data, store);
     return offlineResp;
@@ -81,7 +82,7 @@ export default Ember.Object.createWithMixin(baseMixin, {
   },
 
   persistOffline(key, onlineResp) {
-    onlineResp.then(payload => {
+    onlineResp.then((data) => {
       localstorage.setItem(key, data);
     });
   },
@@ -107,10 +108,10 @@ export default Ember.Object.createWithMixin(baseMixin, {
       url: url,
       type: method
     };
+    let params = Ember.merge(this._defaultParamsForOnline, opts);
     if (data) {
       params.data = data;
     }
-    let params = Ember.merge(this._defaultParamsForOnline, opts);
     return Ember.$.ajax(params);
   },
 });

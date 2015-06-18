@@ -36,8 +36,11 @@ export default Ember.Object.extend(jobMixin, {
         return record.id === onlineRecord[typeClass.modelName].id;
       }
     });
-    let snapshot = recordFromStore._createSnapshot();
-    this.get('adapter').createRecord(store, typeClass, snapshot, true);
+    if (recordFromStore) {
+      let snapshot = recordFromStore._createSnapshot();
+      return this.get('adapter').createRecord(store, typeClass, snapshot, true);
+    }
+    
   },
 
   _persistMany(store, typeClass){

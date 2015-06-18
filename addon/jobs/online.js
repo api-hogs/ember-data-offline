@@ -29,11 +29,12 @@ export default Ember.Object.extend(jobMixin, {
     store.set(`syncLoads.find.${typeClass.modelName}`, false);
 
     adapterResp.then(adapterPayload => {
-      store.unloadRecord(typeClass, id);
-      store.pushPayload(typeClass, adapterPayload);
-
-      store.set(`syncLoads.find.${typeClass.modelName}`, true);
-    });
+      if (!Ember.isEmpty(adapterPayload)) {
+        store.pushPayload(typeClass, adapterPayload);
+        
+        store.set(`syncLoads.find.${typeClass.modelName}`, true);
+      }
+    }).catch(console.log.bind(console));
 
     return adapterResp;
   },

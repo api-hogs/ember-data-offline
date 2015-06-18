@@ -12,11 +12,13 @@ export default Ember.Object.extend(jobMixin, {
 
   findAll(store, typeClass, sinceToken, fromJob) {
     let adapterResp = this.get('adapter').findAll(store, typeClass, sinceToken);
+    store.set(`syncLoads.findAll.${typeClass.modelName}`, false);
 
     adapterResp.then(adapterPayload => {
-      //store.unloadAll(typeClass);
       console.log("findAll from online job", typeClass, adapterPayload)
       store.pushPayload(typeClass, adapterPayload);
+
+      store.set(`syncLoads.findAll.${typeClass.modelName}`, true);
     });
 
     return adapterResp;
@@ -24,10 +26,13 @@ export default Ember.Object.extend(jobMixin, {
 
   find: function(store, typeClass, id, snapshot, fromJob) {
     let adapterResp = this.get('adapter').find(store, typeClass, id, snapshot);
+    store.set(`syncLoads.find.${typeClass.modelName}`, false);
 
     adapterResp.then(adapterPayload => {
       store.unloadRecord(typeClass, id);
       store.pushPayload(typeClass, adapterPayload);
+
+      store.set(`syncLoads.find.${typeClass.modelName}`, true);
     });
 
     return adapterResp;
@@ -35,10 +40,11 @@ export default Ember.Object.extend(jobMixin, {
 
   findQuery(store, type, query, fromJob) {
     let adapterResp = this.get('adapter').findQuery(store, type, query);
+    store.set(`syncLoads.findQuery.${typeClass.modelName}`, false);
 
     adapterResp.then(adapterPayload => {
-      //TODO think about unload
       store.pushPayload(type, adapterPayload);
+      store.set(`syncLoads.findQuery.${typeClass.modelName}`, true);
     });
 
     return adapterResp;
@@ -48,7 +54,6 @@ export default Ember.Object.extend(jobMixin, {
     let adapterResp = this.get('adapter').findMany(store, type, ids, snapshots);
 
     adapterResp.then(adapterPayload => {
-      //TODO think about unload
       store.pushPayload(type, adapterPayload);
     });
 

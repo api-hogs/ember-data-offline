@@ -8,6 +8,7 @@ export default Ember.Route.extend({
     });
     // return this.store.find('user');
   },
+
   actions: {
     goOnline(){
       window.navigator.__defineGetter__('onLine', function() {

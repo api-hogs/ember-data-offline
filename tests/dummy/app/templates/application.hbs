@@ -4,6 +4,7 @@
 <button {{action 'goOffline'}}>set offline</button>
 <button {{action 'findFromLocal'}}>find</button>
 <h2>Users</h2>
+<h4>Is sync loaded: {{isUserSyncLoad}}</h4>
 <ul>
   {{#each model.users as |user|}}
     <li>{{user.firstName}} {{user.lastName}} - {{user.gender}}</li>

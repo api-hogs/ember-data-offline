@@ -29,7 +29,7 @@ export function initialize(instance) {
       return Ember.RSVP.resolve().then(() => {
         return this._super.apply(this, arguments);
       }).then(resp => {
-        return record;
+        return resp;
       }).catch(console.log.bind(console));
     }
   });

@@ -25,13 +25,6 @@ export function initialize(instance) {
       return superResp.get('offlineAdapter');
     },
     //this can be removed, it is only for make error more silent
-    find() {
-      return Ember.RSVP.resolve().then(() => {
-        return this._super.apply(this, arguments);
-      }).then(resp => {
-        return resp;
-      }).catch(console.log.bind(console));
-    }
   });
 };
 

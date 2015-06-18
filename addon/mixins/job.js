@@ -16,7 +16,7 @@ export default Ember.Mixin.create({
     }).catch(err => {
       console.log('Error was occurred', err.status);
 
-      if (err && err.status && err.status !== 408) {
+      if (err && err.status && err.status === 408) {
         return Ember.RSVP.resolve();
       }
     });

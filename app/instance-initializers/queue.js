@@ -24,7 +24,6 @@ export function initialize(instance) {
 
       return superResp.get('offlineAdapter');
     },
-    //this can be removed, it is only for make error more silent
   });
 };
 

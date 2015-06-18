@@ -23,17 +23,21 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   findQuery: function(store, type, query, fromJob) {
-    if (!fromJob) {
-      this.createOnlineJob('findQuery', [store, type, query, true], store);
-    }
-    return this._super.apply(this, arguments);
+    return this._super.apply(this, arguments).then(record => {
+      if (!fromJob) {
+        this.createOnlineJob('findQuery', [store, type, query, true], store);
+      }
+      return record;
+    }).catch(console.log.bind(console));
   },
 
   findMany: function(store, type, ids, snapshots, fromJob) {
-    if (!fromJob) {
-      this.createOnlineJob('findMany', [store, type, ids, snapshots, true], store);
-    }
-    return this._super.apply(this, arguments);
+    return this._super.apply(this, arguments).then(record => {
+      if (!fromJob) {
+        this.createOnlineJob('findMany', [store, type, ids, snapshots, true], store);
+      }
+      return record;
+    }).catch(console.log.bind(console));
   },
 
   createRecord(store, type, snapshot, fromJob) {

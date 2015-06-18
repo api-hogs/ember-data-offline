@@ -12,7 +12,7 @@ export default function() {
       delete user.id;
       return user;
     })};
-  }, 500);
+  });
   this.get('/users/:id', function(db, req){
     let user = db.users[0];
     user.id = req.params.id;

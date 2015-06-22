@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import { initialize } from '../../../initializers/queue';
+import { initialize } from 'dummy/initializers/queue';
 import { module, test } from 'qunit';
 
 var container, application;
@@ -18,7 +18,7 @@ test('it works', function(assert) {
   assert.expect(1);
   
   initialize(container, application);
-  let queue = container.lookup('queue:main');
+  let queue = container.lookup('data-offline-queue:main');
 
   assert.ok(queue, 'Queue successfully registered in container');
 });

@@ -33,7 +33,6 @@
     "ember-disable-prototype-extensions": "^1.0.0",
     "ember-disable-proxy-controllers": "^1.0.0",
     "ember-export-application-global": "^1.0.2",
-    "ember-localforage-adapter": "0.7.3",
     "ember-localstorage-adapter": "git+https://github.com/api-hogs/ember-localstorage-adapter.git#master",
     "ember-try": "0.0.6"
   },
@@ -41,7 +40,8 @@
     "ember-addon"
   ],
   "dependencies": {
-    "ember-cli-babel": "^5.0.0"
+    "ember-cli-babel": "^5.0.0",
+    "ember-localforage-adapter": "0.7.3"
   },
   "ember-addon": {
     "configPath": "tests/dummy/config"

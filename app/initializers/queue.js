@@ -1,7 +1,7 @@
 import Queue from 'ember-data-offline/queue';
 
 export function initialize(container, application) {
-  container.register('queue:main', Queue);
+  container.register('data-offline-queue:main', Queue);
 };
 
 export default {

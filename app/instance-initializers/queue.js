@@ -13,10 +13,10 @@ var syncLoads = Ember.Object.create({
 export function initialize(instance) {
 
   let store = instance.container.lookup('store:main');
-  let queue = instance.container.lookup('queue:main');
+  let queue = instance.container.lookup('data-offline-queue:main');
 
   store.reopen({
-    queue: queue,
+    EDOQueue: queue,
     syncLoads: syncLoads,
 
     adapterFor: function(typeClass) {

@@ -9,10 +9,10 @@ export default Mixin.create({
   offlineJob: offlineJob,
 
   _workingQueue(store){
-    if (isPresent(get(this, 'queue'))) {
-      return get(this, 'queue');
+    if (isPresent(get(this, 'EDOQueue'))) {
+      return get(this, 'EDOQueue');
     } else {
-      return get(store, 'queue');
+      return get(store, 'EDOQueue');
     }
   },
 

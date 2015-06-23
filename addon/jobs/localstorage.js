@@ -7,7 +7,6 @@ export default Ember.Object.extend(jobMixin, {
   task() {
     console.log('sync offline');
     if (this[this.get('method')]){
-      console.log('NFNFNFFNFNFNFNFNFNF', this.get('params'))
       return this[this.get('method')].apply(this, this.get('params'));
     }
     return this.get('adapter')[this.get('method')].apply(this.get('adapter'), this.get('params'));
@@ -84,12 +83,12 @@ export default Ember.Object.extend(jobMixin, {
     this._findWithCheck(fromJob, 'find', onlineResp, store, typeClass, id, snapshot);
   },
 
-  findQuery(store, typeClass, query, onlineResp) {
-    this._findWithCheck('findQuery', onlineResp, store, typeClass, query);
+  findQuery(store, typeClass, query, onlineResp, fromJob) {
+    this._findWithCheck(fromJob, 'findQuery', onlineResp, store, typeClass, query);
   },
 
-  findMany(store, typeClass, ids, snapshots, onlineResp) {
-    this._findWithCheck('findMany', onlineResp, store, typeClass, ids, snapshots);
+  findMany(store, typeClass, ids, snapshots, onlineResp, fromJob) {
+    this._findWithCheck(fromJob, 'findMany', onlineResp, store, typeClass, ids, snapshots);
   },
 
   createRecord(store, type, snapshot, onlineResp){

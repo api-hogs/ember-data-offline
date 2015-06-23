@@ -15,13 +15,17 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   find: function(store, typeClass, id, snapshot, fromJob) {
+    console.log('from online find adapter', typeClass);
     let onlineResp = this._super.apply(this, arguments);
     return onlineResp.then(resp => {
       if (!fromJob) {
+        console.log('from online find adapter in then', resp, typeClass);
         this.createOfflineJob('find', [store, typeClass, id, snapshot, onlineResp, true], store);
       }
       return resp;
-    }).catch(console.log.bind(console));
+    }).catch(err => {
+      console.log('FUCKING ERROR : ', err);
+    });
   },
 
   findQuery: function(store, type, query, fromJob) {

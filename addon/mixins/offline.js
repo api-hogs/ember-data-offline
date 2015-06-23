@@ -14,8 +14,10 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   find: function(store, typeClass, id, snapshot, fromJob) {
+    console.log('JDKSDJSDJSKDKSDKSJD', fromJob)
     return this._super.apply(this, arguments).then(record => {
       if (!fromJob) {
+          console.log('from offline find in then', typeClass);
           this.createOnlineJob('find', [store, typeClass, id, snapshot, true], store);
       }
       return record;

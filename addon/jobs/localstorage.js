@@ -7,6 +7,7 @@ export default Ember.Object.extend(jobMixin, {
   task() {
     console.log('sync offline');
     if (this[this.get('method')]){
+      console.log('NFNFNFFNFNFNFNFNFNF', this.get('params'))
       return this[this.get('method')].apply(this, this.get('params'));
     }
     return this.get('adapter')[this.get('method')].apply(this.get('adapter'), this.get('params'));
@@ -54,22 +55,22 @@ export default Ember.Object.extend(jobMixin, {
     });
   },
 
-  _findWithCheck: function(method, onlineResp, store, typeClass, ...params) {
+  _findWithCheck: function(fromJob, method, onlineResp, store, typeClass, ...params) {
     let offlineAdapter = this.get('adapter');
-
-    RSVP.resolve().then(() => {
-      return offlineAdapter.find(store, typeClass, ...params);
-    }).then(offineRecord => {
-      if (isEmpty(offineRecord)) {
-        return onlineResp;
-      }
-    }).then(onlineRecord => {
-      this.persistOffline(store, typeClass, onlineRecord, method);
-    }).catch(() => {
-      onlineResp.then(onlineRecord => {
+    if (!fromJob) {
+      RSVP.resolve().then(() => { return offlineAdapter.find(store, typeClass, ...params);
+      }).then(offineRecord => {
+        if (isEmpty(offineRecord)) {
+          return onlineResp;
+        }
+      }).then(onlineRecord => {
         this.persistOffline(store, typeClass, onlineRecord, method);
+      }).catch(() => {
+        onlineResp.then(onlineRecord => {
+          this.persistOffline(store, typeClass, onlineRecord, method);
+        });
       });
-    });
+    }
   },
 
   findAll(store, typeClass, sinceToken, adapterResp) {
@@ -79,8 +80,8 @@ export default Ember.Object.extend(jobMixin, {
     });
   },
 
-  find(store, typeClass, id, snapshot, onlineResp) {
-    this._findWithCheck('find', onlineResp, store, typeClass, id, snapshot);
+  find(store, typeClass, id, snapshot, onlineResp, fromJob) {
+    this._findWithCheck(fromJob, 'find', onlineResp, store, typeClass, id, snapshot);
   },
 
   findQuery(store, typeClass, query, onlineResp) {

@@ -3,7 +3,6 @@ import jobMixin from 'ember-data-offline/mixins/job';
 
 export default Ember.Object.extend(jobMixin, {
   task() {
-    console.log('sync', this.get('method'));
     if (this[this.get('method')]){
       return this[this.get('method')].apply(this, this.get('params'));
     }
@@ -15,7 +14,6 @@ export default Ember.Object.extend(jobMixin, {
     store.set(`syncLoads.findAll.${typeClass.modelName}`, false);
 
     adapterResp.then(adapterPayload => {
-      console.log("findAll from online job", typeClass.modelName, adapterPayload);
       store.pushPayload(typeClass.modelName, adapterPayload);
 
       store.set(`syncLoads.findAll.${typeClass.modelName}`, true);
@@ -31,7 +29,7 @@ export default Ember.Object.extend(jobMixin, {
     adapterResp.then(adapterPayload => {
       if (!Ember.isEmpty(adapterPayload)) {
         store.pushPayload(typeClass, adapterPayload);
-        
+
         store.set(`syncLoads.find.${typeClass.modelName}`, true);
       }
     }).catch(console.log.bind(console));

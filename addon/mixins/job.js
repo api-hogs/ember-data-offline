@@ -10,12 +10,9 @@ export default Ember.Mixin.create({
     return true;
   },
   perform() {
-    //guard
     return RSVP.Promise.resolve().then(() => {
       return this.task();
     }).catch(err => {
-      console.log('Error was occurred', err.status);
-
       if (err && err.status && err.status === 408) {
         return Ember.RSVP.resolve();
       }

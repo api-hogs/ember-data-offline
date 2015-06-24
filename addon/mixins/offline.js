@@ -3,8 +3,6 @@ import baseMixin from 'ember-data-offline/mixins/base';
 
 export default Ember.Mixin.create(baseMixin, {
   findAll: function(store, typeClass, sinceToken, fromJob) {
-    console.log('FindAll from offline', typeClass);
-
     return this._super.apply(this, arguments).then(records => {
       if (!fromJob) {
         this.createOnlineJob('findAll', [store, typeClass, sinceToken, true], store);
@@ -16,7 +14,6 @@ export default Ember.Mixin.create(baseMixin, {
   find: function(store, typeClass, id, snapshot, fromJob) {
     return this._super.apply(this, arguments).then(record => {
       if (!fromJob) {
-        console.log('from offline find in then', typeClass);
         this.createOnlineJob('find', [store, typeClass, id, snapshot, true], store);
       }
       return record;

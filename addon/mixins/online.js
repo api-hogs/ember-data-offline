@@ -9,17 +9,14 @@ export default Ember.Mixin.create(baseMixin, {
       if (!fromJob) {
         this.createOfflineJob('findAll', [store, typeClass, sinceToken, adapterResp, true], store);
       }
-      console.log('findAll from online adapter', typeClass);
       return resp;
     });
   },
 
   find: function(store, typeClass, id, snapshot, fromJob) {
-    console.log('from online find adapter', typeClass, id);
     let onlineResp = this._super.apply(this, arguments);
     return onlineResp.then(resp => {
       if (!fromJob) {
-        console.log('from online find adapter in then', resp, typeClass);
         this.createOfflineJob('find', [store, typeClass, id, snapshot, onlineResp, true], store);
       }
       return resp;
@@ -37,11 +34,9 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   findMany: function(store, type, ids, snapshots, fromJob) {
-    console.log('from online findMany', type);
     let onlineResp = this._super.apply(this, arguments);
     return onlineResp.then(resp => {
       if (!fromJob) {
-        console.log('from online findMany then', type);
         this.createOfflineJob('find', [store, type, ids, snapshots, onlineResp, true], store);
       }
       return resp;

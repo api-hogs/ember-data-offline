@@ -14,20 +14,20 @@ ember install ember-data-offline
 First you need to define your application adapter:
 
 ```javascript
-  import baseAdapter from 'ember-data-offline/adapters/base';
+import baseAdapter from 'ember-data-offline/adapters/base';
 
-  export default baseAdapter.extend({
-    offlineNamespace: 'foo'//optional
-  });
+export default baseAdapter.extend({
+  offlineNamespace: 'foo'//optional
+});
 ```
 
 Then specify model and define serializer for it (for now it is required, later we'll fix it):
 
 ```javascript
-  import DS from 'ember-data';
+import DS from 'ember-data';
 
-  export default DS.RESTSerializer.extend({
-  });
+export default DS.RESTSerializer.extend({
+});
 ```
 
 And basically, that's all!
@@ -35,31 +35,31 @@ And basically, that's all!
 If you have `'id'` in your model different from default (`'_id'` for example), you need to specify it in adapter for the model like that:
 
 ```javascript
-  export default appAdapter.extend({
-    serializerPrimaryKey: '_id',
-  });
+export default appAdapter.extend({
+  serializerPrimaryKey: '_id',
+});
 ```
 
 and also in serializer for that model you need to use mixin for translating it to normal `'id'`:
 
 ```javascript
-  import DS from 'ember-data';
-  import offlineIdMixin from 'ember-data-offline/mixins/localstorage-id';
+import DS from 'ember-data';
+import offlineIdMixin from 'ember-data-offline/mixins/localstorage-id'; //thing that you need!
 
-  export default DS.RESTSerializer.extend(offlineIdMixin, {
-    primaryKey: '_id', //usual ember-data stuff
-  });
+export default DS.RESTSerializer.extend(offlineIdMixin, {
+  primaryKey: '_id', //usual ember-data stuff
+});
 ```
 
 ## Details
 
-This addon contains of two essential parts. First - queue and jobs, second - online and offline mixins.
+This addon contains of two essential parts. First - `queue` and `jobs`, second - `online` and `offline mixins`.
 
-Queue is just super easy task runner and used to make kind of background proccessing mechanism and basically we use it to synchronize data flows from online api and local storage.
+`Queue` is just super easy task runner and used to make kind of background proccessing mechanism and basically we use it to synchronize data flows from online api and local storage.
 
-Online mixin redefine all adapter methods for finding, creation, deletion to to make request to online api, but with running offline job to make offline data actual.
+`Online mixin` redefine all adapter methods for finding, creation, deletion to to make request to online api, but with running offline job to make offline data actual.
 
-Same for offline mixin, but vice versa.
+Same for `offline mixin`, but vice versa.
 
 As you see it is as simple as possible and names of mixins say mostly all about them :-).
 

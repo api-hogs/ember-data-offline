@@ -26,10 +26,8 @@ export default Ember.Mixin.create(baseMixin, {
   loadRelationships: function(store, type, record) {
     var adapter = this;
     if (record) {
-      return new Ember.RSVP.Promise(function(resolve, reject) {
-        var resultJSON = {},
-          modelName = type.modelName,
-          relationshipNames, relationships,
+      return new Ember.RSVP.Promise(function(resolve) {
+        var relationshipNames, relationships,
           relationshipPromises = [];
 
         relationshipNames = Ember.get(type, 'relationshipNames');
@@ -76,7 +74,7 @@ export default Ember.Mixin.create(baseMixin, {
               promise = adapter.findMany(store, relationModel, relationEmbeddedId, opts, true);
             }
 
-            embedPromise = new Ember.RSVP.Promise(function(resolve, reject) {
+            embedPromise = new Ember.RSVP.Promise(function(resolve) {
               promise.then(function(relationRecord) {
                 if (relationRecord) {
                   var finalPayload = adapter.addEmbeddedPayload(record, relationName, relationRecord);

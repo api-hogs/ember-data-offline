@@ -83,7 +83,7 @@ test('#perform runs task function', function(assert) {
 
   stop();
   returnValueJob.perform().then(val => {
-    assert.equal('value', val);
+    assert.equal('value', val, 'values are equal');
     start();
   });
 });

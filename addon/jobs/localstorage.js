@@ -71,12 +71,10 @@ export default Ember.Object.extend(jobMixin, {
     }
   },
 
-  findAll(store, typeClass, sinceToken, adapterResp, fromJob) {
-    if (!fromJob) {
+  findAll(store, typeClass, sinceToken, adapterResp) {
       adapterResp.then(records => {
         this.persistOffline(store, typeClass, records, 'findAll');
       });
-    }
   },
 
   find(store, typeClass, id, snapshot, onlineResp, fromJob) {

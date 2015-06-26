@@ -68,12 +68,12 @@ export function initialize(instance) {
       return factory;
     },
       
-    push(typeName, data) {
-      if (Ember.isEmpty(data)) {
-        return null;
-      }
-      return this._super.apply(this, arguments);
-    }
+    // push(typeName, data) {
+    //   if (Ember.isEmpty(data)) {
+    //     return null;
+    //   }
+    //   return this._super.apply(this, arguments);
+    // }
   });
 };
 

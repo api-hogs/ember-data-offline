@@ -67,13 +67,6 @@ export function initialize(instance) {
       factory.store = this;
       return factory;
     },
-      
-    // push(typeName, data) {
-    //   if (Ember.isEmpty(data)) {
-    //     return null;
-    //   }
-    //   return this._super.apply(this, arguments);
-    // }
   });
 };
 

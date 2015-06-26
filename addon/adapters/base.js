@@ -35,7 +35,7 @@ export default DS.RESTAdapter.extend(onlineMixin, {
       onlineAdapter: adapter,
       container: this.container,
       serializer: serializer,
-      caching: 'none'
+      caching: 'none',
     };
     if (adapter.offlineNamespace) {
       defaults.namespace = adapter.offlineNamespace;

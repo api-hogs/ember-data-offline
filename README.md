@@ -67,13 +67,10 @@ Example of usage of these mixins you can see in `addon/adapters/base.js`.
 
 Also we created this base adapter (`addon/adapters/base.js`) to simplify setup proccess. By default it use `RESTAdapter` and `LocalForageAdapter`, but you can use your own adapters that you like.
 
-## Caveats
-
-For now we test it only with `ember-data 1.0.0-beta.17`, and don't garanty that it works with older versions, but it'll will fixed in the closest time. Also PR's are welcome!
-
 ## Contribution
 
-1. `git clone git@github.com:api-hogs/ember-data-offline.git`
+1. fork repo
+2. `git clone git@github.com:your-github/ember-data-offline.git`
 2. `npm i && bower install`
 3. add your feature
 4. cover with tests

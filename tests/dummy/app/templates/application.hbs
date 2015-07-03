@@ -6,7 +6,7 @@
 <h2>Users</h2>
 <h4>Is sync loaded: {{isUserSyncLoad}}</h4>
 <ul>
-  {{#each model.users as |user|}}
+  {{#each model.users key="@guid" as |user|}}
     <li>{{user.firstName}} {{user.lastName}} - {{user.gender}}</li>
   {{/each}}
 </ul>
@@ -14,7 +14,7 @@
 <button {{action 'createUser'}}>Create User</button>
 <h2>Cars</h2>
 <ul>
-  {{#each model.cars as |car|}}
+  {{#each model.cars key="@guid" as |car|}}
     <li>{{car.name}}</li>
   {{/each}}
 </ul>

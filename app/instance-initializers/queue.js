@@ -16,7 +16,7 @@ var normalizeModelName = function(modelName) {
 
 export function initialize(instance) {
 
-  let store = instance.container.lookup('store:main');
+  let store = instance.container.lookup('service:store');
   let queue = instance.container.lookup('data-offline-queue:main');
 
   store.reopen({

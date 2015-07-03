@@ -29,7 +29,7 @@ export default Ember.Object.extend(jobMixin, {
 
     adapterResp.then(adapterPayload => {
       if (!Ember.isEmpty(adapterPayload)) {
-        store.pushPayload(typeClass, adapterPayload);
+        store.pushPayload(typeClass.modelName, adapterPayload);
 
         store.set(`syncLoads.find.${typeClass.modelName}`, true);
       }
@@ -43,7 +43,7 @@ export default Ember.Object.extend(jobMixin, {
     store.set(`syncLoads.findQuery.${type.modelName}`, false);
 
     adapterResp.then(adapterPayload => {
-      store.pushPayload(type, adapterPayload);
+      store.pushPayload(type.modelName, adapterPayload);
       store.set(`syncLoads.findQuery.${type.modelName}`, true);
     });
 
@@ -54,7 +54,7 @@ export default Ember.Object.extend(jobMixin, {
     let adapterResp = this.get('adapter').findMany(store, type, ids, snapshots);
 
     adapterResp.then(adapterPayload => {
-      store.pushPayload(type, adapterPayload);
+      store.pushPayload(type.modelName, adapterPayload);
     });
 
     return adapterResp;

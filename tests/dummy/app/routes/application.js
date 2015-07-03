@@ -3,10 +3,9 @@ import Ember from 'ember';
 export default Ember.Route.extend({
   model(){
     return Ember.RSVP.hash({
-      users: this.store.find('user'),
-      cars: this.store.find('car')
+      users: this.store.findAll('user'),
+      cars: this.store.findAll('car')
     });
-    // return this.store.find('user');
   },
 
   actions: {

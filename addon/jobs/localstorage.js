@@ -24,7 +24,7 @@ export default Ember.Object.extend(jobMixin, {
   },
 
   _persistOne(store, typeClass, onlineRecord){
-    let fromStore = store.all(typeClass);
+    let fromStore = store.peekAll(typeClass);
     if (Ember.isEmpty(fromStore)) {
       return;
     }
@@ -37,11 +37,10 @@ export default Ember.Object.extend(jobMixin, {
       let snapshot = recordFromStore._createSnapshot();
       return this.get('adapter').createRecord(store, typeClass, snapshot, true);
     }
-
   },
 
   _persistMany(store, typeClass){
-    let fromStore = store.all(typeClass.modelName);
+    let fromStore = store.peekAll(typeClass.modelName);
     if (Ember.isEmpty(fromStore)) {
       return;
     }

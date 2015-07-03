@@ -8,7 +8,7 @@ var emberModelMock = Ember.Object.extend({
   }
 });
 var storeMock = Ember.Object.create({
-  all(){
+  peekAll(){
     return Ember.A([
       emberModelMock.create({id: 'foo'})
     ]);

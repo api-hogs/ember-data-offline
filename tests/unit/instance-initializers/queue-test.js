@@ -21,7 +21,7 @@ test('it works', function(assert) {
   assert.expect(1);
   
   initializeInstance(instance);
-  let queue = container.lookup('store:main').get('EDOQueue');
+  let queue = container.lookup('service:store').get('EDOQueue');
 
   assert.ok(queue, 'Queue successfully injected in store');
 });

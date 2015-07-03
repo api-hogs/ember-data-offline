@@ -20,7 +20,7 @@ export default Ember.Mixin.create(baseMixin, {
         this.createOnlineJob('find', [store, typeClass, id, snapshot, true], store);
       }
       if (Ember.isEmpty(record)) {
-       return {id:id};
+       return {id: id};
       }
       return record;
     }).catch(console.log.bind(console));

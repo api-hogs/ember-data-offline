@@ -2,12 +2,16 @@ import Ember from 'ember';
 import baseMixin from 'ember-data-offline/mixins/base';
 
 export default Ember.Mixin.create(baseMixin, {
-  //Check if we really need this shouldReload
-  shouldReloadAll() {
-    return true;
+  shouldReloadAll(store, snapshot) {
+    let modelName = snapshot.type.modelName;
+    let storeRecords = store.peekAll(modelName);
+    if (Ember.isEmpty(storeRecords.get('content'))) {
+     return true; 
+    }
+    return false;
   },
   shouldBackgroundReloadAll: function() {
-    return true;
+    return false;
   },
 
   findAll: function(store, typeClass, sinceToken, snapshots, fromJob) {

@@ -2,12 +2,11 @@ import baseMixin from 'ember-data-offline/mixins/base';
 import Ember from 'ember';
 
 export default Ember.Mixin.create(baseMixin, {
-  //Check if we really need this shouldReload
   shouldReloadAll() {
-    return true;
+    return false;
   },
   shouldBackgroundReloadAll: function() {
-    return true;
+    return false;
   },
 
   findAll: function(store, typeClass, sinceToken, fromJob) {

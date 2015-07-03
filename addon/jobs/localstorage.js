@@ -29,8 +29,6 @@ export default Ember.Object.extend(jobMixin, {
       return;
     }
     let recordFromStore = fromStore.find(record => {
-      // let primaryKey = store.serializerFor(typeClass).primaryKey;
-      // return record.id === onlineRecord[typeClass.modelName][primaryKey];
       if (record && record.id) {
         return record.id === onlineRecord[typeClass.modelName].id;
       }
@@ -43,7 +41,7 @@ export default Ember.Object.extend(jobMixin, {
   },
 
   _persistMany(store, typeClass){
-    let fromStore = store.all(typeClass);
+    let fromStore = store.all(typeClass.modelName);
     if (Ember.isEmpty(fromStore)) {
       return;
     }
@@ -73,6 +71,7 @@ export default Ember.Object.extend(jobMixin, {
 
   findAll(store, typeClass, sinceToken, adapterResp) {
       adapterResp.then(records => {
+      console.log('findAll offline job', typeClass, records)
         this.persistOffline(store, typeClass, records, 'findAll');
       });
   },

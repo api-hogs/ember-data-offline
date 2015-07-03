@@ -14,7 +14,8 @@ export default Ember.Object.extend(jobMixin, {
     store.set(`syncLoads.findAll.${typeClass.modelName}`, false);
 
     adapterResp.then(adapterPayload => {
-      store.pushPayload(typeClass, adapterPayload);
+      console.log('findAll online job', typeClass, adapterPayload)
+      store.pushPayload(typeClass.modelName, adapterPayload);
 
       store.set(`syncLoads.findAll.${typeClass.modelName}`, true);
     });

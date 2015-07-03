@@ -5,7 +5,7 @@ import syncLoads from 'ember-data-offline/utils/sync-loads';
 export default DS.Store.extend({
   syncLoads: syncLoads.create(),
 
-  adapterFor: function(typeClass) {
+  adapterFor: function() {
     return this._super.apply(this, arguments).get('offlineAdapter');
   },
 });

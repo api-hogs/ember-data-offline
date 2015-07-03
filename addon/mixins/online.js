@@ -2,11 +2,20 @@ import baseMixin from 'ember-data-offline/mixins/base';
 import Ember from 'ember';
 
 export default Ember.Mixin.create(baseMixin, {
+  //Check if we really need this shouldReload
+  shouldReloadAll(store, snapshotRecordArray) {
+    return true;
+  },
+
+  shouldBackgroundReloadAll: function(store, snapshotRecordArray) {
+    return true;
+  },
 
   findAll: function(store, typeClass, sinceToken, fromJob) {
-    let adapterResp = this._super.apply(this, arguments);
     console.log('findAll online adapter', typeClass);
+    let adapterResp = this._super.apply(this, arguments);
     return adapterResp.then(resp => {
+        console.log('findAll online adapter then', typeClass);
       if (!fromJob) {
         console.log('findAll online adapter fromJob', typeClass);
         this.createOfflineJob('findAll', [store, typeClass, sinceToken, adapterResp, true], store);

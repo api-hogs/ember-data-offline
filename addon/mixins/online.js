@@ -40,7 +40,19 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   findMany: function(store, type, ids, snapshots, fromJob) {
-    let onlineResp = this._super.apply(this, arguments);
+    let onlineResp;
+    let recordsInStore = store.peekAll(type.modelName);
+    let inStoreIds = recordsNotInStore.map(record => record.id);
+
+    let idsDiff = inStoreIds.filter(item => ids.indexOf(item) < 0);
+
+    if (Ember.isEmpty(idsDiff)) {
+      onlineResp = this._super(store, type, idsDiff, snapshots);
+    }
+    else {
+      onlineResp = Ember.RSVP.resolve([]);
+    }
+
     return onlineResp.then(resp => {
       if (!fromJob) {
         this.createOfflineJob('find', [store, type, ids, snapshots, onlineResp, true], store);

@@ -44,7 +44,7 @@ export default Ember.Mixin.create(baseMixin, {
     let recordsInStore = store.peekAll(type.modelName);
     let inStoreIds = recordsInStore.map(record => record.id);
 
-    let idsDiff = inStoreIds.filter(item => ids.indexOf(item) < 0);
+    let idsDiff = ids.filter(item => inStoreIds.indexOf(item) < 0);
 
     if (!Ember.isEmpty(idsDiff)) {
       onlineResp = this._super(store, type, idsDiff, snapshots);

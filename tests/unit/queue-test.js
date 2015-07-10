@@ -26,7 +26,7 @@ test('base setup success', function(assert) {
   assert.ok(queue);
   assert.equal(queue.get('activeJobs').length, 0);
   assert.equal(queue.get('pendingJobs').length, 0);
-  assert.equal(queue.get('faltureJobs').length, 0);
+  assert.equal(queue.get('failureJobs').length, 0);
   assert.equal(queue.get('retryJobs').length, 0);
 });
 
@@ -69,7 +69,7 @@ test('fail job in queue', function(assert){
   assert.equal(queue.get('activeJobs').length, 1);
   stop();
   Ember.run.later(() => {
-    assert.equal(queue.get('faltureJobs').length, 1);
+    assert.equal(queue.get('failureJobs').length, 1);
     start();
   }, 150);
 

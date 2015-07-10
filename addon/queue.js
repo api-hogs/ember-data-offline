@@ -7,14 +7,14 @@ export default Ember.Object.extend({
   workers: 5,
   activeJobs: null,
   pendingJobs: null,
-  faltureJobs: null,
+  failureJobs: null,
   retryJobs: null,
 
   init: function() {
     this.setProperties({
       activeJobs: Ember.A(),
       pendingJobs: Ember.A(),
-      faltureJobs: Ember.A(),
+      failureJobs: Ember.A(),
       retryJobs: Ember.A(),
     });
     this._super.apply(this, arguments);
@@ -76,7 +76,7 @@ export default Ember.Object.extend({
         }, queue.get('retryOnFailureDelay'));
       } else {
         queue.get('retryJobs').removeObject(job);
-        queue.get('faltureJobs').pushObject(job);
+        queue.get('failureJobs').pushObject(job);
       }
     });
   }

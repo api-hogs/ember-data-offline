@@ -1,3 +1,4 @@
+/*global Uint8Array*/
 import Mirage from 'ember-cli-mirage';
 
 var genId = function() {

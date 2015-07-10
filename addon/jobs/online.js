@@ -1,6 +1,8 @@
 import Ember from 'ember';
 import jobMixin from 'ember-data-offline/mixins/job';
 import handleApiErrors from 'ember-data-offline/utils/handle-api-errors';
+import { persistOne } from 'ember-data-offline/utils/persist-offline';
+import { eraseOne } from 'ember-data-offline/utils/erase-offline';
 
 export default Ember.Object.extend(jobMixin, {
   task() {
@@ -62,12 +64,22 @@ export default Ember.Object.extend(jobMixin, {
 
   createRecord(store, type, snapshot, fromJob) {
     let adapter = this.get('adapter');
-    console.log("CREATE JOB", type ,snapshot);
-    return adapter.createRecord(store, type, snapshot, fromJob).then(null, handleApiErrors)
-      .then(() => {
-        let recordToDelete = store.peekRecord(type.modelName, snapshot.id);
-        store.unloadRecord(recordToDelete);
-        adapter.get('offlineAdapter').deleteRecord(store, type, snapshot, true);
+
+    return adapter.createRecord(store, type, snapshot, fromJob)
+      .then(result => {
+        eraseOne(adapter.get('offlineAdapter'), store, type, snapshot);
+        store.pushPayload(type.modelName, result);
+        persistOne(adapter.get('offlineAdapter'), store, type, result);
+        return result;
+      })
+      .catch(handleApiErrors)
+      .then(result => {
+        if (Ember.isEmpty(result)) {
+          eraseOne(adapter.get('offlineAdapter'), store, type, snapshot);
+        }
+        else {
+          return Ember.RSVP.resolve(result);
+        }
       }, () => {
         return Ember.RSVP.reject();
       });
@@ -82,5 +94,4 @@ export default Ember.Object.extend(jobMixin, {
     let adapter = this.get('adapter');
     return adapter.deleteRecord(store, type, snapshot, fromJob);
   },
-
 });

@@ -1,12 +1,13 @@
 import Ember from 'ember';
 
-export default function(err, handler) {
+export default function(err) {
   //TODO: 422 behavior
-  if (err && !Ember.isEmpty(err.errors)) {
-    if (err.errors[0].status === "408") {
-      return Ember.RSVP.reject();
+  return new Ember.RSVP.Promise((resolve, reject) => {
+    if (err && !Ember.isEmpty(err.errors)) {
+      if (err.errors[0].status === "408") {
+        return reject();
+      }
     }
-  }
-  handler();
-  return null;
+    resolve();
+  });
 }

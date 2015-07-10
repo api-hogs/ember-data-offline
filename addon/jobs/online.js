@@ -63,13 +63,14 @@ export default Ember.Object.extend(jobMixin, {
   createRecord(store, type, snapshot, fromJob) {
     let adapter = this.get('adapter');
     console.log("CREATE JOB", type ,snapshot);
-    return adapter.createRecord(store, type, snapshot, fromJob).then(null, err => {
-      return handleApiErrors(err, () => {
+    return adapter.createRecord(store, type, snapshot, fromJob).then(null, handleApiErrors)
+      .then(() => {
         let recordToDelete = store.peekRecord(type.modelName, snapshot.id);
         store.unloadRecord(recordToDelete);
         adapter.get('offlineAdapter').deleteRecord(store, type, snapshot, true);
+      }, () => {
+        return Ember.RSVP.reject();
       });
-    });
   },
 
   updateRecord(store, type, snapshot, fromJob) {

@@ -1,3 +1,5 @@
+import Mirage from 'ember-cli-mirage';
+
 export default function() {
   this.get('/users', function(db, req){
     if (req.queryParams.bar) {
@@ -21,7 +23,8 @@ export default function() {
   this.post('/users', function(db, request) {
     var attrs = JSON.parse(request.requestBody);
     attrs.id = db.users.length + 1;
-    return {user: attrs};
+    return new Mirage.Response(500, null, null);
+    // return {user: attrs};
   });
   this.get('/companies', function(db, req){
     return {companies: db.companies}; 

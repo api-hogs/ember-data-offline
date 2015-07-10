@@ -2,8 +2,8 @@ import Ember from 'ember';
 
 export default Ember.Object.extend({
   name: 'normal',
-  retryOnFailureDelay: 10000,
-  delay: 5000,
+  retryOnFailureDelay: 1000,
+  delay: 500,
   workers: 5,
   activeJobs: null,
   pendingJobs: null,
@@ -65,6 +65,7 @@ export default Ember.Object.extend({
       this.get('activeJobs').removeObject(job);
       this.get('retryJobs').removeObject(job);
     }, () => {
+      console.log('ERERERER')
       this.get('activeJobs').removeObject(job);
       queue.get('retryJobs').removeObject(job);
 

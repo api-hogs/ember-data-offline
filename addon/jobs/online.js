@@ -1,5 +1,6 @@
 import Ember from 'ember';
 import jobMixin from 'ember-data-offline/mixins/job';
+import handleApiErrors from 'ember-data-offline/utils/handle-api-errors';
 
 export default Ember.Object.extend(jobMixin, {
   task() {
@@ -61,7 +62,14 @@ export default Ember.Object.extend(jobMixin, {
 
   createRecord(store, type, snapshot, fromJob) {
     let adapter = this.get('adapter');
-    return adapter.createRecord(store, type, snapshot, fromJob);
+    console.log("CREATE JOB", type ,snapshot);
+    return adapter.createRecord(store, type, snapshot, fromJob).then(null, err => {
+      return handleApiErrors(err, () => {
+        let recordToDelete = store.peekRecord(type.modelName, snapshot.id);
+        store.unloadRecord(recordToDelete);
+        adapter.get('offlineAdapter').deleteRecord(store, type, snapshot, true);
+      });
+    });
   },
 
   updateRecord(store, type, snapshot, fromJob) {

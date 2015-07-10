@@ -9,14 +9,6 @@ export default Ember.Mixin.create({
   task() {
     return true;
   },
-  fail() {
-    return true;
-  },
-  prevent(err) {
-    return RSVP.Promise.resolve().then(() => {
-      return this.fail(err);
-    });
-  },
   perform() {
     return RSVP.Promise.resolve().then(() => {
       return this.task();

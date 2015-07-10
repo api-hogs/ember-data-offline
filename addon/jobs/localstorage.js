@@ -1,5 +1,6 @@
 import Ember from 'ember';
 import jobMixin from 'ember-data-offline/mixins/job';
+import persistOffline from 'ember-data-offline/utils/persist-offline';
 
 const { isEmpty, RSVP } = Ember;
 
@@ -11,45 +12,6 @@ export default Ember.Object.extend(jobMixin, {
     return this.get('adapter')[this.get('method')].apply(this.get('adapter'), this.get('params'));
   },
 
-  persistOffline(store, typeClass, onlineResp, method) {
-    if (Ember.isEmpty(onlineResp)) {
-     return;
-    }
-    if (method === 'find') {
-     this._persistOne(store, typeClass, onlineResp);
-    }
-    else {
-     this._persistMany(store, typeClass);
-    }
-  },
-
-  _persistOne(store, typeClass, onlineRecord){
-    let fromStore = store.peekAll(typeClass);
-    if (Ember.isEmpty(fromStore)) {
-      return;
-    }
-    let recordFromStore = fromStore.find(record => {
-      if (record && record.id) {
-        return record.id === onlineRecord[typeClass.modelName].id;
-      }
-    });
-    if (recordFromStore) {
-      let snapshot = recordFromStore._createSnapshot();
-      return this.get('adapter').createRecord(store, typeClass, snapshot, true);
-    }
-  },
-
-  _persistMany(store, typeClass){
-    let fromStore = store.peekAll(typeClass.modelName);
-    if (Ember.isEmpty(fromStore)) {
-      return;
-    }
-    fromStore.forEach(record => {
-      let snapshot = record._createSnapshot();
-      this.get('adapter').createRecord(store, typeClass, snapshot, true);
-    });
-  },
-
   _findWithCheck: function(fromJob, method, onlineResp, store, typeClass, ...params) {
     let offlineAdapter = this.get('adapter');
     if (!fromJob) {
@@ -59,19 +21,19 @@ export default Ember.Object.extend(jobMixin, {
           return onlineResp;
         }
       }).then(onlineRecord => {
-        this.persistOffline(store, typeClass, onlineRecord, method);
+        persistOffline(offlineAdapter, store, typeClass, onlineRecord, method);
       }).catch(() => {
         onlineResp.then(onlineRecord => {
-          this.persistOffline(store, typeClass, onlineRecord, method);
+          persistOffline(offlineAdapter, store, typeClass, onlineRecord, method);
         });
       });
     }
   },
 
   findAll(store, typeClass, sinceToken, adapterResp) {
-      adapterResp.then(records => {
-        this.persistOffline(store, typeClass, records, 'findAll');
-      });
+    adapterResp.then(records => {
+      persistOffline(this.get('adapter'), store, typeClass, records, 'findAll');
+    });
   },
 
   find(store, typeClass, id, snapshot, onlineResp, fromJob) {

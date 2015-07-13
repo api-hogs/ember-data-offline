@@ -1,0 +1,1 @@
+export { default } from 'ember-data-offline/blueprints/ember-data-offline';

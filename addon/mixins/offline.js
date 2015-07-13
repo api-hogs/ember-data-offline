@@ -2,15 +2,34 @@ import Ember from 'ember';
 import baseMixin from 'ember-data-offline/mixins/base';
 
 export default Ember.Mixin.create(baseMixin, {
-  shouldReloadAll(store, snapshot) {
-    let modelName = snapshot.type.modelName;
-    let storeRecords = store.peekAll(modelName);
-    if (Ember.isEmpty(storeRecords.get('content'))) {
-     return true; 
+  shouldReloadAll(store, snapshots) {
+    let modelName = snapshots.type.modelName;
+    let lastTime = this.get(`lastTimeFetched.all$${modelName}`);
+    if (Ember.isEmpty(lastTime)) {
+      return true;
+    }
+    let timeDelta = (lastTime - new Date()) / 1000 / 60 / 60;
+    if (timeDelta > this.get('recordTTL')) {
+      return true;
     }
     return false;
   },
   shouldBackgroundReloadAll: function() {
+    return false;
+  },
+  shouldReloadRecord(store, snapshot) {
+    let modelName = snapshot.type.modelName;
+    let lastTime = this.get(`lastTimeFetched.one$${modelName}$${snapshot.id}`);
+    if (Ember.isEmpty(lastTime)) {
+      return true;
+    }
+    let timeDelta = (lastTime - new Date()) / 1000 / 60 / 60;
+    if (timeDelta > this.get('recordTTL')) {
+      return true;
+    }
+    return false;
+  },
+  shouldBackgroundReloadRecord() {
     return false;
   },
 

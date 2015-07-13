@@ -8,6 +8,10 @@ export default Mixin.create({
   onlineJob: onlineJob,
   offlineJob: offlineJob,
 
+  recordTTL: 12, //hours
+
+  lastTimeFetched: Ember.Object.create({}),
+
   _workingQueue(store){
     if (isPresent(get(this, 'EDOQueue'))) {
       return get(this, 'EDOQueue');

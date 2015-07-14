@@ -34,6 +34,7 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   findAll: function(store, typeClass, sinceToken, snapshots, fromJob) {
+    console.log('findAll offline', typeClass.modelName)
     return this._super.apply(this, arguments).then(records => {
       if (!fromJob) {
         this.createOnlineJob('findAll', [store, typeClass, sinceToken, snapshots, true], store);
@@ -43,6 +44,7 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   find: function(store, typeClass, id, snapshot, fromJob) {
+    console.log('find offline', typeClass.modelName)
     return this._super.apply(this, arguments).then(record => {
       if (!fromJob) {
         this.createOnlineJob('find', [store, typeClass, id, snapshot, true], store);
@@ -55,6 +57,7 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   findQuery: function(store, type, query, fromJob) {
+    console.log('findQuery offline', type.modelName)
     return this._super.apply(this, arguments).then(record => {
       if (!fromJob) {
         this.createOnlineJob('findQuery', [store, type, query, true], store);
@@ -64,6 +67,7 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   findMany: function(store, type, ids, snapshots, fromJob) {
+    console.log('findMany offline', type.modelName)
     return this._super.apply(this, arguments).then(records => {
       if (!fromJob) {
         this.createOnlineJob('findMany', [store, type, ids, snapshots, true], store);
@@ -72,7 +76,8 @@ export default Ember.Mixin.create(baseMixin, {
         return p && n;
       }, true);
       if (Ember.isEmpty(isValidRecords)) {
-        return []; 
+        console.log('SKJAKJSKAJSJSK', records)
+        return Ember.RSVP.resolve([]);
       }
       return records;
     }).catch(console.log.bind(console));

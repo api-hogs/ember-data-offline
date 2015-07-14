@@ -7,5 +7,4 @@ export default function() {
     return p + n + " :: ";
   }, "");
   debug(`[ember-data-offline]: ${message}`);
-};
-
+}

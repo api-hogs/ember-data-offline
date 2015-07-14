@@ -3,9 +3,8 @@ const { debug } = Ember;
 
 //Later we can remove this, but until stable release we need it
 export default function() {
-  let params = Ember.A(arguments);
-  let message = params.reduce((p, n) => {
-    return p + n + " :: ";
-  }, "");
+  let message = [].reduce.call(arguments, function(a, b) {
+    return a + b + " :: ";
+  });
   debug(`[ember-data-offline]: ${message}`);
 }

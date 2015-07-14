@@ -1,9 +1,7 @@
-import baseMixin from 'ember-data-offline/mixins/base';
 import Ember from 'ember';
-
-var isObjectEmpty = function(obj) {
-  return Object.keys(obj).length === 0;
-};
+import baseMixin from 'ember-data-offline/mixins/base';
+import isObjectEmpty from 'ember-data-offline/utils/is-object-empty';
+import debug from 'ember-data-offline/utils/debug';
 
 export default Ember.Mixin.create(baseMixin, {
   shouldReloadAll() {
@@ -14,7 +12,7 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   findAll: function(store, typeClass, sinceToken, fromJob) {
-    console.log('findAll online', typeClass.modelName)
+    debug('findAll online', typeClass.modelName);
     let adapterResp = this._super.apply(this, arguments);
     return adapterResp.then(resp => {
       //TODO Think about persistance this registry hash
@@ -27,7 +25,7 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   find: function(store, typeClass, id, snapshot, fromJob) {
-    console.log('find online', typeClass.modelName)
+    debug('find online', typeClass.modelName);
     let onlineResp = this._super.apply(this, arguments);
     return onlineResp.then(resp => {
       this.set(`lastTimeFetched.one$${typeClass.modelName}$${id}`, new Date());
@@ -39,7 +37,7 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   findQuery: function(store, type, query, fromJob) {
-    console.log('findQuery online', type.modelName)
+    debug('findQuery online', type.modelName);
     let onlineResp = this._super.apply(this, arguments);
     return onlineResp.then(resp => {
       if (!fromJob) {
@@ -50,7 +48,7 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   findMany: function(store, type, ids, snapshots, fromJob) {
-    console.log('findMany online', type.modelName)
+    debug('findMany online', type.modelName);
     let onlineResp;
     let recordsInStore = store.peekAll(type.modelName);
     let inStoreIds = recordsInStore.map(record => {
@@ -58,7 +56,6 @@ export default Ember.Mixin.create(baseMixin, {
     });
 
     let idsDiff = ids.filter(item => inStoreIds.indexOf(item) < 0);
-    console.log('findMany onlien DIFF', idsDiff, inStoreIds, ids)
 
     if (!Ember.isEmpty(idsDiff)) {
       onlineResp = this._super(store, type, idsDiff, snapshots);

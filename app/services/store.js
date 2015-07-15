@@ -5,9 +5,5 @@ import Queue from 'ember-data-offline/queue';
 
 export default DS.Store.extend({
   syncLoads: syncLoads.create(),
-  EDOQueue: Queue.create(),
-
-  adapterFor: function() {
-    return this._super.apply(this, arguments).get('offlineAdapter');
-  },
+  EDOQueue: Queue.create()
 });

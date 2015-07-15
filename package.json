@@ -51,7 +51,7 @@
   ],
   "dependencies": {
     "ember-cli-babel": "^5.0.0",
-    "ember-localforage-adapter": "git+ssh://git@github.com:igorrKurr/ember-localforage-adapter.git"
+    "ember-localforage-adapter": "git+https://git@github.com:igorrKurr/ember-localforage-adapter.git"
   },
   "ember-addon": {
     "configPath": "tests/dummy/config"

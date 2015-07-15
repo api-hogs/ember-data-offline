@@ -1,6 +1,5 @@
 import Ember from 'ember';
 import baseMixin from 'ember-data-offline/mixins/base';
-import isObjectEmpty from 'ember-data-offline/utils/is-object-empty';
 import debug from 'ember-data-offline/utils/debug';
 
 export default Ember.Mixin.create(baseMixin, {
@@ -25,7 +24,7 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   find: function(store, typeClass, id, snapshot, fromJob) {
-    debug('find online', typeClass.modelName);
+    debug('find online', typeClass.modelName, id);
     let onlineResp = this._super.apply(this, arguments);
     return onlineResp.then(resp => {
       this.set(`lastTimeFetched.one$${typeClass.modelName}$${id}`, new Date());
@@ -49,24 +48,11 @@ export default Ember.Mixin.create(baseMixin, {
 
   findMany: function(store, type, ids, snapshots, fromJob) {
     debug('findMany online', type.modelName);
-    let onlineResp;
-    let recordsInStore = store.peekAll(type.modelName);
-    let inStoreIds = recordsInStore.map(record => {
-      return !isObjectEmpty(record._internalModel._data) && record.id;
-    });
-
-    let idsDiff = ids.filter(item => inStoreIds.indexOf(item) < 0);
-
-    if (!Ember.isEmpty(idsDiff)) {
-      onlineResp = this._super(store, type, idsDiff, snapshots);
-    }
-    else {
-      onlineResp = Ember.RSVP.resolve([]);
-    }
-
+    //TODO add some config param for such behavior
+    let onlineResp = this._super(store, type, null, snapshots);
     return onlineResp.then(resp => {
       if (!fromJob) {
-        this.createOfflineJob('find', [store, type, ids, snapshots, onlineResp, true], store);
+        this.createOfflineJob('findMany', [store, type, ids, snapshots, onlineResp, true], store);
       }
       return resp;
     });

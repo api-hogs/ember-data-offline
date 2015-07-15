@@ -1,6 +1,6 @@
 import Ember from 'ember';
 import DS from 'ember-data';
-import syncLoads from 'ember-data-offline/utils/sync-loads';
+import syncLoads from 'ember-data-offline/logics/sync-loads';
 
 export default DS.Store.extend({
   syncLoads: syncLoads.create(),

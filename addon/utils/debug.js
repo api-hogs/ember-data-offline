@@ -5,6 +5,6 @@ const { debug } = Ember;
 export default function() {
   let message = [].reduce.call(arguments, function(a, b) {
     return a + b + " :: ";
-  });
+  }, "");
   debug(`[ember-data-offline]: ${message}`);
 }

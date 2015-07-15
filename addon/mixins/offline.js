@@ -68,7 +68,7 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   findMany: function(store, type, ids, snapshots, fromJob) {
-    debug('findMany offline', type.modelName, ids, snapshots);
+    debug('findMany offline', type.modelName);
     return this._super.apply(this, arguments).then(records => {
       if (!fromJob) {
         this.createOnlineJob('findMany', [store, type, ids, snapshots, true], store);

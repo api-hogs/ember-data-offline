@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import LocalstorageJob from 'ember-data-offline/jobs/localstorage';
+import LocalstorageJob from 'ember-data-offline/jobs/localforage';
 
 const { RSVP } = Ember;
 var emberModelMock = Ember.Object.extend({

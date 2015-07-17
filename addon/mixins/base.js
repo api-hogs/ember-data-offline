@@ -1,6 +1,7 @@
 import Ember from 'ember';
-import onlineJob from 'ember-data-offline/jobs/online';
-import offlineJob from 'ember-data-offline/jobs/localstorage';
+import onlineJob from 'ember-data-offline/jobs/rest';
+import offlineJob from 'ember-data-offline/jobs/localforage';
+
 const { Mixin, $, on,  computed, get, isPresent } = Ember;
 
 export default Mixin.create({

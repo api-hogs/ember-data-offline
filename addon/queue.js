@@ -64,7 +64,7 @@ export default Ember.Object.extend({
     job.perform().then(() => {
       this.get('activeJobs').removeObject(job);
       this.get('retryJobs').removeObject(job);
-    }, (err) => {
+    }, () => {
       this.get('activeJobs').removeObject(job);
       queue.get('retryJobs').removeObject(job);
 

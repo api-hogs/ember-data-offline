@@ -57,7 +57,7 @@ export default Ember.Object.extend(jobMixin, {
 
     adapterResp.then(adapterPayload => {
       store.pushPayload(typeClass.modelName, adapterPayload);
-    })
+    });
 
     return adapterResp;
   },

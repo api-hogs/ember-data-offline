@@ -28,30 +28,6 @@ test('#find call adapter #createRecord', function(assert) {
   });
 });
 
-test('#find don`t call adapter #createRecord when no model present in payload', function(assert) {
-  assert.expect(1);
-
-  let job = mockLocastorageJob(assert, RSVP.resolve({id: 2}));
-
-  stop();
-  job.perform().then(() => {
-    assert.ok(true);
-    start();
-  });
-});
-
-test('#find don`t call adapter #createRecord when error in response', function(assert) {
-  assert.expect(1);
-
-  let job = mockLocastorageJob(assert, RSVP.reject());
-
-  stop();
-  job.perform().then(() => {
-    assert.ok(true);
-    start();
-  });
-});
-
 // test('#find persists when there is record from online storage that absent in offline', function(assert) {
 //   assert.expect(2);
 

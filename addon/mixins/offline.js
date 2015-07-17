@@ -1,7 +1,7 @@
 import Ember from 'ember';
 import baseMixin from 'ember-data-offline/mixins/base';
 import debug from 'ember-data-offline/utils/debug';
-import  extractTargetRecordFromPayload from 'ember-data-offline/utils/extract-online';
+import extractTargetRecordFromPayload from 'ember-data-offline/utils/extract-online';
 
 export default Ember.Mixin.create(baseMixin, {
   shouldReloadAll(store, snapshots) {
@@ -77,7 +77,7 @@ export default Ember.Mixin.create(baseMixin, {
     }).catch(console.log.bind(console));
   },
 
-  findMany: function(store, typeClass, ids, snapshots, fromJob, blabla) {
+  findMany: function(store, typeClass, ids, snapshots, fromJob) {
     // debug('findMany offline', type.modelName);
     return this._super.apply(this, arguments).then(records => {
       if (!fromJob) {

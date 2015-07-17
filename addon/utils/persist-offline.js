@@ -1,4 +1,5 @@
 import Ember from 'ember';
+import extractTargetRecordFromPayload from 'ember-data-offline/utils/extract-online';
 
 var persistOne = function persistOne(adapter, store, typeClass, id) {
   let modelName = typeClass.modelName;
@@ -26,7 +27,7 @@ var persistMany = function persistMany(adapter, store, typeClass, ids) {
   if (Ember.isEmpty(fromStore)) {
     return;
   }
-  let records = fromStore.forEach(record => {
+  fromStore.forEach(record => {
     if (ids.indexOf(record.id) > -1) {
       let snapshot = record._createSnapshot();
       adapter.createRecord(store, typeClass, snapshot, true);
@@ -39,16 +40,16 @@ var persistQuery = function persistQuery(adapter, store, typeClass, onlineResp) 
   if (Ember.isEmpty(fromStore)) {
     return;
   }
-  let onlineIds = onlineResp
-  let records = fromStore.forEach(record => {
-    if (ids.indexOf(record.id) > -1) {
+  let onlineIds = extractTargetRecordFromPayload(onlineResp).map(record => record.id);
+  fromStore.forEach(record => {
+    if (onlineIds.indexOf(record.id) > -1) {
       let snapshot = record._createSnapshot();
       adapter.createRecord(store, typeClass, snapshot, true);
     } 
   });
 };
 
-export { persistOne, persistAll };
+export { persistOne, persistAll, persistMany, persistQuery };
 
 export default function persistOffline(adapter, store, typeClass, onlineResp, method) {
   if (Ember.isEmpty(onlineResp)) {

@@ -26,7 +26,6 @@ export default Ember.Object.extend(jobMixin, {
   },
 
   find(store, typeClass, id, snapshot) {
-    console.log('find online JOB', typeClass.modelName, arguments);
     let adapterResp = this.get('adapter').find(store, typeClass, id, snapshot);
     store.set(`syncLoads.find.${typeClass.modelName}`, false);
 
@@ -54,7 +53,6 @@ export default Ember.Object.extend(jobMixin, {
   },
 
   findMany(store, typeClass, ids, snapshots) {
-    console.log('findMany online JOB', typeClass.modelName, arguments);
     let adapterResp = this.get('adapter').findMany(store, typeClass, ids, snapshots);
 
     adapterResp.then(adapterPayload => {

@@ -38,7 +38,6 @@ export default Ember.Object.extend(jobMixin, {
   },
 
   find(store, typeClass, id) {
-    console.log('find offline JOB', typeClass.modelName);
     let adapter = this.get('adapter');
       persistOffline(adapter, store, typeClass, id, "find");
   },
@@ -48,7 +47,6 @@ export default Ember.Object.extend(jobMixin, {
   },
 
   findMany(store, typeClass, ids) {
-    console.log('findMany offline JOB', typeClass.modelName);
     let adapter = this.get('adapter');
       persistOffline(adapter, store, typeClass, ids, "findMany");
   },

@@ -24,7 +24,6 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   find: function(store, typeClass, id, snapshot, fromJob) {
-    console.log('find online', typeClass.modelName, arguments);
     let onlineResp = this._super.apply(this, arguments);
     return onlineResp.then(resp => {
       this.set(`lastTimeFetched.one$${typeClass.modelName}$${id}`, new Date());
@@ -47,7 +46,6 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   findMany: function(store, typeClass, ids, snapshots, fromJob) {
-    console.log('findMany online', typeClass.modelName, arguments);
     // debug('findMany online', type.modelName);
     //TODO add some config param for such behavior
     let onlineResp = this.findAll(store, typeClass, null, true);

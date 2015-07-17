@@ -45,7 +45,6 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   find: function(store, typeClass, id, snapshot, fromJob) {
-    console.log('find offline', typeClass.modelName, arguments);
     return this._super.apply(this, arguments).then(record => {
       if (!fromJob) {
         this.createOnlineJob('find', [store, typeClass, id, snapshot, true], store);
@@ -72,21 +71,17 @@ export default Ember.Mixin.create(baseMixin, {
 
   findMany: function(store, typeClass, ids, snapshots, fromJob) {
     // debug('findMany offline', type.modelName);
-    console.log('findMany offline', typeClass.modelName, arguments);
     return this._super.apply(this, arguments).then(records => {
       if (!fromJob) {
         this.createOnlineJob('findMany', [store, typeClass, ids, snapshots, true], store);
       }
-      let isValidRecords = records.reduce((p, n) => {
-        return p && n;
-      }, true);
-      if (Ember.isEmpty(isValidRecords)) {
+      if (Ember.isEmpty(records)) {
         let primaryKey = store.serializerFor(typeClass.modelName).primaryKey;
         return ids.map(id => {
           let stub = {};
           stub[primaryKey] = id;
           return stub;
-        })
+        });
       }
       return records;
     });

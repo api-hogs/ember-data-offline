@@ -1,0 +1,9 @@
+<h2>Users</h2>
+<h4>Is sync loaded: {{isUserSyncLoad}}</h4>
+<ul>
+  {{#each model as |user|}}
+    <li>{{user.firstName}} {{user.lastName}} - {{user.gender}}</li>
+  {{/each}}
+</ul>
+<h4>Add user</h4>
+<button {{action 'createUser'}}>Create User</button>

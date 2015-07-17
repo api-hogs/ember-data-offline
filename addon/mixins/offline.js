@@ -35,7 +35,7 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   findAll: function(store, typeClass, sinceToken, snapshots, fromJob) {
-    debug('findAll offline', typeClass.modelName);
+    // debug('findAll offline', typeClass.modelName);
     return this._super.apply(this, arguments).then(records => {
       if (!fromJob) {
         this.createOnlineJob('findAll', [store, typeClass, sinceToken, snapshots, true], store);
@@ -45,7 +45,7 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   find: function(store, typeClass, id, snapshot, fromJob) {
-    debug('find offline', typeClass.modelName, id);
+    // debug('find offline', typeClass.modelName, id);
     return this._super.apply(this, arguments).then(record => {
       if (!fromJob) {
         this.createOnlineJob('find', [store, typeClass, id, snapshot, true], store);
@@ -58,7 +58,7 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   findQuery: function(store, type, query, fromJob) {
-    debug('findQuery offline', type.modelName);
+    // debug('findQuery offline', type.modelName);
     return this._super.apply(this, arguments).then(record => {
       if (!fromJob) {
         this.createOnlineJob('findQuery', [store, type, query, true], store);
@@ -68,7 +68,7 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   findMany: function(store, type, ids, snapshots, fromJob) {
-    debug('findMany offline', type.modelName);
+    // debug('findMany offline', type.modelName);
     return this._super.apply(this, arguments).then(records => {
       if (!fromJob) {
         this.createOnlineJob('findMany', [store, type, ids, snapshots, true], store);

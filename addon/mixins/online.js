@@ -11,7 +11,7 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   findAll: function(store, typeClass, sinceToken, fromJob) {
-    debug('findAll online', typeClass.modelName);
+    // debug('findAll online', typeClass.modelName);
     let adapterResp = this._super.apply(this, arguments);
     return adapterResp.then(resp => {
       //TODO Think about persistance this registry hash
@@ -24,7 +24,7 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   find: function(store, typeClass, id, snapshot, fromJob) {
-    debug('find online', typeClass.modelName, id);
+    // debug('find online', typeClass.modelName, id);
     let onlineResp = this._super.apply(this, arguments);
     return onlineResp.then(resp => {
       this.set(`lastTimeFetched.one$${typeClass.modelName}$${id}`, new Date());
@@ -36,7 +36,7 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   findQuery: function(store, type, query, fromJob) {
-    debug('findQuery online', type.modelName);
+    // debug('findQuery online', type.modelName);
     let onlineResp = this._super.apply(this, arguments);
     return onlineResp.then(resp => {
       if (!fromJob) {
@@ -47,7 +47,7 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   findMany: function(store, type, ids, snapshots, fromJob) {
-    debug('findMany online', type.modelName);
+    // debug('findMany online', type.modelName);
     //TODO add some config param for such behavior
     let onlineResp = this.findAll(store, type, null, null);
     return onlineResp.then(resp => {

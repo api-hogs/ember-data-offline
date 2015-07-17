@@ -1,20 +1,17 @@
-{{outlet}}
-<h4>status: {{status}}</h4>
-<button {{action 'goOnline'}}>set online</button>
-<button {{action 'goOffline'}}>set offline</button>
-<button {{action 'findFromLocal'}}>find</button>
-<h2>Users</h2>
-<h4>Is sync loaded: {{isUserSyncLoad}}</h4>
-<ul>
-  {{#each model.users as |user|}}
-    <li>{{user.firstName}} {{user.lastName}} - {{user.gender}}</li>
-  {{/each}}
-</ul>
-<h4>Add user</h4>
-<button {{action 'createUser'}}>Create User</button>
-<h2>Companies</h2>
-<ul>
-  {{#each model.companies as |company|}}
-    <li>{{company.name}}</li>
-  {{/each}}
-</ul>
+<nav class="navbar navbar-default navbar-static-top">
+    <ul class="nav navbar-nav">
+      {{#link-to 'users' tagName="li"}}
+        {{#link-to 'users'}}
+           Users 
+        {{/link-to}}
+      {{/link-to}}
+      {{#link-to 'companies' tagName="li"}}
+        {{#link-to 'companies'}}
+          Companies
+        {{/link-to}}
+      {{/link-to}}
+    </ul>
+</nav>
+<div class="container-fluid">
+  {{outlet}}
+</div>

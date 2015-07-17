@@ -14,18 +14,14 @@ export default function() {
         user._id = index + 100;
         return user;
       });
-      return {users: users};
+      return {dummy_users: users};
     }
-    return {users: db.users.map(user => {
-      user._id = user.id;
-      delete user.id;
-      return user;
-    })};
+    return {dummy_users: db.users};
   });
   this.get('/users/:id', function(db, req){
-    let user = db.users[0];
-    user.id = req.params.id;
-    return {user: user};
+    let user = db.users.find(req.params.id);
+    // user.id = req.params.id;
+    return {dummy_user: user};
   });
   this.post('/users', function(db, request) {
     var attrs = JSON.parse(request.requestBody)['user'];

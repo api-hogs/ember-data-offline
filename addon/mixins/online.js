@@ -11,7 +11,7 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   findAll: function(store, typeClass, sinceToken, fromJob) {
-    // debug('findAll online', typeClass.modelName);
+    debug('findAll online', typeClass.modelName);
     let adapterResp = this._super.apply(this, arguments);
     return adapterResp.then(resp => {
       //TODO Think about persistance this registry hash
@@ -24,7 +24,6 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   find: function(store, typeClass, id, snapshot, fromJob) {
-    console.log('find online', arguments);
     let onlineResp = this._super.apply(this, arguments);
     return onlineResp.then(resp => {
       this.set(`lastTimeFetched.one$${typeClass.modelName}$${id}`, new Date());

@@ -1,7 +1,13 @@
 import Ember from 'ember';
+import { extractTargetRecordFromPayload  }from 'ember-data-offline/utils/extract-online';
 
 var persistOne = function persistOne(adapter, store, typeClass, onlineRecord) {
-  let recordFromStore = store.peekRecord(typeClass.modelName, onlineRecord[typeClass.modelName].id);
+  let modelName = typeClass.modelName;
+  let rec = extractTargetRecordFromPayload(store, typeClass, onlineRecord);
+  if (Ember.isEmpty(rec)) {
+    return;
+  }
+  let recordFromStore = store.peekRecord(modelName, rec.id);
   if (Ember.isEmpty(recordFromStore)) {
     return;
   }

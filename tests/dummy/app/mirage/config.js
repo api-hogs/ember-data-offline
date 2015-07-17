@@ -20,7 +20,6 @@ export default function() {
   });
   this.get('/users/:id', function(db, req){
     let user = db.users.find(req.params.id);
-    // user.id = req.params.id;
     return {dummy_user: user};
   });
   this.post('/users', function(db, request) {
@@ -29,7 +28,12 @@ export default function() {
     // return new Mirage.Response(408, null, null); // Need this for testing
     return {user: attrs};
   });
+
   this.get('/companies', function(db, req){
     return {companies: db.companies}; 
+  });
+
+  this.get('/cars', function(db, req){
+    return {cars: db.cars}; 
   });
 }

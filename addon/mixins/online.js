@@ -24,11 +24,12 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   find: function(store, typeClass, id, snapshot, fromJob) {
+    console.log('find online', typeClass.modelName, arguments);
     let onlineResp = this._super.apply(this, arguments);
     return onlineResp.then(resp => {
       this.set(`lastTimeFetched.one$${typeClass.modelName}$${id}`, new Date());
       if (!fromJob) {
-        this.createOfflineJob('find', [store, typeClass, id, snapshot, onlineResp, false], store);
+        this.createOfflineJob('find', [store, typeClass, id], store);
       }
       return resp;
     }).catch(console.log.bind(console));
@@ -45,13 +46,15 @@ export default Ember.Mixin.create(baseMixin, {
     });
   },
 
-  findMany: function(store, type, ids, snapshots, fromJob) {
+  findMany: function(store, typeClass, ids, snapshots, fromJob) {
+    console.log('findMany online', typeClass.modelName, arguments);
     // debug('findMany online', type.modelName);
     //TODO add some config param for such behavior
-    let onlineResp = this.findAll(store, type, null, null);
+    let onlineResp = this.findAll(store, typeClass, null, true);
+
     return onlineResp.then(resp => {
       if (!fromJob) {
-        this.createOfflineJob('findMany', [store, type, ids, snapshots, onlineResp, true], store);
+        this.createOfflineJob('findMany', [store, typeClass, ids], store);
       }
       return resp;
     });

@@ -7,4 +7,8 @@ export default Mirage.Factory.extend({
   firstName: faker.name.firstName,
   lastName: faker.name.lastName,
   gender: faker.list.cycle('male', 'female'),
+  cars: function(i) {
+    let id = i + 1;
+    return [2 * id - 1, 2 * id];
+  }
 });

@@ -1,6 +1,7 @@
 import Ember from 'ember';
 import baseMixin from 'ember-data-offline/mixins/base';
 import debug from 'ember-data-offline/utils/debug';
+import  extractTargetRecordFromPayload from 'ember-data-offline/utils/extract-online';
 
 export default Ember.Mixin.create(baseMixin, {
   shouldReloadAll(store, snapshots) {
@@ -59,17 +60,24 @@ export default Ember.Mixin.create(baseMixin, {
     });
   },
 
-  findQuery: function(store, type, query, fromJob) {
-    // debug('findQuery offline', type.modelName);
-    return this._super.apply(this, arguments).then(record => {
-      if (!fromJob) {
-        this.createOnlineJob('findQuery', [store, type, query, true], store);
+  query: function(store, typeClass, query, recordArray, fromJob) {
+    return this._super.apply(this, arguments).then(records => {
+      //TODO think how to remove this dirty hasck
+      if (Ember.isEmpty(records)) {
+        return this.get('onlineAdapter').findQuery(store, typeClass, query, recordArray, fromJob).then(onlineRecords => {
+          return extractTargetRecordFromPayload(store, typeClass, onlineRecords);
+        });
       }
-      return record;
+      else {
+        if (!fromJob) {
+          this.createOnlineJob('query', [store, typeClass, query, recordArray, true], store);
+        }
+      }
+      return records;
     }).catch(console.log.bind(console));
   },
 
-  findMany: function(store, typeClass, ids, snapshots, fromJob) {
+  findMany: function(store, typeClass, ids, snapshots, fromJob, blabla) {
     // debug('findMany offline', type.modelName);
     return this._super.apply(this, arguments).then(records => {
       if (!fromJob) {

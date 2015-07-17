@@ -34,19 +34,17 @@ export default Ember.Mixin.create(baseMixin, {
     }).catch(console.log.bind(console));
   },
 
-  findQuery: function(store, type, query, fromJob) {
-    // debug('findQuery online', type.modelName);
+  findQuery: function(store, type, query, recordArray, fromJob) {
     let onlineResp = this._super.apply(this, arguments);
     return onlineResp.then(resp => {
       if (!fromJob) {
-        this.createOfflineJob('findQuery', [store, type, query, onlineResp, true], store);
+        this.createOfflineJob('findQuery', [store, type, query, resp, true], store);
       }
       return resp;
     });
   },
 
   findMany: function(store, typeClass, ids, snapshots, fromJob) {
-    // debug('findMany online', type.modelName);
     //TODO add some config param for such behavior
     let onlineResp = this.findAll(store, typeClass, null, true);
 

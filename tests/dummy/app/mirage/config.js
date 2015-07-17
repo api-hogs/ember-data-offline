@@ -9,13 +9,6 @@ var genId = function() {
 
 export default function() {
   this.get('/users', function(db, req){
-    if (req.queryParams.bar) {
-      let users = db.users.map((user, index) => {
-        user._id = index + 100;
-        return user;
-      });
-      return {dummy_users: users};
-    }
     return {dummy_users: db.users};
   });
   this.get('/users/:id', function(db, req){
@@ -30,6 +23,10 @@ export default function() {
   });
 
   this.get('/companies', function(db, req){
+
+    if (req.queryParams.firstTwo) {
+      return {companies: db.companies.slice(0,2)};
+    }
     return {companies: db.companies}; 
   });
 

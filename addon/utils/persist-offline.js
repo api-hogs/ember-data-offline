@@ -34,6 +34,20 @@ var persistMany = function persistMany(adapter, store, typeClass, ids) {
   });
 };
 
+var persistQuery = function persistQuery(adapter, store, typeClass, onlineResp) {
+  let fromStore = store.peekAll(typeClass.modelName);
+  if (Ember.isEmpty(fromStore)) {
+    return;
+  }
+  let onlineIds = onlineResp
+  let records = fromStore.forEach(record => {
+    if (ids.indexOf(record.id) > -1) {
+      let snapshot = record._createSnapshot();
+      adapter.createRecord(store, typeClass, snapshot, true);
+    } 
+  });
+};
+
 export { persistOne, persistAll };
 
 export default function persistOffline(adapter, store, typeClass, onlineResp, method) {

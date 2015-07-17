@@ -39,11 +39,12 @@ export default Ember.Object.extend(jobMixin, {
 
   find(store, typeClass, id) {
     let adapter = this.get('adapter');
-      persistOffline(adapter, store, typeClass, id, "find");
+    persistOffline(adapter, store, typeClass, id, "find");
   },
 
   findQuery(store, typeClass, query, onlineResp, fromJob) {
-    this._findWithCheck(fromJob, 'findQuery', onlineResp, store, typeClass, query);
+    let adapter = this.get('adapter');
+    persistOffline(adapter, store, typeClass, onlineResp, "findQuery");
   },
 
   findMany(store, typeClass, ids) {

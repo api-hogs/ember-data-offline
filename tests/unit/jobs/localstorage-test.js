@@ -4,7 +4,6 @@
 import Ember from 'ember';
 import { module, test } from 'qunit';
 import { mockLocastorageJob } from '../../helpers/job';
-import LocalstorageJob from 'ember-data-offline/jobs/localstorage';
 
 const { RSVP } = Ember;
 
@@ -17,22 +16,10 @@ module('Unit | Job | Localstorage',  {
     }
 });
 
-test('#find pass when there is record from offline storage', function(assert) {
-  assert.expect(1);
-
-  let job = mockLocastorageJob(RSVP.Promise.resolve({id: 2}), null, assert);
-
-  stop();
-  job.perform().then(() => {
-    assert.ok(true);
-    start();
-  });
-});
-
-test('#find persists when there is record from online storage that absent in offline', function(assert) {
+test('#find call adapter #createRecord', function(assert) {
   assert.expect(2);
 
-  let job = mockLocastorageJob(RSVP.Promise.resolve(null), RSVP.Promise.resolve({bar: {id: 'foo'}}), assert);
+  let job = mockLocastorageJob(assert, RSVP.resolve({bar: {id: 2}}));
 
   stop();
   job.perform().then(() => {
@@ -41,10 +28,10 @@ test('#find persists when there is record from online storage that absent in off
   });
 });
 
-test('#find pass when empty response from online', function(assert) {
+test('#find don`t call adapter #createRecord when no model present in payload', function(assert) {
   assert.expect(1);
 
-  let job = mockLocastorageJob(RSVP.Promise.resolve(null), null, assert);
+  let job = mockLocastorageJob(assert, RSVP.resolve({id: 2}));
 
   stop();
   job.perform().then(() => {
@@ -53,10 +40,10 @@ test('#find pass when empty response from online', function(assert) {
   });
 });
 
-test('#find pass when error in offline and no online record', function(assert) {
+test('#find don`t call adapter #createRecord when error in response', function(assert) {
   assert.expect(1);
 
-  let job = mockLocastorageJob(RSVP.Promise.reject(), RSVP.Promise.resolve(null), assert);
+  let job = mockLocastorageJob(assert, RSVP.reject());
 
   stop();
   job.perform().then(() => {
@@ -65,158 +52,194 @@ test('#find pass when error in offline and no online record', function(assert) {
   });
 });
 
-test('#find persists when error in offline and found online record', function(assert) {
-  assert.expect(2);
+// test('#find persists when there is record from online storage that absent in offline', function(assert) {
+//   assert.expect(2);
 
-  let job = mockLocastorageJob(RSVP.Promise.reject(), RSVP.Promise.resolve({bar: {id: 'foo'}}), assert);
+//   let job = mockLocastorageJob(RSVP.Promise.resolve(null), RSVP.Promise.resolve({bar: {id: 'foo'}}), assert);
 
-  stop();
-  job.perform().then(() => {
-    assert.ok(true);
-    start();
-  });
-});
+//   stop();
+//   job.perform().then(() => {
+//     assert.ok(true);
+//     start();
+//   });
+// });
 
-test('#findAll persists when there are online records', function(assert) {
-  assert.expect(2);
+// test('#find pass when empty response from online', function(assert) {
+//   assert.expect(1);
 
-  let job = mockLocastorageJob(null, RSVP.Promise.resolve({id: 'foo'}), assert, 'findAll');
+//   let job = mockLocastorageJob(RSVP.Promise.resolve(null), null, assert);
 
-  stop();
-  job.perform().then(() => {
-    assert.ok(true);
-    start();
-  });
-});
+//   stop();
+//   job.perform().then(() => {
+//     assert.ok(true);
+//     start();
+//   });
+// });
 
-test('#findAll pass when there are not online records', function(assert) {
-  assert.expect(1);
+// test('#find pass when error in offline and no online record', function(assert) {
+//   assert.expect(1);
 
-  let job = mockLocastorageJob(null, RSVP.Promise.resolve(null), assert, 'findAll');
+//   let job = mockLocastorageJob(RSVP.Promise.reject(), RSVP.Promise.resolve(null), assert);
 
-  stop();
-  job.perform().then(() => {
-    assert.ok(true);
-    start();
-  });
-});
+//   stop();
+//   job.perform().then(() => {
+//     assert.ok(true);
+//     start();
+//   });
+// });
 
-test('#findQuery pass when there is record from offline storage', function(assert) {
-  assert.expect(1);
+// test('#find persists when error in offline and found online record', function(assert) {
+//   assert.expect(2);
 
-  let job = mockLocastorageJob(RSVP.Promise.resolve({id: 2}), null, assert, 'findQuery');
+//   let job = mockLocastorageJob(RSVP.Promise.reject(), RSVP.Promise.resolve({bar: {id: 'foo'}}), assert);
 
-  stop();
-  job.perform().then(() => {
-    assert.ok(true);
-    start();
-  });
-});
+//   stop();
+//   job.perform().then(() => {
+//     assert.ok(true);
+//     start();
+//   });
+// });
 
-test('#findQuery persists when there is record from online storage that absent in offline', function(assert) {
-  assert.expect(2);
+// test('#findAll persists when there are online records', function(assert) {
+//   assert.expect(2);
 
-  let job = mockLocastorageJob(RSVP.Promise.resolve(null), {id: 'foo'}, assert, 'findQuery');
+//   let job = mockLocastorageJob(null, RSVP.Promise.resolve({id: 'foo'}), assert, 'findAll');
 
-  stop();
-  job.perform().then(() => {
-    assert.ok(true);
-    start();
-  });
-});
+//   stop();
+//   job.perform().then(() => {
+//     assert.ok(true);
+//     start();
+//   });
+// });
 
-test('#findQuery pass when empty response from online', function(assert) {
-  assert.expect(1);
+// test('#findAll pass when there are not online records', function(assert) {
+//   assert.expect(1);
 
-  let job = mockLocastorageJob(RSVP.Promise.resolve(null), null, assert, 'findQuery');
+//   let job = mockLocastorageJob(null, RSVP.Promise.resolve(null), assert, 'findAll');
 
-  stop();
-  job.perform().then(() => {
-    assert.ok(true);
-    start();
-  });
-});
+//   stop();
+//   job.perform().then(() => {
+//     assert.ok(true);
+//     start();
+//   });
+// });
 
-test('#findQuery pass when error in offline and no online record', function(assert) {
-  assert.expect(1);
+// test('#findQuery pass when there is record from offline storage', function(assert) {
+//   assert.expect(1);
 
-  let job = mockLocastorageJob(RSVP.Promise.reject(), RSVP.Promise.resolve(null), assert, 'findQuery');
+//   let job = mockLocastorageJob(RSVP.Promise.resolve({id: 2}), null, assert, 'findQuery');
 
-  stop();
-  job.perform().then(() => {
-    assert.ok(true);
-    start();
-  });
-});
+//   stop();
+//   job.perform().then(() => {
+//     assert.ok(true);
+//     start();
+//   });
+// });
 
-test('#findQuery persists when error in offline and found online record', function(assert) {
-  assert.expect(2);
+// test('#findQuery persists when there is record from online storage that absent in offline', function(assert) {
+//   assert.expect(2);
 
-  let job = mockLocastorageJob(RSVP.Promise.reject(), RSVP.Promise.resolve({id: 'foo'}), assert, 'findQuery');
+//   let job = mockLocastorageJob(RSVP.Promise.resolve(null), {id: 'foo'}, assert, 'findQuery');
 
-  stop();
-  job.perform().then(() => {
-    assert.ok(true);
-    start();
-  });
-});
+//   stop();
+//   job.perform().then(() => {
+//     assert.ok(true);
+//     start();
+//   });
+// });
 
-test('#findMany pass when there is record from offline storage', function(assert) {
-  assert.expect(1);
+// test('#findQuery pass when empty response from online', function(assert) {
+//   assert.expect(1);
 
-  let job = mockLocastorageJob(RSVP.Promise.resolve({id: 2}), null, assert, 'findMany');
+//   let job = mockLocastorageJob(RSVP.Promise.resolve(null), null, assert, 'findQuery');
 
-  stop();
-  job.perform().then(() => {
-    assert.ok(true);
-    start();
-  });
-});
+//   stop();
+//   job.perform().then(() => {
+//     assert.ok(true);
+//     start();
+//   });
+// });
 
-test('#findMany persists when there is record from online storage that absent in offline', function(assert) {
-  assert.expect(2);
+// test('#findQuery pass when error in offline and no online record', function(assert) {
+//   assert.expect(1);
 
-  let job = mockLocastorageJob(RSVP.Promise.resolve(null), {id: 'foo'}, assert, 'findMany');
+//   let job = mockLocastorageJob(RSVP.Promise.reject(), RSVP.Promise.resolve(null), assert, 'findQuery');
 
-  stop();
-  job.perform().then(() => {
-    assert.ok(true);
-    start();
-  });
-});
+//   stop();
+//   job.perform().then(() => {
+//     assert.ok(true);
+//     start();
+//   });
+// });
 
-test('#findMany pass when empty response from online', function(assert) {
-  assert.expect(1);
+// test('#findQuery persists when error in offline and found online record', function(assert) {
+//   assert.expect(2);
 
-  let job = mockLocastorageJob(RSVP.Promise.resolve(null), null, assert, 'findMany');
+//   let job = mockLocastorageJob(RSVP.Promise.reject(), RSVP.Promise.resolve({id: 'foo'}), assert, 'findQuery');
 
-  stop();
-  job.perform().then(() => {
-    assert.ok(true);
-    start();
-  });
-});
+//   stop();
+//   job.perform().then(() => {
+//     assert.ok(true);
+//     start();
+//   });
+// });
 
-test('#findMany pass when error in offline and no online record', function(assert) {
-  assert.expect(1);
+// test('#findMany pass when there is record from offline storage', function(assert) {
+//   assert.expect(1);
 
-  let job = mockLocastorageJob(RSVP.Promise.reject(), RSVP.Promise.resolve(null), assert, 'findMany');
+//   let job = mockLocastorageJob(RSVP.Promise.resolve({id: 2}), null, assert, 'findMany');
 
-  stop();
-  job.perform().then(() => {
-    assert.ok(true);
-    start();
-  });
-});
+//   stop();
+//   job.perform().then(() => {
+//     assert.ok(true);
+//     start();
+//   });
+// });
 
-test('#findMany persists when error in offline and found online record', function(assert) {
-  assert.expect(2);
+// test('#findMany persists when there is record from online storage that absent in offline', function(assert) {
+//   assert.expect(2);
 
-  let job = mockLocastorageJob(RSVP.Promise.reject(), RSVP.Promise.resolve({id: 'foo'}), assert, 'findMany');
+//   let job = mockLocastorageJob(RSVP.Promise.resolve(null), {id: 'foo'}, assert, 'findMany');
 
-  stop();
-  job.perform().then(() => {
-    assert.ok(true);
-    start();
-  });
-});
+//   stop();
+//   job.perform().then(() => {
+//     assert.ok(true);
+//     start();
+//   });
+// });
+
+// test('#findMany pass when empty response from online', function(assert) {
+//   assert.expect(1);
+
+//   let job = mockLocastorageJob(RSVP.Promise.resolve(null), null, assert, 'findMany');
+
+//   stop();
+//   job.perform().then(() => {
+//     assert.ok(true);
+//     start();
+//   });
+// });
+
+// test('#findMany pass when error in offline and no online record', function(assert) {
+//   assert.expect(1);
+
+//   let job = mockLocastorageJob(RSVP.Promise.reject(), RSVP.Promise.resolve(null), assert, 'findMany');
+
+//   stop();
+//   job.perform().then(() => {
+//     assert.ok(true);
+//     start();
+//   });
+// });
+
+// test('#findMany persists when error in offline and found online record', function(assert) {
+//   assert.expect(2);
+
+//   let job = mockLocastorageJob(RSVP.Promise.reject(), RSVP.Promise.resolve({id: 'foo'}), assert, 'findMany');
+
+//   stop();
+//   job.perform().then(() => {
+//     assert.ok(true);
+//     start();
+//   });
+// });

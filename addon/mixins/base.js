@@ -40,7 +40,6 @@ export default Mixin.create({
       store: store,
       method: method,
       params: params,
-      delay: 20,
     });
     this.addToQueue(job, store);
   },

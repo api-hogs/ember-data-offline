@@ -14,7 +14,7 @@ var extractTargetRecordFromPayload = function extractTargetRecordFromPayload(sto
   }
   if (!modelNameInPayload) {
     Logger.error("You try to persist payload that doesn't have any properties for model:", typeClass, "Please check your API response or serializer");
-    return false;
+    return null;
   }
   return payload[modelNameInPayload];
 };

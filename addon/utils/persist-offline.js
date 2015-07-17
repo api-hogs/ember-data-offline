@@ -1,19 +1,12 @@
 import Ember from 'ember';
 
 var persistOne = function persistOne(adapter, store, typeClass, onlineRecord) {
-  let fromStore = store.peekAll(typeClass.modelName);
-  if (Ember.isEmpty(fromStore)) {
+  let recordFromStore = store.peekRecord(typeClass.modelName, onlineRecord[typeClass.modelName].id);
+  if (Ember.isEmpty(recordFromStore)) {
     return;
   }
-  let recordFromStore = fromStore.find(record => {
-    if (record && record.id) {
-      return record.id === onlineRecord[typeClass.modelName].id;
-    }
-  });
-  if (recordFromStore) {
-    let snapshot = recordFromStore._createSnapshot();
-    return adapter.createRecord(store, typeClass, snapshot, true);
-  }
+  let snapshot = recordFromStore._createSnapshot();
+  return adapter.createRecord(store, typeClass, snapshot, true);
 };
 
 var persistMany = function persistMany(adapter, store, typeClass) {

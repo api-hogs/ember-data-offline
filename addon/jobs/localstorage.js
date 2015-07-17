@@ -14,9 +14,12 @@ export default Ember.Object.extend(jobMixin, {
 
   _findWithCheck: function(fromJob, method, onlineResp, store, typeClass, ...params) {
     let offlineAdapter = this.get('adapter');
+    console.log('FIND WITH CHECK', arguments)
     if (!fromJob) {
-      RSVP.resolve().then(() => { return offlineAdapter.find(store, typeClass, ...params);
+      RSVP.resolve().then(() => {
+        return offlineAdapter.find(store, typeClass, ...params);
       }).then(offineRecord => {
+        console.log('JJDKSJKDJKSJDKJSKDJKSJDKSJDKJSKDJ', offineRecord)
         if (isEmpty(offineRecord)) {
           return onlineResp;
         }
@@ -38,7 +41,12 @@ export default Ember.Object.extend(jobMixin, {
 
   find(store, typeClass, id, snapshot, onlineResp, fromJob) {
     console.log('find local JOB', arguments);
-    this._findWithCheck(fromJob, 'find', onlineResp, store, typeClass, id, snapshot);
+    // this._findWithCheck(fromJob, 'find', onlineResp, store, typeClass, id, snapshot);
+    let adapter = this.get('adapter');
+    onlineResp.then(record => {
+      console.log('QWWWWWWWWWWWWWWQQWQQQQQQQQW')
+      persistOffline(adapter, store, typeClass, record, "find");
+    })
   },
 
   findQuery(store, typeClass, query, onlineResp, fromJob) {

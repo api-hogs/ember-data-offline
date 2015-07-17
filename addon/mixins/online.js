@@ -24,12 +24,12 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   find: function(store, typeClass, id, snapshot, fromJob) {
-    // debug('find online', typeClass.modelName, id);
+    console.log('find online', arguments);
     let onlineResp = this._super.apply(this, arguments);
     return onlineResp.then(resp => {
       this.set(`lastTimeFetched.one$${typeClass.modelName}$${id}`, new Date());
       if (!fromJob) {
-        this.createOfflineJob('find', [store, typeClass, id, snapshot, onlineResp, true], store);
+        this.createOfflineJob('find', [store, typeClass, id, snapshot, onlineResp, false], store);
       }
       return resp;
     }).catch(console.log.bind(console));

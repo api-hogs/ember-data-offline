@@ -45,13 +45,16 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   find: function(store, typeClass, id, snapshot, fromJob) {
-    // debug('find offline', typeClass.modelName, id);
+    console.log('find offline', arguments);
     return this._super.apply(this, arguments).then(record => {
       if (!fromJob) {
         this.createOnlineJob('find', [store, typeClass, id, snapshot, true], store);
       }
       if (Ember.isEmpty(record)) {
-       return {id: id};
+        let primaryKey = store.serializerFor(typeClass.modelName).primaryKey;
+        let stub = {};
+        stub[primaryKey] = id;
+        return stub;
       }
       return record;
     });

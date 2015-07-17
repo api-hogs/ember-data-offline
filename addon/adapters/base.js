@@ -10,6 +10,7 @@ var localAdapter = LFAdapter.extend({
 });
 
 export default DS.RESTAdapter.extend(onlineMixin, {
+  __adapterName__: "ONLINE",
   offlineAdapter: Ember.computed(function() {
     let adapter = this;
     let serializer = LFSerializer.extend({
@@ -32,6 +33,7 @@ export default DS.RESTAdapter.extend(onlineMixin, {
      serializer.set('primaryKey', serializerPrimaryKey); 
     }
     let defaults = {
+      __adapterName__: "OFFLINE",
       onlineAdapter: adapter,
       container: this.container,
       serializer: serializer,

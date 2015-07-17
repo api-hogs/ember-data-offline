@@ -37,6 +37,7 @@ export default Ember.Object.extend(jobMixin, {
   },
 
   find(store, typeClass, id, snapshot, onlineResp, fromJob) {
+    console.log('find local JOB', arguments);
     this._findWithCheck(fromJob, 'find', onlineResp, store, typeClass, id, snapshot);
   },
 

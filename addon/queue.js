@@ -3,7 +3,7 @@ import Ember from 'ember';
 export default Ember.Object.extend({
   name: 'normal',
   retryOnFailureDelay: 5000,
-  delay: 2500,
+  delay: 500,
   workers: 5,
   activeJobs: null,
   pendingJobs: null,

@@ -1,6 +1,7 @@
 import Ember from 'ember';
 import baseMixin from 'ember-data-offline/mixins/base';
 import debug from 'ember-data-offline/utils/debug';
+import extractTargetRecordFromPayload from 'ember-data-offline/utils/extract-online';
 
 export default Ember.Mixin.create(baseMixin, {
   shouldReloadAll(store, snapshots) {
@@ -45,39 +46,50 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   find: function(store, typeClass, id, snapshot, fromJob) {
-    debug('find offline', typeClass.modelName, id);
     return this._super.apply(this, arguments).then(record => {
       if (!fromJob) {
         this.createOnlineJob('find', [store, typeClass, id, snapshot, true], store);
       }
       if (Ember.isEmpty(record)) {
-       return {id: id};
+        let primaryKey = store.serializerFor(typeClass.modelName).primaryKey;
+        let stub = {};
+        stub[primaryKey] = id;
+        return stub;
       }
       return record;
     });
   },
 
-  findQuery: function(store, type, query, fromJob) {
-    debug('findQuery offline', type.modelName);
-    return this._super.apply(this, arguments).then(record => {
-      if (!fromJob) {
-        this.createOnlineJob('findQuery', [store, type, query, true], store);
+  query: function(store, typeClass, query, recordArray, fromJob) {
+    return this._super.apply(this, arguments).then(records => {
+      //TODO think how to remove this dirty hasck
+      if (Ember.isEmpty(records)) {
+        return this.get('onlineAdapter').findQuery(store, typeClass, query, recordArray, fromJob).then(onlineRecords => {
+          return extractTargetRecordFromPayload(store, typeClass, onlineRecords);
+        });
       }
-      return record;
+      else {
+        if (!fromJob) {
+          this.createOnlineJob('query', [store, typeClass, query, recordArray, true], store);
+        }
+      }
+      return records;
     }).catch(console.log.bind(console));
   },
 
-  findMany: function(store, type, ids, snapshots, fromJob) {
-    debug('findMany offline', type.modelName);
+  findMany: function(store, typeClass, ids, snapshots, fromJob) {
+    // debug('findMany offline', type.modelName);
     return this._super.apply(this, arguments).then(records => {
       if (!fromJob) {
-        this.createOnlineJob('findMany', [store, type, ids, snapshots, true], store);
+        this.createOnlineJob('findMany', [store, typeClass, ids, snapshots, true], store);
       }
-      let isValidRecords = records.reduce((p, n) => {
-        return p && n;
-      }, true);
-      if (Ember.isEmpty(isValidRecords)) {
-        return Ember.RSVP.resolve([]);
+      if (Ember.isEmpty(records)) {
+        let primaryKey = store.serializerFor(typeClass.modelName).primaryKey;
+        return ids.map(id => {
+          let stub = {};
+          stub[primaryKey] = id;
+          return stub;
+        });
       }
       return records;
     });

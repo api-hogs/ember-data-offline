@@ -3,6 +3,7 @@
 module.exports = function(environment) {
   var ENV = {
     modulePrefix: 'dummy',
+    podModulePrefix: 'dummy/pods',
     environment: environment,
     baseURL: '/',
     locationType: 'auto',
@@ -20,6 +21,8 @@ module.exports = function(environment) {
   };
 
   if (environment === 'development') {
+    // ENV['ember-cli-mirage'] = { enabled: false };
+
     // ENV.APP.LOG_RESOLVER = true;
     // ENV.APP.LOG_ACTIVE_GENERATION = true;
     // ENV.APP.LOG_TRANSITIONS = true;

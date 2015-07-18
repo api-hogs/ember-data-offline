@@ -25,7 +25,7 @@ export default Ember.Object.extend(jobMixin, {
     return adapterResp;
   },
 
-  find: function(store, typeClass, id, snapshot) {
+  find(store, typeClass, id, snapshot) {
     let adapterResp = this.get('adapter').find(store, typeClass, id, snapshot);
     store.set(`syncLoads.find.${typeClass.modelName}`, false);
 
@@ -52,11 +52,11 @@ export default Ember.Object.extend(jobMixin, {
     return adapterResp;
   },
 
-  findMany(store, type, ids, snapshots) {
-    let adapterResp = this.get('adapter').findMany(store, type, ids, snapshots);
+  findMany(store, typeClass, ids, snapshots) {
+    let adapterResp = this.get('adapter').findMany(store, typeClass, ids, snapshots);
 
     adapterResp.then(adapterPayload => {
-      store.pushPayload(type.modelName, adapterPayload);
+      store.pushPayload(typeClass.modelName, adapterPayload);
     });
 
     return adapterResp;

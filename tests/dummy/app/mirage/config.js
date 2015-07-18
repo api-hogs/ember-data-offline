@@ -9,23 +9,11 @@ var genId = function() {
 
 export default function() {
   this.get('/users', function(db, req){
-    if (req.queryParams.bar) {
-      let users = db.users.map((user, index) => {
-        user._id = index + 100;
-        return user;
-      });
-      return {users: users};
-    }
-    return {users: db.users.map(user => {
-      user._id = user.id;
-      delete user.id;
-      return user;
-    })};
+    return {dummy_users: db.users};
   });
   this.get('/users/:id', function(db, req){
-    let user = db.users[0];
-    user.id = req.params.id;
-    return {user: user};
+    let user = db.users.find(req.params.id);
+    return {dummy_user: user};
   });
   this.post('/users', function(db, request) {
     var attrs = JSON.parse(request.requestBody)['user'];
@@ -33,7 +21,16 @@ export default function() {
     // return new Mirage.Response(408, null, null); // Need this for testing
     return {user: attrs};
   });
+
   this.get('/companies', function(db, req){
+
+    if (req.queryParams.firstTwo) {
+      return {companies: db.companies.slice(0,2)};
+    }
     return {companies: db.companies}; 
+  });
+
+  this.get('/cars', function(db, req){
+    return {cars: db.cars}; 
   });
 }

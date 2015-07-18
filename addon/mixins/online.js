@@ -24,35 +24,33 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   find: function(store, typeClass, id, snapshot, fromJob) {
-    debug('find online', typeClass.modelName, id);
     let onlineResp = this._super.apply(this, arguments);
     return onlineResp.then(resp => {
       this.set(`lastTimeFetched.one$${typeClass.modelName}$${id}`, new Date());
       if (!fromJob) {
-        this.createOfflineJob('find', [store, typeClass, id, snapshot, onlineResp, true], store);
+        this.createOfflineJob('find', [store, typeClass, id], store);
       }
       return resp;
     }).catch(console.log.bind(console));
   },
 
-  findQuery: function(store, type, query, fromJob) {
-    debug('findQuery online', type.modelName);
+  findQuery: function(store, type, query, recordArray, fromJob) {
     let onlineResp = this._super.apply(this, arguments);
     return onlineResp.then(resp => {
       if (!fromJob) {
-        this.createOfflineJob('findQuery', [store, type, query, onlineResp, true], store);
+        this.createOfflineJob('findQuery', [store, type, query, resp, true], store);
       }
       return resp;
     });
   },
 
-  findMany: function(store, type, ids, snapshots, fromJob) {
-    debug('findMany online', type.modelName);
+  findMany: function(store, typeClass, ids, snapshots, fromJob) {
     //TODO add some config param for such behavior
-    let onlineResp = this.findAll(store, type, null, null);
+    let onlineResp = this.findAll(store, typeClass, null, true);
+
     return onlineResp.then(resp => {
       if (!fromJob) {
-        this.createOfflineJob('findMany', [store, type, ids, snapshots, onlineResp, true], store);
+        this.createOfflineJob('findMany', [store, typeClass, ids], store);
       }
       return resp;
     });

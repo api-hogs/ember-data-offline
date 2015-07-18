@@ -1,0 +1,11 @@
+{{#link-to 'users'}}Back{{/link-to}}
+<h1>
+  Page for user: {{model.id}}
+</h1>
+<h2>
+  {{model.firstName}} {{model.lastName}}
+</h2>
+and his cars:
+{{#each model.cars as |car|}}
+  <li>{{car.id}} - {{car.label}}</li>
+{{/each}}

@@ -5,26 +5,12 @@ import onlineMixin from 'ember-data-offline/mixins/online';
 import LFAdapter from 'ember-localforage-adapter/adapters/localforage';
 import LFSerializer from 'ember-localforage-adapter/serializers/localforage';
 
-var localAdapter = LFAdapter.extend({
-  namespace: 'ember-data-offline:store',
-});
-
 export default DS.RESTAdapter.extend(onlineMixin, {
   __adapterName__: "ONLINE",
   offlineAdapter: Ember.computed(function() {
     let adapter = this;
     let serializer = LFSerializer.extend({
-      extractArray(store, type, payload) {
-        var serializer = this;
-
-        if (Ember.isEmpty(payload)) {
-          return [];
-        }
-
-        return payload.map(function (record) {
-          return serializer.extractSingle(store, type, record);
-        });
-      },
+      // There was extractArray redefenition, maybe we still need this
     }).create({
       container: this.container,
     });
@@ -38,11 +24,12 @@ export default DS.RESTAdapter.extend(onlineMixin, {
       container: this.container,
       serializer: serializer,
       caching: 'none',
+      namespace: 'ember-data-offline:store',
     };
     if (adapter.offlineNamespace) {
       defaults.namespace = adapter.offlineNamespace;
     }
-    return localAdapter.extend(offlineMixin, {
+    return LFAdapter.extend(offlineMixin, {
     }).create(defaults);
   }),
 });

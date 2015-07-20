@@ -1,6 +1,7 @@
 import Ember from 'ember';
 import onlineJob from 'ember-data-offline/jobs/rest';
 import offlineJob from 'ember-data-offline/jobs/localforage';
+import moment from 'moment';
 
 const { Mixin, $, on,  computed, get, isPresent } = Ember;
 
@@ -9,7 +10,7 @@ export default Mixin.create({
   onlineJob: onlineJob,
   offlineJob: offlineJob,
 
-  recordTTL: 12, //hours
+  recordTTL: moment.duration(12, 'hours'),
 
   lastTimeFetched: Ember.Object.create({}),
 

@@ -46,7 +46,6 @@ export default Ember.Mixin.create(baseMixin, {
 
   findMany: function(store, typeClass, ids, snapshots, fromJob) {
     //TODO add some config param for such behavior
-    console.log('findMany online', typeClass.modelName, fromJob)
     let onlineResp = this.findAll(store, typeClass, null, true);
 
     return onlineResp.then(resp => {

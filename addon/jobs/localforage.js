@@ -13,9 +13,7 @@ export default Ember.Object.extend(jobMixin, {
   },
 
   findAll(store, typeClass, sinceToken, adapterResp) {
-    // adapterResp.then(records => {
     persistOffline(this.get('adapter'), store, typeClass, null, 'findAll');
-    // }).catch(console.log.bind(console));
   },
 
   find(store, typeClass, id) {

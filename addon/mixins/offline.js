@@ -50,7 +50,6 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   find: function(store, typeClass, id, snapshot, fromJob) {
-    console.log('find Offline', typeClass.modelName)
     return this._super.apply(this, arguments).then(record => {
       if (!fromJob) {
         if (isExpiredOne(store, typeClass, record) && !Ember.isEmpty(id)) {
@@ -85,11 +84,9 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   findMany: function(store, typeClass, ids, snapshots, fromJob) {
-    // console.log('findMany offline', typeClass.modelName);
     // debug('findMany offline', type.modelName);
     return this._super.apply(this, arguments).then(records => {
       if (!fromJob) {
-        console.log("findMany  OOOOOOOOOOOOOOOO", typeClass.modelName, ids, records, isExpiredMany(store, typeClass, records))
         if (isExpiredMany(store, typeClass, records) && !Ember.isEmpty(ids)) {
           this.createOnlineJob('findMany', [store, typeClass, ids, snapshots, true], store);
         }

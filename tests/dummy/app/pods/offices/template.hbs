@@ -1,0 +1,6 @@
+<h2>Offices</h2>
+<ul>
+  {{#each model as |office|}}
+    <li>{{office.address}} and company for this address - <i>{{office.company.name}}</i></li>
+  {{/each}}
+</ul>

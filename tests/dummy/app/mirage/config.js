@@ -33,4 +33,12 @@ export default function() {
   this.get('/cars', function(db, req){
     return {cars: db.cars}; 
   });
+
+  this.get('/offices_for_company', function(db, req){
+    return {offices: db.offices};
+  });
+  this.get('/offices_for_company/:id', function(db, req){
+    let office = db.offices.find(req.params.id);
+    return {offices: office};
+  });
 }

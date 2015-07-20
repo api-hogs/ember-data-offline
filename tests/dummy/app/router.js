@@ -11,6 +11,7 @@ Router.map(function() {
     this.route('user', {path: '/users/:id'});
   });
   this.route('companies');
+  this.route('offices');
 });
 
 export default Router;

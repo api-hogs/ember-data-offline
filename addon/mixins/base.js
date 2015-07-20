@@ -25,9 +25,10 @@ export default Mixin.create({
     this._workingQueue(store).add(job);
   },
 
-  createOnlineJob(method, params, store){
+  createOnlineJob(method, params){
+    let [store, typeClass] = params;
     let job = this.get('onlineJob').create({
-      adapter: this.get('onlineAdapter'),
+      adapter: store.lookupAdapter(typeClass.modelName) || this.get('onlineAdapter'),
       method: method,
       params: params,
       retryCount: 3,

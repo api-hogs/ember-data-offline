@@ -2,9 +2,12 @@
 <h1>
   Page for user: {{model.id}}
 </h1>
-<h2>
-  {{model.firstName}} {{model.lastName}}
-</h2>
+<div>
+  <label for="First name">First name</label>
+  {{input value=model.firstName}}
+  <label for="First name">First name</label>
+  {{input value=model.lastName}}
+</div>
 and his cars:
 {{#each model.cars as |car|}}
   <li>{{car.id}} - {{car.label}}</li>

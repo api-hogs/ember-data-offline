@@ -13,9 +13,9 @@ App = Ember.Application.extend({
   Resolver: Resolver
 });
 
-//Shut up deprecations
-// Ember.deprecate = function() { };
-// Ember.warn = function() { };
+// Shut up deprecations
+Ember.deprecate = function() { };
+Ember.warn = function() { };
 
 loadInitializers(App, config.modulePrefix);
 

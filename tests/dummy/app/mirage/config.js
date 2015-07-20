@@ -21,6 +21,11 @@ export default function() {
     // return new Mirage.Response(408, null, null); // Need this for testing
     return {user: attrs};
   });
+  this.put('/users', function(db, request) {
+    var attrs = JSON.parse(request.requestBody)['user'];
+    // return new Mirage.Response(408, null, null); // Need this for testing
+    return {dummy_user: attrs};
+  });
 
   this.get('/companies', function(db, req){
 

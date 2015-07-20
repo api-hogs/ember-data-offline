@@ -2,40 +2,7 @@ import Ember from 'ember';
 import baseMixin from 'ember-data-offline/mixins/base';
 import debug from 'ember-data-offline/utils/debug';
 import extractTargetRecordFromPayload from 'ember-data-offline/utils/extract-online';
-
-var isExpiredOne = function(store, typeClass, record) {
-  if (Ember.isEmpty(record)) {
-   return true; 
-  }
-  let adapter = store.lookupAdapter(typeClass.modelName);
-  let recordTTL = adapter.get('recordTTL');
-  let updatedAt = record['__data_offline_meta__'].updatedAt;
-  let wasUpdated = new Date(updatedAt);
-  let timeDelta = (new Date() - wasUpdated) / 1000 / 60 / 60; 
-  if (timeDelta > recordTTL) {
-   return true; 
-  }
-  return false;
-};
-
-var isExpiredMany = function(store, typeClass, records) {
-  if (Ember.isEmpty(records)) {
-   return true; 
-  }
-  let adapter = store.lookupAdapter(typeClass.modelName);
-  let recordTTL = adapter.get('recordTTL');
-  return records.reduce((p, record) => {
-    console.log('DJSDKSDJSDKJDSJDK', record)
-    let updatedAt = record['__data_offline_meta__'].updatedAt;
-    let wasUpdated = new Date(updatedAt);
-    let timeDelta = (new Date() - wasUpdated) / 1000 / 60 / 60; 
-    let gate = false;
-    if (timeDelta > recordTTL) {
-     return true; 
-    }
-    return p || gate;
-  }, false);
-};
+import { isExpiredOne, isExpiredMany } from 'ember-data-offline/utils/expired';
 
 export default Ember.Mixin.create(baseMixin, {
   shouldReloadAll(store, snapshots) {

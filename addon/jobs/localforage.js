@@ -12,29 +12,8 @@ export default Ember.Object.extend(jobMixin, {
     return this.get('adapter')[this.get('method')].apply(this.get('adapter'), this.get('params'));
   },
 
-  // _findWithCheck: function(fromJob, method, onlineResp, store, typeClass, ...params) {
-  //   let offlineAdapter = this.get('adapter');
-  //   if (!fromJob) {
-  //     RSVP.resolve().then(() => {
-  //       return offlineAdapter.find(store, typeClass, ...params);
-  //     }).then(offineRecord => {
-  //       if (isEmpty(offineRecord)) {
-  //         return onlineResp;
-  //       }
-  //     }).then(onlineRecord => {
-  //       persistOffline(offlineAdapter, store, typeClass, onlineRecord, method);
-  //     }).catch(() => {
-  //       onlineResp.then(onlineRecord => {
-  //         persistOffline(offlineAdapter, store, typeClass, onlineRecord, method);
-  //       });
-  //     });
-  //   }
-  // },
-
-  findAll(store, typeClass, sinceToken, adapterResp) {
-    adapterResp.then(records => {
-      persistOffline(this.get('adapter'), store, typeClass, records, 'findAll');
-    }).catch(console.log.bind(console));
+  findAll(store, typeClass) {
+    persistOffline(this.get('adapter'), store, typeClass, null, 'findAll');
   },
 
   find(store, typeClass, id) {
@@ -49,7 +28,8 @@ export default Ember.Object.extend(jobMixin, {
 
   findMany(store, typeClass, ids) {
     let adapter = this.get('adapter');
-      persistOffline(adapter, store, typeClass, ids, "findMany");
+    //While we using findAll instead of findMany we better use this for persistance
+    persistOffline(adapter, store, typeClass, ids, 'findAll');
   },
 
   createRecord(store, type, snapshot, onlineResp){

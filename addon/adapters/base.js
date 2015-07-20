@@ -10,7 +10,13 @@ export default DS.RESTAdapter.extend(onlineMixin, {
   offlineAdapter: Ember.computed(function() {
     let adapter = this;
     let serializer = LFSerializer.extend({
-      // There was extractArray redefenition, maybe we still need this
+      serialize(snapshot) {
+        let json = this._super.apply(this, arguments);
+        if (snapshot['__data_offline_meta__']) {
+          json['__data_offline_meta__'] = snapshot['__data_offline_meta__'];
+        }
+        return json;
+      }
     }).create({
       container: this.container,
     });

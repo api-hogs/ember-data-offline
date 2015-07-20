@@ -3,4 +3,5 @@ export default function(server) {
   server.createList('car', 4);
   server.createList('company', 3);
   server.createList('office', 3);
+  server.createList('city', 3);
 }

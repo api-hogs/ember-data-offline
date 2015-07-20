@@ -2,6 +2,6 @@ import Ember from 'ember';
 
 export default Ember.Route.extend({
   model() {
-    return this.store.query('company', {firstTwo: true});
+    return this.store.findAll('company');
   },
 });

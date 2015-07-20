@@ -3,5 +3,6 @@ const { Model, attr, belongsTo } = DS;
 
 export default Model.extend({
   address: attr('string'),
-  company: belongsTo('company', {async: true})
+  company: belongsTo('company', {async: true}),
+  city: belongsTo('city', {async: true})
 });

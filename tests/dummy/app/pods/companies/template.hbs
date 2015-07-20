@@ -1,6 +1,6 @@
 <h2>Companies</h2>
 <ul>
   {{#each model as |company|}}
-    <li>{{company.name}}</li>
+    <li>{{company.name}} in <i>{{company.office.city.name}}</i> at address <b>{{company.office.address}}</b></li>
   {{/each}}
 </ul>

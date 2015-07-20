@@ -5,5 +5,9 @@ export default Mirage.Factory.extend({
   company: function(i) {
     let id = i + 1;
     return id;
-  }
+  },
+  city: function(i) {
+    let id = i + 1;
+    return id;
+  },
 });

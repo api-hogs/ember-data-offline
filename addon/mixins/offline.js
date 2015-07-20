@@ -50,13 +50,14 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   find: function(store, typeClass, id, snapshot, fromJob) {
+    console.log('find Offline', typeClass.modelName)
     return this._super.apply(this, arguments).then(record => {
       if (!fromJob) {
-        if (isExpiredOne(store, typeClass, record)) {
+        if (isExpiredOne(store, typeClass, record) && !Ember.isEmpty(id)) {
           this.createOnlineJob('find', [store, typeClass, id, snapshot, true], store);
         }
       }
-      if (Ember.isEmpty(record)) {
+      if (Ember.isEmpty(record) && !Ember.isEmpty(id)) {
         let primaryKey = store.serializerFor(typeClass.modelName).primaryKey;
         let stub = {};
         stub[primaryKey] = id;
@@ -84,14 +85,16 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   findMany: function(store, typeClass, ids, snapshots, fromJob) {
+    // console.log('findMany offline', typeClass.modelName);
     // debug('findMany offline', type.modelName);
     return this._super.apply(this, arguments).then(records => {
       if (!fromJob) {
-        if (isExpiredMany(store, typeClass, records)) {
+        console.log("findMany  OOOOOOOOOOOOOOOO", typeClass.modelName, ids, records, isExpiredMany(store, typeClass, records))
+        if (isExpiredMany(store, typeClass, records) && !Ember.isEmpty(ids)) {
           this.createOnlineJob('findMany', [store, typeClass, ids, snapshots, true], store);
         }
       }
-      if (Ember.isEmpty(records)) {
+      if (Ember.isEmpty(records) && !Ember.isEmpty(ids)) {
         let primaryKey = store.serializerFor(typeClass.modelName).primaryKey;
         return ids.map(id => {
           let stub = {};

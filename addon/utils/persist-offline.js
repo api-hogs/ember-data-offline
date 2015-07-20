@@ -64,9 +64,6 @@ var persistQuery = function persistQuery(adapter, store, typeClass, onlineResp) 
 export { persistOne, persistAll, persistMany, persistQuery };
 
 export default function persistOffline(adapter, store, typeClass, onlineResp, method) {
-  if (Ember.isEmpty(onlineResp)) {
-    return;
-  }
   if (method === 'find') {
     persistOne(adapter, store, typeClass, onlineResp);
   } else if (method === 'findMany') {

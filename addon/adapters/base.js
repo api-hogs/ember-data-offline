@@ -12,7 +12,6 @@ export default DS.RESTAdapter.extend(onlineMixin, {
     let serializer = LFSerializer.extend({
       // There was extractArray redefenition, maybe we still need this
       serialize(snapshot) {
-        console.log('SERAILIE SBNAPSOT', snapshot)
         let json = this._super.apply(this, arguments);
         if (snapshot['__data_offline_meta__']) {
           json['__data_offline_meta__'] = snapshot['__data_offline_meta__'];

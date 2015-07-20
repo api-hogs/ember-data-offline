@@ -3,6 +3,21 @@ import baseMixin from 'ember-data-offline/mixins/base';
 import debug from 'ember-data-offline/utils/debug';
 import extractTargetRecordFromPayload from 'ember-data-offline/utils/extract-online';
 
+var isExpired = function(store, typeClass, record) {
+  if (Ember.isEmpty(record)) {
+   return true; 
+  }
+  let adapter = store.lookupAdapter(typeClass.modelName);
+  let recordTTL = adapter.get('recordTTL');
+  let updatedAt = record['__data_offline_meta__'].updatedAt;
+  let wasUpdated = new Date(updatedAt);
+  let timeDelta = (new Date() - wasUpdated) / 1000 / 60 / 60; 
+  if (timeDelta > recordTTL) {
+   return true; 
+  }
+  return false;
+};
+
 export default Ember.Mixin.create(baseMixin, {
   shouldReloadAll(store, snapshots) {
     let modelName = snapshots.type.modelName;
@@ -47,8 +62,11 @@ export default Ember.Mixin.create(baseMixin, {
 
   find: function(store, typeClass, id, snapshot, fromJob) {
     return this._super.apply(this, arguments).then(record => {
+      console.log('find offline', record)
       if (!fromJob) {
-        this.createOnlineJob('find', [store, typeClass, id, snapshot, true], store);
+        if (isExpired(store, typeClass, record)) {
+          this.createOnlineJob('find', [store, typeClass, id, snapshot, true], store);
+        }
       }
       if (Ember.isEmpty(record)) {
         let primaryKey = store.serializerFor(typeClass.modelName).primaryKey;

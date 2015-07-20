@@ -1,6 +1,12 @@
 import Ember from 'ember';
 import extractTargetRecordFromPayload from 'ember-data-offline/utils/extract-online';
 
+var addMeta = function(snapshot) {
+  snapshot['__data_offline_meta__'] = {
+    updatedAt: new Date().toString()
+  };
+}
+
 var persistOne = function persistOne(adapter, store, typeClass, id) {
   let modelName = typeClass.modelName;
   let recordFromStore = store.peekRecord(modelName, id);
@@ -8,6 +14,9 @@ var persistOne = function persistOne(adapter, store, typeClass, id) {
     return;
   }
   let snapshot = recordFromStore._createSnapshot();
+  
+  addMeta(snapshot);
+  
   return adapter.createRecord(store, typeClass, snapshot, true);
 };
 

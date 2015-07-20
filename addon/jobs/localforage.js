@@ -12,7 +12,7 @@ export default Ember.Object.extend(jobMixin, {
     return this.get('adapter')[this.get('method')].apply(this.get('adapter'), this.get('params'));
   },
 
-  findAll(store, typeClass, sinceToken, adapterResp) {
+  findAll(store, typeClass) {
     persistOffline(this.get('adapter'), store, typeClass, null, 'findAll');
   },
 
@@ -29,7 +29,7 @@ export default Ember.Object.extend(jobMixin, {
   findMany(store, typeClass, ids) {
     let adapter = this.get('adapter');
     //While we using findAll instead of findMany we better use this for persistance
-    persistOffline(this.get('adapter'), store, typeClass, null, 'findAll');
+    persistOffline(adapter, store, typeClass, ids, 'findAll');
     // persistOffline(adapter, store, typeClass, ids, "findMany");
   },
 

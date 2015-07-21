@@ -7,6 +7,6 @@ export default DS.Store.extend({
   syncLoads: syncLoads.create(),
   EDOQueue: Queue.create(),
   adapterFor() {
-    return this._super.apply(this, arguments).get('offlineAdapter');
+    return this._super.apply(this, arguments).get('offlineAdapter') || this._super.apply(this, arguments);
   }
 });

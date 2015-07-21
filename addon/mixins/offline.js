@@ -2,6 +2,7 @@ import Ember from 'ember';
 import baseMixin from 'ember-data-offline/mixins/base';
 import debug from 'ember-data-offline/utils/debug';
 import extractTargetRecordFromPayload from 'ember-data-offline/utils/extract-online';
+import { isExpiredOne, isExpiredMany } from 'ember-data-offline/utils/expired';
 
 export default Ember.Mixin.create(baseMixin, {
   shouldReloadAll(store, snapshots) {
@@ -39,7 +40,10 @@ export default Ember.Mixin.create(baseMixin, {
     debug('findAll offline', typeClass.modelName);
     return this._super.apply(this, arguments).then(records => {
       if (!fromJob) {
-        this.createOnlineJob('findAll', [store, typeClass, sinceToken, snapshots, true], store);
+        //TODO find way to pass force reload option here
+        // if (isExpiredMany(store, typeClass, records)) {
+          this.createOnlineJob('findAll', [store, typeClass, sinceToken, snapshots, true], store);
+        // }
       }
       return records;
     }).catch(console.log.bind(console));
@@ -48,9 +52,11 @@ export default Ember.Mixin.create(baseMixin, {
   find: function(store, typeClass, id, snapshot, fromJob) {
     return this._super.apply(this, arguments).then(record => {
       if (!fromJob) {
-        this.createOnlineJob('find', [store, typeClass, id, snapshot, true], store);
+        if (isExpiredOne(store, typeClass, record) && !Ember.isEmpty(id)) {
+          this.createOnlineJob('find', [store, typeClass, id, snapshot, true], store);
+        }
       }
-      if (Ember.isEmpty(record)) {
+      if (Ember.isEmpty(record) && !Ember.isEmpty(id)) {
         let primaryKey = store.serializerFor(typeClass.modelName).primaryKey;
         let stub = {};
         stub[primaryKey] = id;
@@ -81,9 +87,11 @@ export default Ember.Mixin.create(baseMixin, {
     // debug('findMany offline', type.modelName);
     return this._super.apply(this, arguments).then(records => {
       if (!fromJob) {
-        this.createOnlineJob('findMany', [store, typeClass, ids, snapshots, true], store);
+        if (isExpiredMany(store, typeClass, records) && !Ember.isEmpty(ids)) {
+          this.createOnlineJob('findMany', [store, typeClass, ids, snapshots, true], store);
+        }
       }
-      if (Ember.isEmpty(records)) {
+      if (Ember.isEmpty(records) && !Ember.isEmpty(ids)) {
         let primaryKey = store.serializerFor(typeClass.modelName).primaryKey;
         return ids.map(id => {
           let stub = {};

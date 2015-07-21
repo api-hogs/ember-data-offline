@@ -13,7 +13,7 @@ App = Ember.Application.extend({
   Resolver: Resolver
 });
 
-// Shut up deprecations
+//Shut up deprecations
 Ember.deprecate = function() { };
 Ember.warn = function() { };
 

@@ -46,4 +46,12 @@ export default function() {
     let office = db.offices.find(req.params.id);
     return {offices: office};
   });
+
+  this.get('/cities', function(db, req){
+    return {cities: db.cities};
+  });
+  this.get('/cities/:id', function(db, req){
+    let city = db.cities.find(req.params.id);
+    return {city: city};
+  });
 }

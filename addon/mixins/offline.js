@@ -106,11 +106,14 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   createRecord(store, type, snapshot, fromJob) {
+    console.log('JKJKJKJKJKJKJ', type.modelName)
     if (!fromJob) {
       this.createOnlineJob('createRecord', [store, type, snapshot, true], store);
     }
 
+    let storeMetadata = store.metadataFor(type.modelName)["__data_offline_meta__"];
     addUpdatedAtToMeta(snapshot);
+    addFetchedAtToMeta(snapshot, Ember.getWithDefault(storeMetadata, `${snapshot.id}.fetchedAt`, null));
     return this._super.apply(this, [store, type, snapshot]);
   },
 

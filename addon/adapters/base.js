@@ -4,7 +4,6 @@ import offlineMixin from 'ember-data-offline/mixins/offline';
 import onlineMixin from 'ember-data-offline/mixins/online';
 import LFAdapter from 'ember-localforage-adapter/adapters/localforage';
 import LFSerializer from 'ember-localforage-adapter/serializers/localforage';
-import extractTargetRecordFromPayload from 'ember-data-offline/utils/extract-online';
 import isObjectEmpty from 'ember-data-offline/utils/is-object-empty';
 
 export default DS.RESTAdapter.extend(onlineMixin, {
@@ -17,19 +16,11 @@ export default DS.RESTAdapter.extend(onlineMixin, {
           if (snapshot.get('__data_offline_meta__')) {
             json['__data_offline_meta__'] = snapshot.get('__data_offline_meta__');
           }
-          console.log('jJJJ', snapshot.modelName, snapshot)
           return json;
-        },
-        normalize(modelClass, resourceHash) {
-          let superResp = this._super.apply(this, arguments);
-          console.log('BBBBBBBBBBBBBBBBBB', superResp, resourceHash)
-          return superResp;
-
         },
         extractMeta: function(store, modelClass, payload) {
           let meta = store.metadataFor(modelClass);
           if (isObjectEmpty(meta)) {
-            console.log('{{{{{{{{{{{{{{{{}}}}}}}}}}}}}}}}', meta)
             meta = {};
             meta['__data_offline_meta__'] = {};
           }
@@ -38,7 +29,6 @@ export default DS.RESTAdapter.extend(onlineMixin, {
               meta['__data_offline_meta__'][_payload[store.serializerFor(modelClass).primaryKey]] = _payload['__data_offline_meta__'];
             });
           } else {
-            console.log('META', payload, meta)
             meta['__data_offline_meta__'][payload[store.serializerFor(modelClass).primaryKey]] = payload['__data_offline_meta__'];
           }
           store.setMetadataFor(modelClass, meta);

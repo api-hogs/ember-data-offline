@@ -1,6 +1,6 @@
 import Ember from 'ember';
 import extractTargetRecordFromPayload from 'ember-data-offline/utils/extract-online';
-import { addFetchedAtToMeta } from 'ember-data-offline/utils/meta';
+// import { addFetchedAtToMeta } from 'ember-data-offline/utils/meta';
 
 var persistOne = function persistOne(adapter, store, typeClass, id) {
   let modelName = typeClass.modelName;
@@ -10,7 +10,7 @@ var persistOne = function persistOne(adapter, store, typeClass, id) {
   }
   let snapshot = recordFromStore._createSnapshot();
   
-  addFetchedAtToMeta(snapshot);
+  // addFetchedAtToMeta(snapshot);
   
   return adapter.createRecord(store, typeClass, snapshot, true);
 };
@@ -22,7 +22,7 @@ var persistAll = function persistAll(adapter, store, typeClass) {
   }
   fromStore.forEach(record => {
     let snapshot = record._createSnapshot();
-    addFetchedAtToMeta(snapshot);
+    // addFetchedAtToMeta(snapshot);
     adapter.createRecord(store, typeClass, snapshot, true);
   });
 };
@@ -35,7 +35,7 @@ var persistMany = function persistMany(adapter, store, typeClass, ids) {
   fromStore.forEach(record => {
     if (ids.indexOf(record.id) > -1) {
       let snapshot = record._createSnapshot();
-      addFetchedAtToMeta(snapshot);
+      // addFetchedAtToMeta(snapshot);
       adapter.createRecord(store, typeClass, snapshot, true);
     } 
   });
@@ -50,7 +50,7 @@ var persistQuery = function persistQuery(adapter, store, typeClass, onlineResp) 
   fromStore.forEach(record => {
     if (onlineIds.indexOf(record.id) > -1) {
       let snapshot = record._createSnapshot();
-      addFetchedAtToMeta(snapshot);
+      // addFetchedAtToMeta(snapshot);
       adapter.createRecord(store, typeClass, snapshot, true);
     } 
   });

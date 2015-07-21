@@ -3,6 +3,7 @@ import jobMixin from 'ember-data-offline/mixins/job';
 import handleApiErrors from 'ember-data-offline/utils/handle-api-errors';
 import { persistOne } from 'ember-data-offline/utils/persist-offline';
 import { eraseOne } from 'ember-data-offline/utils/erase-offline';
+import extractTargetRecordFromPayload from 'ember-data-offline/utils/extract-online';
 
 export default Ember.Object.extend(jobMixin, {
   task() {
@@ -69,12 +70,16 @@ export default Ember.Object.extend(jobMixin, {
       .then(result => {
         eraseOne(adapter.get('offlineAdapter'), store, type, snapshot);
         store.pushPayload(type.modelName, result);
-        persistOne(adapter.get('offlineAdapter'), store, type, result);
+        let recordId = extractTargetRecordFromPayload(store, type, result).id;
+        console.log("CCCCCCCCCCCCCCCC", result, recordId)
+        persistOne(adapter.get('offlineAdapter'), store, type, recordId);
+
         return result;
       })
       .catch(handleApiErrors)
       .then(result => {
         if (Ember.isEmpty(result)) {
+          console.log('BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB', result)
           eraseOne(adapter.get('offlineAdapter'), store, type, snapshot);
         }
         else {

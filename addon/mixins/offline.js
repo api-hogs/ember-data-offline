@@ -3,6 +3,7 @@ import baseMixin from 'ember-data-offline/mixins/base';
 import debug from 'ember-data-offline/utils/debug';
 import extractTargetRecordFromPayload from 'ember-data-offline/utils/extract-online';
 import { isExpiredOne, isExpiredMany } from 'ember-data-offline/utils/expired';
+import { addUpdatedAtToMeta, addFetchedAtToMeta } from 'ember-data-offline/utils/meta';
 
 export default Ember.Mixin.create(baseMixin, {
   shouldReloadAll(store, snapshots) {
@@ -51,6 +52,7 @@ export default Ember.Mixin.create(baseMixin, {
 
   find: function(store, typeClass, id, snapshot, fromJob) {
     return this._super.apply(this, arguments).then(record => {
+      console.log("XXXXXXXXXXXXXXXXXXX", record)
       if (!fromJob) {
         if (isExpiredOne(store, typeClass, record) && !Ember.isEmpty(id)) {
           this.createOnlineJob('find', [store, typeClass, id, snapshot, true], store);
@@ -107,14 +109,20 @@ export default Ember.Mixin.create(baseMixin, {
     if (!fromJob) {
       this.createOnlineJob('createRecord', [store, type, snapshot, true], store);
     }
-    return this._super.apply(this, arguments);
+
+    addUpdatedAtToMeta(snapshot);
+    return this._super.apply(this, [store, type, snapshot]);
   },
 
   updateRecord(store, type, snapshot, fromJob) {
     if (!fromJob) {
       this.createOnlineJob('updateRecord', [store, type, snapshot, true], store);
     }
-    return this._super.apply(this, arguments);
+
+    let storeMetadata = store.metadataFor(type.modelName)["__data_offline_meta__"];
+    addUpdatedAtToMeta(snapshot);
+    addFetchedAtToMeta(snapshot, storeMetadata[snapshot.id].fetchedAt);
+    return this._super.apply(this, [store, type, snapshot]);
   },
 
   deleteRecord(store, type, snapshot, fromJob) {

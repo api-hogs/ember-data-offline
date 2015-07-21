@@ -8,5 +8,5 @@ export default DS.Store.extend({
   EDOQueue: Queue.create(),
   adapterFor() {
     return this._super.apply(this, arguments).get('offlineAdapter') || this._super.apply(this, arguments);
-  }
+  },
 });

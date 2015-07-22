@@ -43,7 +43,7 @@ export default Ember.Mixin.create(baseMixin, {
       if (!fromJob) {
         //TODO find way to pass force reload option here
         // if (isExpiredMany(store, typeClass, records)) {
-          this.createOnlineJob('findAll', [store, typeClass, sinceToken, snapshots, true], store);
+          this.createOnlineJob('findAll', [store, typeClass, sinceToken, snapshots, true]);
         // }
       }
       return records;
@@ -55,7 +55,7 @@ export default Ember.Mixin.create(baseMixin, {
       console.log("XXXXXXXXXXXXXXXXXXX", record)
       if (!fromJob) {
         if (isExpiredOne(store, typeClass, record) && !Ember.isEmpty(id)) {
-          this.createOnlineJob('find', [store, typeClass, id, snapshot, true], store);
+          this.createOnlineJob('find', [store, typeClass, id, snapshot, true]);
         }
       }
       if (Ember.isEmpty(record) && !Ember.isEmpty(id)) {
@@ -78,7 +78,7 @@ export default Ember.Mixin.create(baseMixin, {
       }
       else {
         if (!fromJob) {
-          this.createOnlineJob('query', [store, typeClass, query, recordArray, true], store);
+          this.createOnlineJob('query', [store, typeClass, query, recordArray, true]);
         }
       }
       return records;
@@ -90,7 +90,7 @@ export default Ember.Mixin.create(baseMixin, {
     return this._super.apply(this, arguments).then(records => {
       if (!fromJob) {
         if (isExpiredMany(store, typeClass, records) && !Ember.isEmpty(ids)) {
-          this.createOnlineJob('findMany', [store, typeClass, ids, snapshots, true], store);
+          this.createOnlineJob('findMany', [store, typeClass, ids, snapshots, true]);
         }
       }
       if (Ember.isEmpty(records) && !Ember.isEmpty(ids)) {
@@ -107,19 +107,34 @@ export default Ember.Mixin.create(baseMixin, {
 
   createRecord(store, type, snapshot, fromJob) {
     console.log('JKJKJKJKJKJKJ', type.modelName)
-    if (!fromJob) {
-      this.createOnlineJob('createRecord', [store, type, snapshot, true], store);
-    }
 
     let storeMetadata = store.metadataFor(type.modelName)["__data_offline_meta__"];
     addUpdatedAtToMeta(snapshot);
     addFetchedAtToMeta(snapshot, Ember.getWithDefault(storeMetadata, `${snapshot.id}.fetchedAt`, null));
-    return this._super.apply(this, [store, type, snapshot]);
+
+    // return this._super.apply(this, [store, type, snapshot]).then(resp => {
+    //   console.log('EEEEEEEEEEEEEEEEEE', resp)
+    //     return {balala: true};
+    // });
+        // let job = this.createOnlineJob('createRecord', [store, type, snapshot, true], true);
+    if (this.get('isOnline')) {
+      if (!fromJob) {
+        console.log("RRRRRRRRRRRRRRRR")
+        this.createOnlineJob('createRecord', [store, type, snapshot, true], `create$${type.modelName}`);
+      }
+      return this._super.apply(this, [store, type, snapshot]);
+    }
+    else {
+      if (!fromJob) {
+        this.createOnlineJob('createRecord', [store, type, snapshot, true]);
+      }
+      return this._super.apply(this, [store, type, snapshot]);
+    }
   },
 
   updateRecord(store, type, snapshot, fromJob) {
     if (!fromJob) {
-      this.createOnlineJob('updateRecord', [store, type, snapshot, true], store);
+      this.createOnlineJob('updateRecord', [store, type, snapshot, true]);
     }
 
     let storeMetadata = store.metadataFor(type.modelName)["__data_offline_meta__"];
@@ -130,7 +145,7 @@ export default Ember.Mixin.create(baseMixin, {
 
   deleteRecord(store, type, snapshot, fromJob) {
     if (!fromJob) {
-      this.createOnlineJob('deleteRecord', [store, type, snapshot, true], store);
+      this.createOnlineJob('deleteRecord', [store, type, snapshot, true]);
     }
     return this._super.apply(this, arguments);
   }

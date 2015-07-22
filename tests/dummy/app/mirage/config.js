@@ -18,6 +18,7 @@ export default function() {
   this.post('/users', function(db, request) {
     var attrs = JSON.parse(request.requestBody)['user'];
     attrs._id = genId();
+    delete attrs.id;
     // return new Mirage.Response(408, null, null); // Need this for testing
     return {dummy_user: attrs};
   });

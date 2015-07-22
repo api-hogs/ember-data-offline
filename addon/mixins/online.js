@@ -57,10 +57,11 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   createRecord(store, type, snapshot, fromJob) {
+    console.log('JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ')
     let onlineResp = this._super.apply(this, arguments);
-    if (!fromJob) {
-      this.createOfflineJob('createRecord', [store, type, snapshot, onlineResp, true], store);
-    }
+    // if (!fromJob) {
+    //   this.createOfflineJob('createRecord', [store, type, snapshot, onlineResp, true], store);
+    // }
     return onlineResp;
   },
 

@@ -30,7 +30,9 @@ export default Ember.Route.extend({
         lastName: "K",
         gender: "male"
       });
-      newUser.save();
+      newUser.save().then(result => {
+        console.log("TTTTTTTTTTTTTTTT", result)
+      });
     },
   },
 });

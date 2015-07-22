@@ -52,7 +52,6 @@ export default Ember.Mixin.create(baseMixin, {
 
   find: function(store, typeClass, id, snapshot, fromJob) {
     return this._super.apply(this, arguments).then(record => {
-      console.log("XXXXXXXXXXXXXXXXXXX", record)
       if (!fromJob) {
         if (isExpiredOne(store, typeClass, record) && !Ember.isEmpty(id)) {
           this.createOnlineJob('find', [store, typeClass, id, snapshot, true]);
@@ -106,20 +105,12 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   createRecord(store, type, snapshot, fromJob) {
-    console.log('JKJKJKJKJKJKJ', type.modelName)
-
     let storeMetadata = store.metadataFor(type.modelName)["__data_offline_meta__"];
     addUpdatedAtToMeta(snapshot);
     addFetchedAtToMeta(snapshot, Ember.getWithDefault(storeMetadata, `${snapshot.id}.fetchedAt`, null));
 
-    // return this._super.apply(this, [store, type, snapshot]).then(resp => {
-    //   console.log('EEEEEEEEEEEEEEEEEE', resp)
-    //     return {balala: true};
-    // });
-        // let job = this.createOnlineJob('createRecord', [store, type, snapshot, true], true);
     if (this.get('isOnline')) {
       if (!fromJob) {
-        console.log("RRRRRRRRRRRRRRRR")
         this.createOnlineJob('createRecord', [store, type, snapshot, true], `create$${type.modelName}`);
       }
       return this._super.apply(this, [store, type, snapshot]);

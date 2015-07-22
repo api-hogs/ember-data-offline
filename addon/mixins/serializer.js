@@ -6,7 +6,6 @@ export default Ember.Mixin.create({
     if (snapshot.get('__data_offline_meta__')) {
       json['__data_offline_meta__'] = snapshot.get('__data_offline_meta__');
     }
-        console.log('OOOOOOOOOOOOO', snapshot.modelName, snapshot)
     return json;
   },
 

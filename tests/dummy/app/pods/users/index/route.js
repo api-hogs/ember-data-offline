@@ -31,7 +31,7 @@ export default Ember.Route.extend({
         gender: "male"
       });
       newUser.save().then(result => {
-        console.log("TTTTTTTTTTTTTTTT", result)
+        console.log("saved!", result);
       });
     },
   },

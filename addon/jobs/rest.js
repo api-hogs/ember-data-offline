@@ -71,7 +71,6 @@ export default Ember.Object.extend(jobMixin, {
           eraseOne(adapter.get('offlineAdapter'), store, type, snapshot);
           store.pushPayload(type.modelName, result);
           let recordId = extractTargetRecordFromPayload(store, type, result).id;
-          console.log("CCCCCCCCCCCCCCCC", result, recordId)
           persistOne(adapter.get('offlineAdapter'), store, type, recordId);
 
           return result;
@@ -79,7 +78,6 @@ export default Ember.Object.extend(jobMixin, {
         .catch(handleApiErrors)
         .then(result => {
           if (Ember.isEmpty(result)) {
-            console.log('BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB', result)
             eraseOne(adapter.get('offlineAdapter'), store, type, snapshot);
           }
           else {

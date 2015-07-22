@@ -11,7 +11,7 @@ var _isExpired = function(record, recordTTL) {
    return true; 
   }
   return false;
-}
+};
 
 var isExpiredOne = function(store, typeClass, record) {
   if (Ember.isEmpty(record)) {
@@ -19,7 +19,7 @@ var isExpiredOne = function(store, typeClass, record) {
   }
   let recordTTL = store.lookupAdapter(typeClass.modelName).get('recordTTL');
 
-  return _isExpired(record, recordTTL)
+  return _isExpired(record, recordTTL);
 };
 
 var isExpiredMany = function(store, typeClass, records) {

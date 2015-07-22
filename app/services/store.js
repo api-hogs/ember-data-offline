@@ -9,7 +9,6 @@ DS.Model.reopen({
     let store = this.store;
     return this._super.apply(this, arguments).then(resp => {
       let job = store.get(`EDOQueue.onDemandJobs.create$${modelName}`);
-      console.log("OOOOOOOOOOOOOOOOOOOOOO", store.get('EDOQueue'))
       if (!job) {
         return resp;
       }
@@ -17,10 +16,7 @@ DS.Model.reopen({
     })
     .then(result => {
       return result;
-    })
-
-    // console.log("OOOOOOOOOOOOOOOOOOOOOOOOOOO", superResp)
-    //   return superResp;
+    });
   }
 });
 

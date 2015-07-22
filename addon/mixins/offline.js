@@ -2,7 +2,7 @@ import Ember from 'ember';
 import baseMixin from 'ember-data-offline/mixins/base';
 import debug from 'ember-data-offline/utils/debug';
 import extractTargetRecordFromPayload from 'ember-data-offline/utils/extract-online';
-import { isExpiredOne, isExpiredMany } from 'ember-data-offline/utils/expired';
+import { isExpiredOne, isExpiredMany, isExpiredAll } from 'ember-data-offline/utils/expired';
 import { updateMeta } from 'ember-data-offline/utils/meta';
 
 export default Ember.Mixin.create(baseMixin, {
@@ -37,13 +37,23 @@ export default Ember.Mixin.create(baseMixin, {
     return false;
   },
 
+  metadataForType(typeClass) {
+    return this._namespaceForType(typeClass).then(namespace => {
+      return namespace["__data_offline_meta__"];
+    });
+  },
+
   findAll: function(store, typeClass, sinceToken, snapshots, fromJob) {
     debug('findAll offline', typeClass.modelName);
     return this._super.apply(this, arguments).then(records => {
       if (!fromJob) {
         //TODO find way to pass force reload option here
         // if (isExpiredMany(store, typeClass, records)) {
-          this.createOnlineJob('findAll', [store, typeClass, sinceToken, snapshots, true]);
+        this.metadataForType(typeClass).then(meta => {
+          if (isExpiredAll(store, typeClass, meta)) {
+            this.createOnlineJob('findAll', [store, typeClass, sinceToken, snapshots, true]);
+          }
+        });
         // }
       }
       return records;

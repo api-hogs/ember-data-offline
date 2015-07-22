@@ -2,10 +2,13 @@ import Ember from 'ember';
 import moment from 'moment';
 
 var _isExpired = function(record, recordTTL) {
-  let updatedAt = record['__data_offline_meta__'].fetchedAt;
+  if (!record) {
+    return true;
+  }
+  let updatedAt = record["__data_offline_meta__"] ? record['__data_offline_meta__'].fetchedAt : record.fetchedAt;
   //this is for locally created records
-  if (updatedAt === null) {
-    return false;
+  if (!updatedAt) {
+    return true;
   }
   if (moment().diff(updatedAt) > recordTTL) {
    return true; 
@@ -22,6 +25,13 @@ var isExpiredOne = function(store, typeClass, record) {
   return _isExpired(record, recordTTL);
 };
 
+var isExpiredAll = function(store, typeClass, meta) {
+  let adapter = store.lookupAdapter(typeClass.modelName);
+  let ttl = adapter.get('collectionTTL') || adapter.get('recordTTL');
+
+  return _isExpired(meta, ttl);
+};
+
 var isExpiredMany = function(store, typeClass, records) {
   if (Ember.isEmpty(records)) {
     return true;
@@ -34,4 +44,4 @@ var isExpiredMany = function(store, typeClass, records) {
   }, false);
 };
 
-export { isExpiredOne, isExpiredMany };
+export { isExpiredOne, isExpiredMany, isExpiredAll };

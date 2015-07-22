@@ -55,4 +55,5 @@ export default function() {
     let city = db.cities.find(req.params.id);
     return {city: city};
   });
+
 }

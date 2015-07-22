@@ -17,9 +17,17 @@ var persistAll = function persistAll(adapter, store, typeClass) {
   if (Ember.isEmpty(fromStore)) {
     return;
   }
-  fromStore.forEach(record => {
+  let promises = fromStore.map(record => {
     let snapshot = record._createSnapshot();
-    adapter.createRecord(store, typeClass, snapshot, true);
+    return adapter.createRecord(store, typeClass, snapshot, true);
+  });
+  Ember.RSVP.all(promises).then(() => {
+    adapter._namespaceForType(typeClass).then(namespace => {
+      namespace["__data_offline_meta__"] = {
+        fetchedAt: new Date().toString()
+      };
+      adapter.persistData(typeClass, namespace);
+    });
   });
 };
 

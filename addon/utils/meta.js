@@ -6,14 +6,27 @@ var addMeta = function addMeta(snapshot, infoToAdd) {
 };
 
 var addUpdatedAtToMeta = function addUpdatedAtToMeta(snapshot) {
-  addMeta(snapshot, { updatedAt: new Date().toString() });
+  addMeta(snapshot, {
+    updatedAt: new Date().toString()
+  });
 };
 
 var addFetchedAtToMeta = function addFetchedAtToMeta(snapshot, fetchedAt) {
   let date = fetchedAt || new Date().toString();
-  addMeta(snapshot, { fetchedAt: date });
+  addMeta(snapshot, {
+    fetchedAt: date
+  });
 };
 
-export { addMeta, addUpdatedAtToMeta, addFetchedAtToMeta };
+var updateMeta = function updateMeta(snapshot) {
+  //TODO maybe updatedAt not always gets setted?
+  let store = snapshot.record.store;
+  let modelName = snapshot._internalModel.modelName;
+  let storeMetadata = store.metadataFor(modelName)["__data_offline_meta__"];
+  addUpdatedAtToMeta(snapshot);
+  addFetchedAtToMeta(snapshot, Ember.getWithDefault(storeMetadata, `${snapshot.id}.fetchedAt`, null));
+};
+
+export { addMeta, addUpdatedAtToMeta, addFetchedAtToMeta, updateMeta };
 
 export default addMeta;

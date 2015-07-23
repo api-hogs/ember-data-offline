@@ -14,9 +14,9 @@ var persistOne = function persistOne(adapter, store, typeClass, id) {
     return;
   }
   let snapshot = recordFromStore._createSnapshot();
-  
+
   addMeta(snapshot);
-  
+
   return adapter.createRecord(store, typeClass, snapshot, true);
 };
 
@@ -42,7 +42,7 @@ var persistMany = function persistMany(adapter, store, typeClass, ids) {
       let snapshot = record._createSnapshot();
       addMeta(snapshot);
       adapter.createRecord(store, typeClass, snapshot, true);
-    } 
+    }
   });
 };
 
@@ -57,7 +57,7 @@ var persistQuery = function persistQuery(adapter, store, typeClass, onlineResp) 
       let snapshot = record._createSnapshot();
       addMeta(snapshot);
       adapter.createRecord(store, typeClass, snapshot, true);
-    } 
+    }
   });
 };
 

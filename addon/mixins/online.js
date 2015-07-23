@@ -10,7 +10,7 @@ export default Ember.Mixin.create(baseMixin, {
     return false;
   },
 
-  findAll: function(store, typeClass, sinceToken, fromJob) {
+  findAll: function(store, typeClass) {
     debug('findAll online', typeClass.modelName);
     return this._super.apply(this, arguments);
   },

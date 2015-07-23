@@ -48,13 +48,11 @@ export default Ember.Mixin.create(baseMixin, {
     return this._super.apply(this, arguments).then(records => {
       if (!fromJob) {
         //TODO find way to pass force reload option here
-        // if (isExpiredMany(store, typeClass, records)) {
         this.metadataForType(typeClass).then(meta => {
           if (isExpiredAll(store, typeClass, meta)) {
             this.createOnlineJob('findAll', [store, typeClass, sinceToken, snapshots, true]);
           }
         });
-        // }
       }
       return records;
     }).catch(console.log.bind(console));

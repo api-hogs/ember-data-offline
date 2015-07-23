@@ -56,4 +56,5 @@ export default function() {
     return {city: city};
   });
 
+  this.pretender.get('/*passthrough', this.pretender.passthrough);
 }

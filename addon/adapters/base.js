@@ -13,8 +13,13 @@ export default DS.RESTAdapter.extend(onlineMixin, {
     let serializer = LFSerializer.extend({
       serialize(snapshot) {
           let json = this._super.apply(this, arguments);
+          let store = snapshot.record.store;
+          let primaryKey = store.serializerFor(snapshot._internalModel.modelName).primaryKey;
           if (snapshot.get('__data_offline_meta__')) {
             json['__data_offline_meta__'] = snapshot.get('__data_offline_meta__');
+          }
+          if (primaryKey !== 'id') {
+            json.id = json[primaryKey];
           }
           return json;
         },

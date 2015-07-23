@@ -15,24 +15,30 @@ var persistOne = function persistOne(adapter, store, typeClass, id) {
 
 var persistAll = function persistAll(adapter, store, typeClass) {
   let fromStore = store.peekAll(typeClass.modelName).toArray();
-  if (Ember.isEmpty(fromStore)) {
-    return;
-  }
-  adapter._namespaceForType(typeClass).then(namespace => {
-    var serializer = store.adapterFor(typeClass.modelName).serializer;
+  let promises = [Ember.RSVP.resolve()];
 
-    for (var i = 0, len = fromStore.length; i !== len; i++) {
-      let snapshot = fromStore[i]._createSnapshot();
-      updateMeta(snapshot);
-      let recordHash = serializer.serialize(snapshot, {includeId: true});
+  let serializer = store.adapterFor(typeClass.modelName).serializer;
 
-      namespace.records[recordHash.id] = recordHash;
-    }
-    namespace["__data_offline_meta__"] = {
-      fetchedAt: new Date().toString()
-    };
-    adapter.persistData(typeClass, namespace);
+  adapter.queue.attach((resolve, reject) => {
+    adapter._namespaceForType(typeClass).then(namespace => {
+      if (!Ember.isEmpty(fromStore)) {
+        for (var i = 0, len = fromStore.length; i !== len; i++) {
+          let snapshot = fromStore[i]._createSnapshot();
+          updateMeta(snapshot);
+          let recordHash = serializer.serialize(snapshot, {includeId: true});
+
+          namespace.records[recordHash.id] = recordHash;
+        }
+      }
+      namespace["__data_offline_meta__"] = {
+        fetchedAt: new Date().toString()
+      };
+      adapter.persistData(typeClass, namespace).then(() => {
+        resolve();
+      });
+    });
   });
+
 };
 
 var persistMany = function persistMany(adapter, store, typeClass, ids) {
@@ -40,11 +46,11 @@ var persistMany = function persistMany(adapter, store, typeClass, ids) {
   if (Ember.isEmpty(fromStore)) {
     return;
   }
+
+  //While we using findAll instead of findMany we better use this for persistance
   fromStore.forEach(record => {
-    if (ids.indexOf(record.id) > -1) {
-      let snapshot = record._createSnapshot();
-      adapter.createRecord(store, typeClass, snapshot, true);
-    } 
+    let snapshot = record._createSnapshot();
+    adapter.createRecord(store, typeClass, snapshot, true);
   });
 };
 

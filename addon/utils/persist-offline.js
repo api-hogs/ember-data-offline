@@ -1,11 +1,6 @@
 import Ember from 'ember';
 import extractTargetRecordFromPayload from 'ember-data-offline/utils/extract-online';
-
-var addMeta = function addMeta(snapshot) {
-  snapshot['__data_offline_meta__'] = {
-    updatedAt: new Date().toString()
-  };
-};
+import { updateMeta } from 'ember-data-offline/utils/meta';
 
 var persistOne = function persistOne(adapter, store, typeClass, id) {
   let modelName = typeClass.modelName;
@@ -15,20 +10,28 @@ var persistOne = function persistOne(adapter, store, typeClass, id) {
   }
   let snapshot = recordFromStore._createSnapshot();
   
-  addMeta(snapshot);
-  
   return adapter.createRecord(store, typeClass, snapshot, true);
 };
 
 var persistAll = function persistAll(adapter, store, typeClass) {
-  let fromStore = store.peekAll(typeClass.modelName);
+  let fromStore = store.peekAll(typeClass.modelName).toArray();
   if (Ember.isEmpty(fromStore)) {
     return;
   }
-  fromStore.forEach(record => {
-    let snapshot = record._createSnapshot();
-    addMeta(snapshot);
-    adapter.createRecord(store, typeClass, snapshot, true);
+  adapter._namespaceForType(typeClass).then(namespace => {
+    var serializer = store.adapterFor(typeClass.modelName).serializer;
+
+    for (var i = 0, len = fromStore.length; i !== len; i++) {
+      let snapshot = fromStore[i]._createSnapshot();
+      updateMeta(snapshot);
+      let recordHash = serializer.serialize(snapshot, {includeId: true});
+
+      namespace.records[recordHash.id] = recordHash;
+    }
+    namespace["__data_offline_meta__"] = {
+      fetchedAt: new Date().toString()
+    };
+    adapter.persistData(typeClass, namespace);
   });
 };
 
@@ -40,7 +43,6 @@ var persistMany = function persistMany(adapter, store, typeClass, ids) {
   fromStore.forEach(record => {
     if (ids.indexOf(record.id) > -1) {
       let snapshot = record._createSnapshot();
-      addMeta(snapshot);
       adapter.createRecord(store, typeClass, snapshot, true);
     } 
   });
@@ -55,7 +57,6 @@ var persistQuery = function persistQuery(adapter, store, typeClass, onlineResp) 
   fromStore.forEach(record => {
     if (onlineIds.indexOf(record.id) > -1) {
       let snapshot = record._createSnapshot();
-      addMeta(snapshot);
       adapter.createRecord(store, typeClass, snapshot, true);
     } 
   });

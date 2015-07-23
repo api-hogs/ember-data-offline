@@ -9,6 +9,7 @@ export default Ember.Object.extend({
   pendingJobs: null,
   failureJobs: null,
   retryJobs: null,
+  onDemandJobs: null,
 
   init: function() {
     this.setProperties({
@@ -16,6 +17,7 @@ export default Ember.Object.extend({
       pendingJobs: Ember.A(),
       failureJobs: Ember.A(),
       retryJobs: Ember.A(),
+      onDemandJobs: Ember.Object.create(),
     });
     this._super.apply(this, arguments);
   },
@@ -49,9 +51,12 @@ export default Ember.Object.extend({
     }
   }),
 
-  add: function(job) {
+  add: function(job, onDemandKey) {
+    if (!Ember.isEmpty(onDemandKey)) {
+      return this.set(`onDemandJobs.${onDemandKey}`, job);
+    }
     if (!this.isJobExist(job)) {
-      this.get('pendingJobs').pushObject(job);
+      return this.get('pendingJobs').pushObject(job);
     }
   },
 

@@ -2,7 +2,8 @@ import Ember from 'ember';
 import baseMixin from 'ember-data-offline/mixins/base';
 import debug from 'ember-data-offline/utils/debug';
 import extractTargetRecordFromPayload from 'ember-data-offline/utils/extract-online';
-import { isExpiredOne, isExpiredMany } from 'ember-data-offline/utils/expired';
+import { isExpiredOne, isExpiredMany, isExpiredAll } from 'ember-data-offline/utils/expired';
+import { updateMeta } from 'ember-data-offline/utils/meta';
 
 export default Ember.Mixin.create(baseMixin, {
   shouldReloadAll(store, snapshots) {
@@ -36,14 +37,22 @@ export default Ember.Mixin.create(baseMixin, {
     return false;
   },
 
+  metadataForType(typeClass) {
+    return this._namespaceForType(typeClass).then(namespace => {
+      return namespace["__data_offline_meta__"];
+    });
+  },
+
   findAll: function(store, typeClass, sinceToken, snapshots, fromJob) {
     debug('findAll offline', typeClass.modelName);
     return this._super.apply(this, arguments).then(records => {
       if (!fromJob) {
         //TODO find way to pass force reload option here
-        // if (isExpiredMany(store, typeClass, records)) {
-          this.createOnlineJob('findAll', [store, typeClass, sinceToken, snapshots, true], store);
-        // }
+        this.metadataForType(typeClass).then(meta => {
+          if (isExpiredAll(store, typeClass, meta)) {
+            this.createOnlineJob('findAll', [store, typeClass, sinceToken, snapshots, true]);
+          }
+        });
       }
       return records;
     }).catch(console.log.bind(console));
@@ -53,7 +62,7 @@ export default Ember.Mixin.create(baseMixin, {
     return this._super.apply(this, arguments).then(record => {
       if (!fromJob) {
         if (isExpiredOne(store, typeClass, record) && !Ember.isEmpty(id)) {
-          this.createOnlineJob('find', [store, typeClass, id, snapshot, true], store);
+          this.createOnlineJob('find', [store, typeClass, id, snapshot, true]);
         }
       }
       if (Ember.isEmpty(record) && !Ember.isEmpty(id)) {
@@ -76,7 +85,7 @@ export default Ember.Mixin.create(baseMixin, {
       }
       else {
         if (!fromJob) {
-          this.createOnlineJob('query', [store, typeClass, query, recordArray, true], store);
+          this.createOnlineJob('query', [store, typeClass, query, recordArray, true]);
         }
       }
       return records;
@@ -88,7 +97,7 @@ export default Ember.Mixin.create(baseMixin, {
     return this._super.apply(this, arguments).then(records => {
       if (!fromJob) {
         if (isExpiredMany(store, typeClass, records) && !Ember.isEmpty(ids)) {
-          this.createOnlineJob('findMany', [store, typeClass, ids, snapshots, true], store);
+          this.createOnlineJob('findMany', [store, typeClass, ids, snapshots, true]);
         }
       }
       if (Ember.isEmpty(records) && !Ember.isEmpty(ids)) {
@@ -104,22 +113,32 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   createRecord(store, type, snapshot, fromJob) {
+    updateMeta(snapshot);
+
     if (!fromJob) {
-      this.createOnlineJob('createRecord', [store, type, snapshot, true], store);
+      if (this.get('isOnline')) {
+        this.createOnlineJob('createRecord', [store, type, snapshot, true], `create$${type.modelName}`);
+      }
+      else {
+        this.createOnlineJob('createRecord', [store, type, snapshot, true]);
+      }
     }
-    return this._super.apply(this, arguments);
+
+    return this._super.apply(this, [store, type, snapshot]);
   },
 
   updateRecord(store, type, snapshot, fromJob) {
     if (!fromJob) {
-      this.createOnlineJob('updateRecord', [store, type, snapshot, true], store);
+      this.createOnlineJob('updateRecord', [store, type, snapshot, true]);
     }
-    return this._super.apply(this, arguments);
+
+    updateMeta(snapshot);
+    return this._super.apply(this, [store, type, snapshot]);
   },
 
   deleteRecord(store, type, snapshot, fromJob) {
     if (!fromJob) {
-      this.createOnlineJob('deleteRecord', [store, type, snapshot, true], store);
+      this.createOnlineJob('deleteRecord', [store, type, snapshot, true]);
     }
     return this._super.apply(this, arguments);
   }

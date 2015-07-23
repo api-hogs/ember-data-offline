@@ -2,10 +2,27 @@
 <h1>
   Page for user: {{model.id}}
 </h1>
-<h2>
-  {{model.firstName}} {{model.lastName}}
-</h2>
-and his cars:
-{{#each model.cars as |car|}}
-  <li>{{car.id}} - {{car.label}}</li>
-{{/each}}
+<div class="row">
+  <div class="col-md-4">
+    <form>
+      <div class="form-group">
+        <label for="First name">First name</label>
+        {{input value=model.firstName class="form-control"}}
+      </div>
+      <div class="form-group">
+        <label for="Last name">Last name</label>
+        {{input value=model.lastName class="form-control"}}
+      </div>
+      <button type="submit" class="btn btn-default" {{action 'updateUser'}}>Update</button>
+    </form>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-4">
+    <h3>And his cars:</h3>
+    
+    {{#each model.cars as |car|}}
+      <li>{{car.id}} - {{car.label}}</li>
+    {{/each}}
+  </div>
+</div>

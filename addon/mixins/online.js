@@ -10,17 +10,9 @@ export default Ember.Mixin.create(baseMixin, {
     return false;
   },
 
-  findAll: function(store, typeClass, sinceToken, fromJob) {
+  findAll: function(store, typeClass) {
     debug('findAll online', typeClass.modelName);
-    let adapterResp = this._super.apply(this, arguments);
-    return adapterResp.then(resp => {
-      //TODO Think about persistance this registry hash
-      this.set(`lastTimeFetched.all$${typeClass.modelName}`, new Date());
-      if (!fromJob) {
-        this.createOfflineJob('findAll', [store, typeClass, sinceToken, adapterResp, true], store);
-      }
-      return resp;
-    });
+    return this._super.apply(this, arguments);
   },
 
   find: function(store, typeClass, id, snapshot, fromJob) {

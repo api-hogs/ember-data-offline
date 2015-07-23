@@ -11,10 +11,16 @@ export default DS.RESTAdapter.extend(onlineMixin, {
   offlineAdapter: Ember.computed(function() {
     let adapter = this;
     let serializer = LFSerializer.extend({
-      serialize(snapshot) {
+      serialize(snapshot, options) {
           let json = this._super.apply(this, arguments);
           let store = snapshot.record.store;
-          let primaryKey = store.serializerFor(snapshot._internalModel.modelName).primaryKey;
+          let modelSerializer = store.serializerFor(snapshot._internalModel.modelName);
+          let primaryKey = 'id';
+          if (modelSerializer) {
+            primaryKey = modelSerializer.primaryKey;
+            let serialized = modelSerializer.serialize(snapshot, options);
+            json = Ember.merge(json, serialized);
+          }
           if (snapshot.get('__data_offline_meta__')) {
             json['__data_offline_meta__'] = snapshot.get('__data_offline_meta__');
           }

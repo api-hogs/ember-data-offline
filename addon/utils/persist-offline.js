@@ -2,6 +2,31 @@ import Ember from 'ember';
 import extractTargetRecordFromPayload from 'ember-data-offline/utils/extract-online';
 import { updateMeta } from 'ember-data-offline/utils/meta';
 
+var _persistArray = function(array, adapter, typeClass, withMeta) {
+  let serializer = adapter.serializer;
+  adapter.queue.attach((resolve) => {
+    adapter._namespaceForType(typeClass).then(namespace => {
+      if (!Ember.isEmpty(array)) {
+        for (var i = 0, len = array.length; i !== len; i++) {
+          let snapshot = array[i]._createSnapshot();
+          updateMeta(snapshot);
+
+          let recordHash = serializer.serialize(snapshot, {includeId: true});
+          namespace.records[recordHash.id] = recordHash;
+        }
+      }
+      if (withMeta) {
+        namespace["__data_offline_meta__"] = {
+          fetchedAt: new Date().toString()
+        };
+      }
+      adapter.persistData(typeClass, namespace).then(() => {
+        resolve();
+      });
+    });
+  });
+};
+
 var persistOne = function persistOne(adapter, store, typeClass, id) {
   let modelName = typeClass.modelName;
   let recordFromStore = store.peekRecord(modelName, id);
@@ -15,37 +40,13 @@ var persistOne = function persistOne(adapter, store, typeClass, id) {
 
 var persistAll = function persistAll(adapter, store, typeClass) {
   let fromStore = store.peekAll(typeClass.modelName).toArray();
-  if (Ember.isEmpty(fromStore)) {
-    return;
-  }
-  adapter._namespaceForType(typeClass).then(namespace => {
-    var serializer = store.adapterFor(typeClass.modelName).serializer;
-
-    for (var i = 0, len = fromStore.length; i !== len; i++) {
-      let snapshot = fromStore[i]._createSnapshot();
-      updateMeta(snapshot);
-      let recordHash = serializer.serialize(snapshot, {includeId: true});
-
-      namespace.records[recordHash.id] = recordHash;
-    }
-    namespace["__data_offline_meta__"] = {
-      fetchedAt: new Date().toString()
-    };
-    adapter.persistData(typeClass, namespace);
-  });
+  _persistArray(fromStore, adapter, typeClass, true);
 };
 
-var persistMany = function persistMany(adapter, store, typeClass, ids) {
-  let fromStore = store.peekAll(typeClass.modelName);
-  if (Ember.isEmpty(fromStore)) {
-    return;
-  }
-  fromStore.forEach(record => {
-    if (ids.indexOf(record.id) > -1) {
-      let snapshot = record._createSnapshot();
-      adapter.createRecord(store, typeClass, snapshot, true);
-    } 
-  });
+var persistMany = function persistMany(adapter, store, typeClass) {
+  //While we using findAll instead of findMany we better use this for persistance
+  let fromStore = store.peekAll(typeClass.modelName).toArray();
+  _persistArray(fromStore, adapter, typeClass);
 };
 
 var persistQuery = function persistQuery(adapter, store, typeClass, onlineResp) {

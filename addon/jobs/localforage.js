@@ -2,8 +2,6 @@ import Ember from 'ember';
 import jobMixin from 'ember-data-offline/mixins/job';
 import persistOffline from 'ember-data-offline/utils/persist-offline';
 
-// const { isEmpty, RSVP } = Ember;
-
 export default Ember.Object.extend(jobMixin, {
   task() {
     if (this[this.get('method')]){
@@ -34,18 +32,18 @@ export default Ember.Object.extend(jobMixin, {
   createRecord(store, type, snapshot, onlineResp){
     onlineResp.then(() => {
       return this.get('adapter').createRecord(store, type, snapshot);
-    }).catch(console.log.bind(console));
+    });
   },
 
   updateRecord(store, type, snapshot, onlineResp){
     onlineResp.then(() => {
       return this.get('adapter').updateRecord(store, type, snapshot);
-    }).catch(console.log.bind(console));
+    });
   },
 
   deleteRecord(store, type, snapshot, onlineResp){
     onlineResp.then(() => {
       return this.get('adapter').deleteRecord(store, type, snapshot);
-    }).catch(console.log.bind(console));
+    });
   },
 });

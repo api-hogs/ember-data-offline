@@ -23,7 +23,7 @@ export default Ember.Mixin.create(baseMixin, {
         this.createOfflineJob('find', [store, typeClass, id], store);
       }
       return resp;
-    }).catch(console.log.bind(console));
+    });
   },
 
   findQuery: function(store, type, query, recordArray, fromJob) {

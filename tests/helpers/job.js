@@ -38,38 +38,33 @@ var storeMock = Ember.Object.extend({
 
 var snapshotMock = Ember.Object.create({});
 var adapterСlass = Ember.Object.extend({
-  find: function() {
-    return RSVP.Promise.resolve();
+
+  createRecord() {
+    this.get('assert').ok(true, this.get('adapterType') + " adapter.createRecord was invoked.");
+    return Ember.RSVP.Promise.resolve('foo');
   },
+  updateRecord() {
+    this.get('assert').ok(true, this.get('adapterType') +  " adapter.updateRecord was invoked.");
+    return Ember.RSVP.Promise.resolve('foo');
+  },
+  deleteRecord(){
+    this.get('assert').ok(true, this.get('adapterType') +  " adapter.deleteRecoed was invoked.");
+    return Ember.RSVP.Promise.resolve('foo');
+  },
+  unhadled(){
+    this.get('assert').ok(true, this.get('adapterType') +  " adapter.unhadled was invoked.");
+    return Ember.RSVP.Promise.resolve('foo');
+  }
 });
 var typeClassMock = {
   modelName: 'bar',
 };
 
-var resolve = function(){
-  return true;
-};
-
-
 
 var localstorageJobMock = function(assert, onlineAdapterResp, method = { name : 'find', args : 1}) {
   let offlineAdapter = adapterСlass.create({
-      createRecord() {
-        assert.ok(true, "offline adapter.createRecord was invoked.");
-        return Ember.RSVP.Promise.resolve(1);
-      },
-      updateRecord() {
-        assert.ok(true, "offline adapter.updateRecord was invoked.");
-        return Ember.RSVP.Promise.resolve(1);
-      },
-      deleteRecord(){
-        assert.ok(true, "offline adapter.deleteRecoed was invoked.");
-        return Ember.RSVP.Promise.resolve(1);
-      },
-      unhadled(){
-        assert.ok(true, "offline adapter.unhadled was invoked.");
-        return Ember.RSVP.Promise.resolve(1);
-      }
+    assert : assert,
+    adapterType : "offline"
   });
 
   let _storeMock = storeMock.create({});
@@ -108,57 +103,31 @@ var localstorageJobMock = function(assert, onlineAdapterResp, method = { name : 
   return job;
 };
 
-var restJobMock = function function_name(assert, onlineAdapterResp, method = { name : 'find', args : 1}) {
+var restJobMock = function function_name(assert, method = { name : 'find', args : 1}) {
 
 let onlineAdapter = adapterСlass.create({
-    createRecord() {
-      assert.ok(true, "adapter.createRecord was invoked.");
-      return Ember.RSVP.Promise.resolve(1);
-    },
-    updateRecord() {
-      assert.ok(true, "adapter.updateRecord was invoked.");
-      return Ember.RSVP.Promise.resolve(1);
-    },
-    deleteRecord(){
-      assert.ok(true, "adapter.deleteRecoed was invoked.");
-      return Ember.RSVP.Promise.resolve(1);
-    },
+    assert : assert,
+    adapterType : "rest",
     findAll(){
-      assert.ok(true, "adapter.findAll was invoked.");
-      return Ember.RSVP.Promise.resolve(1);
+      assert.ok(true, "rest adapter.findAll was invoked.");
+      return Ember.RSVP.Promise.resolve('foo');
     },
     find(){
-      assert.ok(true, "adapter.find was invoked.");
-      return Ember.RSVP.Promise.resolve(1);
+      assert.ok(true, "rest adapter.find was invoked.");
+      return Ember.RSVP.Promise.resolve('foo');
     },
     findQuery(){
-      assert.ok(true, "adapter.findQuery was invoked.");
-      return Ember.RSVP.Promise.resolve(1);
+      assert.ok(true, "rest adapter.findQuery was invoked.");
+      return Ember.RSVP.Promise.resolve('foo');
     },
     findMany(){
-      assert.ok(true, "adapter.findMany was invoked.");
-      return Ember.RSVP.Promise.resolve(1);
+      assert.ok(true, "rest adapter.findMany was invoked.");
+      return Ember.RSVP.Promise.resolve('foo');
     },
-
     offlineAdapter : adapterСlass.create({
-        createRecord() {
-          assert.ok(true, "offline adapter.createRecord was invoked.");
-          return Ember.RSVP.Promise.resolve(1);
-        },
-        updateRecord() {
-          assert.ok(true, "offline adapter.updateRecord was invoked.");
-          return Ember.RSVP.Promise.resolve(1);
-        },
-        deleteRecord(){
-          assert.ok(true, "offline adapter.deleteRecoed was invoked.");
-          return Ember.RSVP.Promise.resolve(1);
-        },
-        unhadled(){
-          assert.ok(true, "offline adapter.unhadled was invoked.");
-          return Ember.RSVP.Promise.resolve(1);
-        }
+        assert : assert,
+        adapterType : "offline"
     })
-
   });
 
   let _storeMosck = storeMock.create({

@@ -24,7 +24,7 @@ test('#find call adapter #createRecord', function(assert) {
 
   stop();
   job.perform().then(() => {
-    assert.ok(true);
+    assert.ok(true,"job.perform");
     start();
   });
 });
@@ -36,7 +36,7 @@ test('#find pass when there is record in store', function(assert) {
 
   stop();
   job.perform().then(() => {
-    assert.ok(true);
+    assert.ok(true,"job.perform");
     start();
   });
 });
@@ -48,7 +48,7 @@ test('#find pass when there is no record in store', function(assert) {
 
   stop();
   job.perform().then(() => {
-    assert.ok(true);
+    assert.ok(true,"job.perform");
     start();
   });
 });
@@ -60,7 +60,7 @@ test('#findAll pass', function(assert) {
 
   stop();
   job.perform().then(() => {
-    assert.ok(true);
+    assert.ok(true,"job.perform");
     start();
   });
 });
@@ -73,7 +73,7 @@ test('#findMany pass ', function(assert) {
 
    stop();
    job.perform().then(() => {
-     assert.ok(true);
+     assert.ok(true,"job.perform");
      start();
    });
  });
@@ -86,7 +86,7 @@ test('#findMany pass ', function(assert) {
 
    stop();
    job.perform().then(() => {
-     assert.ok(true);
+     assert.ok(true,"job.perform");
      start();
    });
  });
@@ -98,7 +98,7 @@ test('#findMany pass ', function(assert) {
 
    stop();
    job.perform().then(() => {
-     assert.ok(true);
+     assert.ok(true,"job.perform");
      start();
    });
  });
@@ -110,7 +110,7 @@ test('pass unhadled function through localforage to adapter', function(assert){
 
   stop();
   job.perform().then(() => {
-    assert.ok(true);
+    assert.ok(true,"job.perform");
     start();
   });
 });

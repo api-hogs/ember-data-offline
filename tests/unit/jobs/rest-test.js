@@ -22,7 +22,7 @@ test('rest job #find call adapter #find', function(assert) {
   //store.pushPayload was invoked
   //job.perform
 
-  let job = restJobMock(assert, null,{name : 'find', args : 'foo'});
+  let job = restJobMock(assert, {name : 'find', args : 'foo'});
 
   stop();
   job.perform().then(() => {
@@ -37,11 +37,11 @@ test('rest job #findAll call adapter #findAll', function(assert) {
   //store.pushPayload was invoked
   //job.perform
 
-  let job = restJobMock(assert, null,{name : 'find'});
+  let job = restJobMock(assert, {name : 'find'});
 
   stop();
   job.perform().then(() => {
-    assert.ok(true);
+    assert.ok(true,"job.perform");
     start();
   });
 });
@@ -49,11 +49,11 @@ test('rest job #findAll call adapter #findAll', function(assert) {
 test('rest job #findAll call adapter #findAll', function(assert) {
   assert.expect(3);
 
-  let job = restJobMock(assert, null,{name : 'findAll'});
+  let job = restJobMock(assert, {name : 'findAll'});
 
   stop();
   job.perform().then(() => {
-    assert.ok(true);
+    assert.ok(true,"job.perform");
     start();
   });
 });
@@ -61,11 +61,11 @@ test('rest job #findAll call adapter #findAll', function(assert) {
 test('rest job #findQuery call adapter #findQuery ', function(assert) {
   assert.expect(3);
 
-  let job = restJobMock(assert, null,{name : 'findQuery', args  : { name : 'foo'}});
+  let job = restJobMock(assert, {name : 'findQuery', args  : { name : 'foo'}});
 
   stop();
   job.perform().then(() => {
-    assert.ok(true);
+    assert.ok(true,"job.perform");
     start();
   });
 });
@@ -73,23 +73,23 @@ test('rest job #findQuery call adapter #findQuery ', function(assert) {
 test('rest job #findMany call adapter #findMany', function(assert) {
   assert.expect(3);
 
-  let job = restJobMock(assert, null,{name : 'findMany', args  : { name : 'foo', args: [1,2]}});
+  let job = restJobMock(assert, {name : 'findMany', args  : { name : 'foo', args: [1,2]}});
 
   stop();
   job.perform().then(() => {
-    assert.ok(true);
+    assert.ok(true,"job.perform");
     start();
   });
 });
 
 test('rest job #createRecord pass', function(assert) {
-  assert.expect(4);
+  assert.expect(5);
 
-  let job = restJobMock(assert, null,{name : 'createRecord'});
+  let job = restJobMock(assert, {name : 'createRecord'});
 
   stop();
   job.perform().then(() => {
-    assert.ok(true);
+    assert.ok(true,"job.perform");
     start();
   });
 });
@@ -97,11 +97,11 @@ test('rest job #createRecord pass', function(assert) {
 test('rest job #updateRecord pass', function(assert) {
   assert.expect(2);
 
-  let job = restJobMock(assert, null,{name : 'updateRecord'});
+  let job = restJobMock(assert, {name : 'updateRecord'});
 
   stop();
   job.perform().then(() => {
-    assert.ok(true);
+    assert.ok(true,"job.perform");
     start();
   });
 });
@@ -109,11 +109,11 @@ test('rest job #updateRecord pass', function(assert) {
 test('rest job #deleteRecord pass', function(assert) {
   assert.expect(2);
 
-  let job = restJobMock(assert, null,{name : 'updateRecord'});
+  let job = restJobMock(assert, {name : 'updateRecord'});
 
   stop();
   job.perform().then(() => {
-    assert.ok(true);
+    assert.ok(true,"job.perform");
     start();
   });
 });

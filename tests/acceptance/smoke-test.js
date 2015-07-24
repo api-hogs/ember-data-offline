@@ -48,21 +48,21 @@ test('localforage is populated on #findAll', function(assert) {
   });
 });
 
-test('localforage is populated on #find', function(assert) {
-  assert.expect(2);
-  visit('/users/1');
+//test('localforage is populated on #find', function(assert) {
+//  assert.expect(2);
+//  visit('/users/1');
 
-  stop();
-  andThen(() => {
+//  stop();
+//  andThen(() => {
 
-    Ember.run.later(() => {
-      let lfItems = window.localforage.getItem("foo");
-      return lfItems.then(result => {
-        console.log(JSON.stringify(result));
-        assert.equal(result.car.records[1].label, cars[0].label);
-        assert.equal(result.car.records[2].label, cars[1].label);
-        start();
-      });
-    },4500);
-  });
-});
+//    Ember.run.later(() => {
+//      let lfItems = window.localforage.getItem("foo");
+//      return lfItems.then(result => {
+//        console.log(JSON.stringify(result));
+//        assert.equal(result.car.records[1].label, cars[0].label);
+//        assert.equal(result.car.records[2].label, cars[1].label);
+//        start();
+//      });
+//    },4500);
+//  });
+//});

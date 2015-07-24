@@ -14,7 +14,7 @@ export default Mixin.create({
 
   lastTimeFetched: Ember.Object.create({}),
 
-  _workingQueue(store){
+  _workingQueue(store) {
     if (isPresent(get(this, 'EDOQueue'))) {
       return get(this, 'EDOQueue');
     } else {
@@ -22,11 +22,11 @@ export default Mixin.create({
     }
   },
 
-  addToQueue(job, store){
-    this._workingQueue(store).add(job);
+  addToQueue(job, store, onDemandKey) {
+    this._workingQueue(store).add(job, onDemandKey);
   },
 
-  createOnlineJob(method, params){
+  createOnlineJob(method, params, onDemandKey) {
     let [store, typeClass] = params;
     let job = this.get('onlineJob').create({
       adapter: store.lookupAdapter(typeClass.modelName) || this.get('onlineAdapter'),
@@ -34,10 +34,10 @@ export default Mixin.create({
       params: params,
       retryCount: 3,
     });
-    this.addToQueue(job, store);
+    this.addToQueue(job, store, onDemandKey);
   },
 
-  createOfflineJob(method, params, store){
+  createOfflineJob(method, params, store) {
     let job = this.get('offlineJob').create({
       adapter: this.get('offlineAdapter'),
       store: store,

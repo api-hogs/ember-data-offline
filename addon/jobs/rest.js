@@ -3,6 +3,7 @@ import jobMixin from 'ember-data-offline/mixins/job';
 import handleApiErrors from 'ember-data-offline/utils/handle-api-errors';
 import { persistOne } from 'ember-data-offline/utils/persist-offline';
 import { eraseOne } from 'ember-data-offline/utils/erase-offline';
+import extractTargetRecordFromPayload from 'ember-data-offline/utils/extract-online';
 
 export default Ember.Object.extend(jobMixin, {
   task() {
@@ -17,7 +18,12 @@ export default Ember.Object.extend(jobMixin, {
     store.set(`syncLoads.findAll.${typeClass.modelName}`, false);
 
     adapterResp.then(adapterPayload => {
-      store.pushPayload(typeClass.modelName, adapterPayload);
+      new Ember.RSVP.Promise(resolve => {
+        store.pushPayload(typeClass.modelName, adapterPayload);
+        return resolve();
+      }).then(() => {
+        this.get('adapter').createOfflineJob('findAll', [store, typeClass, sinceToken, null, true], store);
+      });
 
       store.set(`syncLoads.findAll.${typeClass.modelName}`, true);
     });
@@ -65,24 +71,27 @@ export default Ember.Object.extend(jobMixin, {
   createRecord(store, type, snapshot, fromJob) {
     let adapter = this.get('adapter');
 
-    return adapter.createRecord(store, type, snapshot, fromJob)
-      .then(result => {
-        eraseOne(adapter.get('offlineAdapter'), store, type, snapshot);
-        store.pushPayload(type.modelName, result);
-        persistOne(adapter.get('offlineAdapter'), store, type, result);
-        return result;
-      })
-      .catch(handleApiErrors)
-      .then(result => {
-        if (Ember.isEmpty(result)) {
+      return adapter.createRecord(store, type, snapshot, fromJob)
+        .then(result => {
           eraseOne(adapter.get('offlineAdapter'), store, type, snapshot);
-        }
-        else {
-          return Ember.RSVP.resolve(result);
-        }
-      }, () => {
-        return Ember.RSVP.reject();
-      });
+          store.pushPayload(type.modelName, result);
+          let recordId = extractTargetRecordFromPayload(store, type, result).id;
+          persistOne(adapter.get('offlineAdapter'), store, type, recordId);
+
+          return result;
+        })
+        .catch(handleApiErrors)
+        .then(result => {
+          if (Ember.isEmpty(result)) {
+            eraseOne(adapter.get('offlineAdapter'), store, type, snapshot);
+          }
+          else {
+            return Ember.RSVP.resolve(result);
+          }
+        }, () => {
+          return Ember.RSVP.reject();
+        });
+
   },
 
   updateRecord(store, type, snapshot, fromJob) {

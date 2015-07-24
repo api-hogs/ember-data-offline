@@ -10,17 +10,9 @@ export default Ember.Mixin.create(baseMixin, {
     return false;
   },
 
-  findAll: function(store, typeClass, sinceToken, fromJob) {
+  findAll: function(store, typeClass) {
     debug('findAll online', typeClass.modelName);
-    let adapterResp = this._super.apply(this, arguments);
-    return adapterResp.then(resp => {
-      //TODO Think about persistance this registry hash
-      this.set(`lastTimeFetched.all$${typeClass.modelName}`, new Date());
-      if (!fromJob) {
-        this.createOfflineJob('findAll', [store, typeClass, sinceToken, adapterResp, true], store);
-      }
-      return resp;
-    });
+    return this._super.apply(this, arguments);
   },
 
   find: function(store, typeClass, id, snapshot, fromJob) {
@@ -56,12 +48,8 @@ export default Ember.Mixin.create(baseMixin, {
     });
   },
 
-  createRecord(store, type, snapshot, fromJob) {
-    let onlineResp = this._super.apply(this, arguments);
-    if (!fromJob) {
-      this.createOfflineJob('createRecord', [store, type, snapshot, onlineResp, true], store);
-    }
-    return onlineResp;
+  createRecord() {
+    return this._super.apply(this, arguments);
   },
 
   updateRecord(store, type, snapshot, fromJob) {

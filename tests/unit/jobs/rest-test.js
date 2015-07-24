@@ -47,7 +47,7 @@ test('rest job #findAll call adapter #findAll', function(assert) {
 });
 
 test('rest job #findAll call adapter #findAll', function(assert) {
-  assert.expect(3);
+  assert.expect(4);
 
   let job = restJobMock(assert, {name : 'findAll'});
 
@@ -83,7 +83,7 @@ test('rest job #findMany call adapter #findMany', function(assert) {
 });
 
 test('rest job #createRecord pass', function(assert) {
-  assert.expect(5);
+  assert.expect(6);
 
   let job = restJobMock(assert, {name : 'createRecord'});
 

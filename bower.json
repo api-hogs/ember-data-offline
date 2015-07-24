@@ -19,7 +19,7 @@
     "moment-timezone": "~0.4.0"
   },
   "devDependencies": {
-    "localforage": "~1.2.1",
+    "localforage": "1.2.4",
     "bootstrap": "~3.3.5"
   }
 }

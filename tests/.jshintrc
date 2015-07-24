@@ -1,5 +1,7 @@
 {
   "predef": [
+    "stop",
+    "start",
     "server",
     "document",
     "window",

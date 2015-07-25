@@ -41,7 +41,7 @@ export default Ember.Object.extend(jobMixin, {
 
         store.set(`syncLoads.find.${typeClass.modelName}`, true);
       }
-    }).catch(console.log.bind(console));
+    });
 
     return adapterResp;
   },

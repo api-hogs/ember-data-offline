@@ -71,5 +71,4 @@ export default DS.RESTAdapter.extend(onlineMixin, {
 
     this.set('offlineAdapter', offlineAdapter);
   }),
-  // offlineAdapter: Ember.computed(function() {
 });

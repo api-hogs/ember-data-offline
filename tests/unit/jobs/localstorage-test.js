@@ -3,7 +3,7 @@
 
 import Ember from 'ember';
 import { module, test } from 'qunit';
-import { mockLocastorageJob } from '../../helpers/job';
+import { localstorageJobMock } from '../../helpers/job';
 
 const { RSVP } = Ember;
 
@@ -16,17 +16,118 @@ module('Unit | Job | Localstorage',  {
     }
 });
 
+
 test('#find call adapter #createRecord', function(assert) {
   assert.expect(2);
 
-  let job = mockLocastorageJob(assert, RSVP.resolve({bar: {id: 2}}));
+  let job = localstorageJobMock(assert, null,{name : 'find', args : 'foo'});
 
   stop();
   job.perform().then(() => {
-    assert.ok(true);
+    assert.ok(true,"job.perform");
     start();
   });
 });
+
+test('#find pass when there is record in store', function(assert) {
+  assert.expect(2);
+  //in store : {id:foo} -> assert for createRecord + job.perform
+  let job = localstorageJobMock(assert, null, {name : 'find', args : 'foo'});
+
+  stop();
+  job.perform().then(() => {
+    assert.ok(true,"job.perform");
+    start();
+  });
+});
+
+test('#find pass when there is no record in store', function(assert) {
+  assert.expect(1);
+  //in store : {id:foo} -> assert for job.perform only
+  let job = localstorageJobMock(assert, null, {name : 'find', args : 1});
+
+  stop();
+  job.perform().then(() => {
+    assert.ok(true,"job.perform");
+    start();
+  });
+});
+
+//test('#findAll pass', function(assert) {
+//  assert.expect(2);
+  //in store : {id:foo} -> assert for createRecord + job.perform
+//  let job = localstorageJobMock(assert, null, {name : 'findAll'});
+
+//  stop();
+//  job.perform().then(() => {
+//    assert.ok(true,"job.perform");
+//    start();
+//  });
+//});
+
+
+//test('#findMany pass ', function(assert) {
+//   assert.expect(2);
+   //in store : {id:foo} -> assert for createRecord + job.perform
+//   let job = localstorageJobMock(assert, null, {name : 'findMany', args : ['foo', 'foo2']});
+
+//   stop();
+//   job.perform().then(() => {
+//     assert.ok(true,"job.perform");
+//     start();
+//   });
+// });
+
+
+ test('adapter #updateRecord is successfully by offline job #deleteRecord', function(assert){
+   assert.expect(2);
+
+   let job = localstorageJobMock(assert, RSVP.Promise.resolve({id:1}), { name : 'updateRecord'});
+
+   stop();
+   job.perform().then(() => {
+     assert.ok(true,"job.perform");
+     start();
+   });
+ });
+
+ test('adapter #deleteRecord is successfully invoked by offline job #deleteRecord', function(assert){
+   assert.expect(2);
+
+   let job = localstorageJobMock(assert, RSVP.Promise.resolve({id:1}), { name : 'deleteRecord'});
+
+   stop();
+   job.perform().then(() => {
+     assert.ok(true,"job.perform");
+     start();
+   });
+ });
+
+
+test('pass unhadled function through localforage to adapter', function(assert){
+  assert.expect(2);
+  let job = localstorageJobMock(assert, RSVP.Promise.resolve({id:1}), { name : 'unhadled'});
+
+  stop();
+  job.perform().then(() => {
+    assert.ok(true,"job.perform");
+    start();
+  });
+});
+
+
+ //test('#findQuery pass', function(assert) {
+//   assert.expect(2);
+   //in store : {id:foo} -> assert for createRecord + job.perform
+//   let job = mockLocastorageJob(assert, RSVP.Promise.resolve({ bar: {id : 'foo', name :'foo'}}), {name : 'findQuery', args: {name : 'foo'}});
+
+//   stop();
+//   job.perform().then(() => {
+//     assert.ok(true);
+//     start();
+//   });
+// });
+
 
 // test('#find persists when there is record from online storage that absent in offline', function(assert) {
 //   assert.expect(2);

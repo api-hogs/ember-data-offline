@@ -1,3 +1,4 @@
+/*WE DON'T NEED THIS ANYMORE remove after remove form rc*/
 import Ember from 'ember';
 
 export default Ember.Mixin.create({

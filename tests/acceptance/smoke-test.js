@@ -25,8 +25,10 @@ test('localforage is populated on #findAll', function(assert) {
 
   visit('/');
 
+  waitForRecordingModel('user');
+
   andThen(() => {
-    getLocalforageData({user: 1, city: 1}, 'user').then(result => {
+    return window.localforage.getItem('foo').then(result => {
       assert.equal(result.user.records[1].firstName, users[0].firstName, "Record 1 from server === record 1 in locaclforage");
       assert.equal(result.user.records[2].firstName, users[1].firstName, "Record 2 from server === record 2 in locaclforage");
       assert.equal(store.peekAll('user').get('firstObject').get('firstName'), users[0].firstName, "Record 1 in store === record 1 from server ");
@@ -38,15 +40,24 @@ test('localforage is populated on #findAll', function(assert) {
 });
 
 test('localforage is populated on #find', function(assert) {
-  assert.expect(2);
+  assert.expect(3);
 
   visit('/users/1');
 
+  waitForRecordingModel('user');
+
   andThen(() => {
-    getLocalforageData({user: 1, car: 1}, 'car').then(result => {
+    return window.localforage.getItem('foo').then(result => {
+      assert.equal(result.user.records[1].firstName, users[0].firstName);
+    });
+  });
+
+  waitForRecordingModel('car');
+
+  andThen(() => {
+    return window.localforage.getItem('foo').then(result => {
       assert.equal(result.car.records[1].label, cars[0].label);
       assert.equal(result.car.records[2].label, cars[1].label);
     });
   });
 });
-

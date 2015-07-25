@@ -8,8 +8,13 @@ import isObjectEmpty from 'ember-data-offline/utils/is-object-empty';
 
 export default DS.RESTAdapter.extend(onlineMixin, {
   __adapterName__: "ONLINE",
-  offlineAdapter: Ember.computed(function() {
+  offlineAdapter: null,
+
+  initRunner: Ember.on('init', function() {
+
     let adapter = this;
+    let container = this.container;
+
     let serializer = LFSerializer.extend({
       serialize(snapshot, options) {
           let json = this._super.apply(this, arguments);
@@ -45,7 +50,7 @@ export default DS.RESTAdapter.extend(onlineMixin, {
           store.setMetadataFor(modelClass, meta);
         },
     }).create({
-      container: this.container,
+      container: container,
     });
     let serializerPrimaryKey = this.get('serializerPrimaryKey');
     if (serializerPrimaryKey) {
@@ -54,7 +59,7 @@ export default DS.RESTAdapter.extend(onlineMixin, {
     let defaults = {
       __adapterName__: "OFFLINE",
       onlineAdapter: adapter,
-      container: this.container,
+      container: container,
       serializer: serializer,
       caching: 'none',
       namespace: 'ember-data-offline:store',
@@ -62,6 +67,8 @@ export default DS.RESTAdapter.extend(onlineMixin, {
     if (adapter.offlineNamespace) {
       defaults.namespace = adapter.offlineNamespace;
     }
-    return LFAdapter.extend(offlineMixin, {}).create(defaults);
+    let offlineAdapter = LFAdapter.extend(offlineMixin).create(defaults);
+
+    this.set('offlineAdapter', offlineAdapter);
   }),
 });

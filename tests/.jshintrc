@@ -1,5 +1,8 @@
 {
   "predef": [
+    "waitForRecordingAll",
+    "waitForRecordingModel",
+    "getLocalforageData",
     "stop",
     "start",
     "server",

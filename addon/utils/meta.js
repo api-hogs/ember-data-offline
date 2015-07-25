@@ -22,9 +22,10 @@ var updateMeta = function updateMeta(snapshot) {
   //TODO maybe updatedAt not always gets setted?
   let store = snapshot.record.store;
   let modelName = snapshot._internalModel.modelName;
-  let storeMetadata = store.metadataFor(modelName)["__data_offline_meta__"];
+  let storeMetadata = store.metadataFor(modelName);
+  
   addUpdatedAtToMeta(snapshot);
-  addFetchedAtToMeta(snapshot, Ember.getWithDefault(storeMetadata, `${snapshot.id}.fetchedAt`, null));
+  addFetchedAtToMeta(snapshot, Ember.getWithDefault(storeMetadata, `__data_offline_meta__.${snapshot.id}.fetchedAt`, null));
 };
 
 export { addMeta, addUpdatedAtToMeta, addFetchedAtToMeta, updateMeta };

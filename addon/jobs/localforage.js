@@ -2,8 +2,6 @@ import Ember from 'ember';
 import jobMixin from 'ember-data-offline/mixins/job';
 import persistOffline from 'ember-data-offline/utils/persist-offline';
 
-// const { isEmpty, RSVP } = Ember;
-
 export default Ember.Object.extend(jobMixin, {
   task() {
     if (this[this.get('method')]){

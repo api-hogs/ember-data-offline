@@ -55,7 +55,7 @@ export default Ember.Mixin.create(baseMixin, {
         });
       }
       return records;
-    }).catch(console.log.bind(console));
+    });
   },
 
   find: function(store, typeClass, id, snapshot, fromJob) {
@@ -89,7 +89,7 @@ export default Ember.Mixin.create(baseMixin, {
         }
       }
       return records;
-    }).catch(console.log.bind(console));
+    });
   },
 
   findMany: function(store, typeClass, ids, snapshots, fromJob) {

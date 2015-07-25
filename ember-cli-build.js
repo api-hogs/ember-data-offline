@@ -6,7 +6,6 @@ module.exports = function(defaults) {
     // Add options here
   });
   app.import(app.bowerDirectory + "/bootstrap/dist/css/bootstrap.min.css");
-  app.import( app.bowerDirectory + '/object.observe/dist/object-observe.min.js', { type: 'test' } );
 
   return app.toTree();
 };

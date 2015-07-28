@@ -53,30 +53,30 @@ test('#find pass when there is no record in store', function(assert) {
   });
 });
 
-//test('#findAll pass', function(assert) {
-//  assert.expect(2);
+test('#findAll pass', function(assert) {
+  assert.expect(3);
   //in store : {id:foo} -> assert for createRecord + job.perform
-//  let job = localstorageJobMock(assert, null, {name : 'findAll'});
+  let job = localstorageJobMock(assert, null, {name : 'findAll'});
 
-//  stop();
-//  job.perform().then(() => {
-//    assert.ok(true,"job.perform");
-//    start();
-//  });
-//});
+  stop();
+  job.perform().then(() => {
+    assert.ok(true,"job.perform");
+    start();
+  });
+});
 
 
-//test('#findMany pass ', function(assert) {
-//   assert.expect(2);
+test('#findMany pass ', function(assert) {
+   assert.expect(3);
    //in store : {id:foo} -> assert for createRecord + job.perform
-//   let job = localstorageJobMock(assert, null, {name : 'findMany', args : ['foo', 'foo2']});
+   let job = localstorageJobMock(assert, null, {name : 'findMany', args : ['foo', 'foo2']});
 
-//   stop();
-//   job.perform().then(() => {
-//     assert.ok(true,"job.perform");
-//     start();
-//   });
-// });
+   stop();
+   job.perform().then(() => {
+     assert.ok(true,"job.perform");
+     start();
+   });
+ });
 
 
  test('adapter #updateRecord is successfully by offline job #deleteRecord', function(assert){
@@ -104,9 +104,9 @@ test('#find pass when there is no record in store', function(assert) {
  });
 
 
-test('pass unhadled function through localforage to adapter', function(assert){
+test('pass unhandled function through localforage to adapter', function(assert){
   assert.expect(2);
-  let job = localstorageJobMock(assert, RSVP.Promise.resolve({id:1}), { name : 'unhadled'});
+  let job = localstorageJobMock(assert, RSVP.Promise.resolve({id:1}), { name : 'unhandled'});
 
   stop();
   job.perform().then(() => {

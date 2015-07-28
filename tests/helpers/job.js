@@ -9,7 +9,7 @@ var resolveMock = function(dataMock){
 };
 var emberModelMock = Ember.Object.extend({
   _createSnapshot(){
-    return { id : 'foo'};
+    return snapshotMock.reopen({ id : 'foo'});
   }
 });
 var storeMock = Ember.Object.extend({
@@ -33,29 +33,62 @@ var storeMock = Ember.Object.extend({
         return key;
       }
     };
+  },
+  metadataFor(){
+    return Ember.Object.create();
   }
 });
 
-var snapshotMock = Ember.Object.create({});
-var adapterСlass = Ember.Object.extend({
+var snapshotMock = Ember.Object.create({
+  record : Ember.Object.create({
+    store : storeMock.create(),
+    __data_offline_meta__ : Ember.Object.create()
+  }),
+  _internalModel : {
+    modelName : 'bar'
+  }
+});
 
+var adapterСlass = Ember.Object.extend({
   createRecord() {
     this.get('assert').ok(true, this.get('adapterType') + " adapter.createRecord was invoked.");
-    return Ember.RSVP.Promise.resolve({bar : {id : 'foo'}});
+    return RSVP.Promise.resolve({bar : {id : 'foo'}});
   },
   updateRecord() {
     this.get('assert').ok(true, this.get('adapterType') +  " adapter.updateRecord was invoked.");
-    return Ember.RSVP.Promise.resolve({bar : {id : 'foo'}});
+    return RSVP.Promise.resolve({bar : {id : 'foo'}});
   },
   deleteRecord(){
     this.get('assert').ok(true, this.get('adapterType') +  " adapter.deleteRecoed was invoked.");
-    return Ember.RSVP.Promise.resolve({bar : {id : 'foo'}});
+    return RSVP.Promise.resolve({bar : {id : 'foo'}});
   },
-  unhadled(){
-    this.get('assert').ok(true, this.get('adapterType') +  " adapter.unhadled was invoked.");
-    return Ember.RSVP.Promise.resolve({bar : {id : 'foo'}});
-  }
+  unhandled(){
+    this.get('assert').ok(true, this.get('adapterType') +  " adapter.unhandled was invoked.");
+    return RSVP.Promise.resolve({bar : {id : 'foo'}});
+  },
+  queue : {
+    attach: callback => {
+      callback(function(){ });
+    }
+  },
+  _namespaceForType(typeClass){
+    this.get('assert').ok(true, this.get('adapterType') +  " adapter._namespaceForType was invoked.");
+    return RSVP.Promise.resolve({ records : Ember.A(), __data_offline_meta__ : Ember.Object.create()});
+  },
+  persistData(){
+    this.get('assert').ok(true, this.get('adapterType') +  " adapter.persistData was invoked.");
+    return RSVP.Promise.resolve();
+  },
+  serializer : Ember.Object.create({
+    serialize(snapshot){
+      return {
+        id : snapshot.id,
+        __data_offline_meta__ : snapshot.record.get('__data_offline_meta__')
+      };
+    }
+  })
 });
+
 var typeClassMock = {
   modelName: 'bar',
 };
@@ -90,12 +123,7 @@ var localstorageJobMock = function(assert, onlineAdapterResp, method = { name : 
     return job;
   }
 
-  if (method.name === 'updateRecord'){
-    job.set('params', [_storeMock, typeClassMock, snapshotMock, onlineAdapterResp]);
-    return job;
-  }
-
-  if (method.name === 'deleteRecord'){
+  if (method.name === 'deleteRecord' || method.name === 'updateRecord'){
     job.set('params', [_storeMock, typeClassMock, snapshotMock, onlineAdapterResp]);
     return job;
   }
@@ -109,19 +137,19 @@ let onlineAdapter = adapterСlass.create({
     assert : assert,
     adapterType : "rest",
     findAll(){
-      assert.ok(true, "rest adapter.findAll was invoked.");
+      this.get('assert').ok(true, this.get('adapterType') + " adapter.findAll was invoked.");
       return Ember.RSVP.Promise.resolve({bar : {id : 'foo'}});
     },
     find(){
-      assert.ok(true, "rest adapter.find was invoked.");
+      this.get('assert').ok(true, this.get('adapterType') + " adapter.find was invoked.");
       return Ember.RSVP.Promise.resolve({bar : {id : 'foo'}});
     },
     findQuery(){
-      assert.ok(true, "rest adapter.findQuery was invoked.");
+      this.get('assert').ok(true, this.get('adapterType') + " adapter.findQuery was invoked.");
       return Ember.RSVP.Promise.resolve({bar : {id : 'foo'}});
     },
     findMany(){
-      assert.ok(true, "rest adapter.findMany was invoked.");
+      this.get('assert').ok(true, this.get('adapterType') + " adapter.findMany was invoked.");
       return Ember.RSVP.Promise.resolve({bar : {id : 'foo'}});
     },
     offlineAdapter : adapterСlass.create({
@@ -129,7 +157,7 @@ let onlineAdapter = adapterСlass.create({
         adapterType : "offline"
     }),
     createOfflineJob(){
-      assert.ok(true, "rest adapter.createOfflineJob was invoked.");
+      this.get('assert').ok(true, this.get('adapterType') + " adapter.createOfflineJob was invoked.");
       return Ember.RSVP.Promise.resolve('foo');
     }
   });

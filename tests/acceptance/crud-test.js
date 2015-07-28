@@ -1,44 +1,10 @@
 import Ember from 'ember';
-import {
-  module, test
-}
-from 'qunit';
+import { module, test } from 'qunit';
 import startApp from '../helpers/start-app';
+import { assertRecordMeta, assertCollectionMeta } from '../helpers/assert-meta';
+import { getLFObjectInfo } from '../helpers/lf-utils';
 
 var App, users, cars, store;
-
-var getLFObjectInfo = function(obj) {
-  let keys = Object.keys(obj);
-  let length = keys.length;
-  let firstObject = obj[keys[0]];
-  let lastObject = obj[keys[length - 1]];
-
-  return {
-    length: length,
-    firstObject: firstObject,
-    lastObject: lastObject,
-    nth(n) {
-      return obj[keys[n]];
-    }
-  };
-};
-
-var _assertMeta = function(isAll, obj, assert) {
-  let fetchedAt = obj['__data_offline_meta__'].fetchedAt;
-  assert.ok(fetchedAt, "Record meta present");
-  if (!isAll) {
-    let updatedAt = obj['__data_offline_meta__'].updatedAt;
-    assert.ok(updatedAt, "Record meta present");
-  }
-};
-
-var assertRecordMeta = function(obj, assert) {
-  _assertMeta(false, obj, assert);
-};
-
-var assertCollectionMeta = function(obj, assert) {
-  _assertMeta(true, obj, assert);
-};
 
 module('Acceptance: CRUD Test', {
   beforeEach: function() {

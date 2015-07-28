@@ -9,7 +9,7 @@ var localforageHelpers = function() {
       let queue = adapter.get('queue.queue');
 
       let interval = window.setInterval(function() {
-        if (queue.length === numberOfRecords + 1) {
+        if (queue.length >= numberOfRecords + 1) {
           queue[numberOfRecords].then(() => {
             window.clearInterval(interval);
             Ember.Test.adapter.asyncEnd();

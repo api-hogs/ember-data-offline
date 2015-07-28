@@ -1,13 +1,15 @@
-<h2>Users</h2>
+<h2>
+  Users
+  <button id="add-user" {{action 'createUser'}} class="btn btn-sm btn-primary">Create User</button>
+</h2>
 <h4>Is sync loaded: {{isUserSyncLoad}}</h4>
-<ul>
+<ul class="list-group col-md-5">
   {{#each model as |user|}}
-    <li>
+    <li class="list-group-item">
+      <span class="badge delete-user" {{action 'deleteUser' user}}>X</span>
       {{#link-to 'users.user' user.id}}
         {{user.firstName}} {{user.lastName}} - {{user.gender}}
       {{/link-to}}
     </li>
   {{/each}}
 </ul>
-<h4>Add user</h4>
-<button {{action 'createUser'}}>Create User</button>

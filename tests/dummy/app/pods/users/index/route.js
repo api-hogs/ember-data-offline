@@ -35,5 +35,8 @@ export default Ember.Route.extend({
         console.log("saved!", result);
       });
     },
+    deleteUser(user){
+      user.destroyRecord();
+    },
   },
 });

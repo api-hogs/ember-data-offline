@@ -4,7 +4,20 @@ import startApp from '../helpers/start-app';
 
 var App, users, cars, store;
 
-module('Acceptance: Smoke Test', {
+var getLFObjectInfo = function(obj) {
+  let keys = Object.keys(obj);
+  let length = keys.length;
+  let firstObject = obj[keys[0]];
+  let lastObject = obj[keys[length - 1]];
+
+  return {
+    length: length,
+    firstObject: firstObject,
+    lastObject: lastObject
+  };
+};
+
+module('Acceptance: CRUD Test', {
   beforeEach: function() {
     Ember.run(() => {
       window.localforage.clear();
@@ -29,8 +42,8 @@ test('localforage is populated on #findAll', function(assert) {
 
   andThen(() => {
     return window.localforage.getItem('foo').then(result => {
-      assert.equal(result.user.records[1].firstName, users[0].firstName, "Record 1 from server === record 1 in locaclforage");
-      assert.equal(result.user.records[2].firstName, users[1].firstName, "Record 2 from server === record 2 in locaclforage");
+      assert.equal(result.user.records[1].firstName, users[0].firstName, "Record 1 from server === record 1 in localforage");
+      assert.equal(result.user.records[2].firstName, users[1].firstName, "Record 2 from server === record 2 in localforage");
       assert.equal(store.peekAll('user').get('firstObject').get('firstName'), users[0].firstName, "Record 1 in store === record 1 from server ");
       assert.equal(store.peekAll('user').get('lastObject').get('firstName'), users[1].firstName, "Record 2 in store === record 2 from server ");
       assert.equal(store.peekAll('user').get('firstObject').get('firstName'), result.user.records[1].firstName, "Record 1 in store === record 1 in localforage");
@@ -58,6 +71,30 @@ test('localforage is populated on #find', function(assert) {
     return window.localforage.getItem('foo').then(result => {
       assert.equal(result.car.records[1].label, cars[0].label);
       assert.equal(result.car.records[2].label, cars[1].label);
+    });
+  });
+});
+
+test('localforage is populated on #createRecord', function(assert) {
+  assert.expect(4);
+
+  visit('/');
+
+  andThen(() => {
+    return click('#add-user');
+  });
+
+  waitForRecordingModel('user', 4);
+
+  andThen(() => {
+    return window.localforage.getItem('foo').then(result => {
+      let users = getLFObjectInfo(result.user.records);
+      let newUser = users.lastObject;
+
+      assert.equal(users.length, 3, "There is new record in localforage");
+      assert.equal(newUser.firstName, "Igor", "Created record from server === created record in localforage");
+      assert.ok(newUser.id.length > 3);
+      assert.equal(newUser.firstName, store.peekRecord('user', newUser.id).get('firstName'), "Created record from store === created record in localforage");
     });
   });
 });

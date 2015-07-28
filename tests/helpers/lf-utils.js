@@ -10,6 +10,12 @@ var getLFObjectInfo = function getLFObjectInfo(obj) {
     lastObject: lastObject,
     nth(n) {
       return obj[keys[n]];
+    },
+    find(prop, val) {
+      let key = keys.filter(key => {
+        return obj[key][prop] === val;
+      })[0];
+      return obj[key];
     }
   };
 };

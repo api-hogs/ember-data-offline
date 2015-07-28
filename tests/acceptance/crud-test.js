@@ -87,7 +87,7 @@ test('createRecord', function(assert) {
   andThen(() => {
     return window.localforage.getItem('foo').then(result => {
       let users = getLFObjectInfo(result.user.records);
-      let newUser = users.lastObject;
+      let newUser = users.find("firstName", "Igor");
 
       assert.equal(users.length, 3, "There is new record in localforage");
       assert.equal(newUser.firstName, "Igor", "Created record from server === created record in localforage");

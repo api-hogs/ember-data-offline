@@ -60,8 +60,7 @@ export default Ember.Mixin.create(baseMixin, {
     return onlineResp;
   },
 
-  deleteRecord(store, type, snapshot, fromJob) {
-    let onlineResp = this._super.apply(this, arguments);
-    return onlineResp;
+  deleteRecord() {
+    return this._super.apply(this, arguments);
   }
 });

@@ -70,28 +70,20 @@ export default Ember.Object.extend(jobMixin, {
 
   createRecord(store, type, snapshot, fromJob) {
     let adapter = this.get('adapter');
+    let apiHandler = handleApiErrors(function() {
+      eraseOne(adapter.get('offlineAdapter'), store, type, snapshot);
+    });
 
-      return adapter.createRecord(store, type, snapshot, fromJob)
-        .then(result => {
-          eraseOne(adapter.get('offlineAdapter'), store, type, snapshot);
-          store.pushPayload(type.modelName, result);
-          let recordId = extractTargetRecordFromPayload(store, type, result).id;
-          persistOne(adapter.get('offlineAdapter'), store, type, recordId);
+    return adapter.createRecord(store, type, snapshot, fromJob)
+      .then(result => {
+        eraseOne(adapter.get('offlineAdapter'), store, type, snapshot);
+        store.pushPayload(type.modelName, result);
+        let recordId = extractTargetRecordFromPayload(store, type, result).id;
+        persistOne(adapter.get('offlineAdapter'), store, type, recordId);
 
-          return result;
-        })
-        .catch(handleApiErrors)
-        .then(result => {
-          if (Ember.isEmpty(result)) {
-            eraseOne(adapter.get('offlineAdapter'), store, type, snapshot);
-          }
-          else {
-            return Ember.RSVP.resolve(result);
-          }
-        }, () => {
-          return Ember.RSVP.reject();
-        });
-
+        return result;
+      })
+      .catch(apiHandler);
   },
 
   updateRecord(store, type, snapshot, fromJob) {

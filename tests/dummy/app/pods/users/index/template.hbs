@@ -6,7 +6,7 @@
 <ul class="list-group col-md-5">
   {{#each model as |user|}}
     <li class="list-group-item">
-      <span class="badge" {{action 'deleteUser' user}}>X</span>
+      <span class="badge delete-user" {{action 'deleteUser' user}}>X</span>
       {{#link-to 'users.user' user.id}}
         {{user.firstName}} {{user.lastName}} - {{user.gender}}
       {{/link-to}}

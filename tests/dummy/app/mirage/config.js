@@ -19,14 +19,15 @@ export default function() {
     var attrs = JSON.parse(request.requestBody)['user'];
     attrs._id = genId();
     delete attrs.id;
-    // return new Mirage.Response(408, null, null); // Need this for testing
+    // return new Mirage.Response(404, null, null); // Need this for testing
     return {dummy_user: attrs};
   });
-  this.put('/users', function(db, request) {
+  this.put('/users/:id', function(db, request) {
     var attrs = JSON.parse(request.requestBody)['user'];
     // return new Mirage.Response(408, null, null); // Need this for testing
     return {dummy_user: attrs};
   });
+  this.del('/users/:id', 'user');
 
   this.get('/companies', function(db, req){
 

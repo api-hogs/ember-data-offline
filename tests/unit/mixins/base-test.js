@@ -4,74 +4,63 @@
 import Ember from 'ember';
 import BaseMixin from 'ember-data-offline/mixins/base';
 import { module, test } from 'qunit';
+import { goOnline, goOffline, getStoreMock, getQueueMock } from '../../helpers/base';
+
 
 const { RSVP } = Ember;
 
 var subject;
 
-var queueMock = Ember.Object.extend({
-  add() {
-    this.get('assert').ok(true, 'queue.add was invoked @' + this.get('encapsulatedIn'));
-  }
-});
-
-var storeMock = Ember.Object.extend({
-  lookupAdapter() {
-    return Ember.Object.create({});
-  }
-});
-
 module('Unit | Mixin | Base', {
   beforeEach: function() {
-    subject = Ember.Object.createWithMixins(BaseMixin, { });
+    subject = Ember.Object.createWithMixins(BaseMixin);
+    goOnline();
   },
   afterEach: function() {
     subject = null;
   }
 });
 
-test('#addToQueue with queue @ store ', (assert) => {
-  assert.expect(1);
+test('it checks online/offline', (assert) => {
+  assert.expect(3);
 
-  let store = storeMock.create({
-    EDOQueue: queueMock.create({
-      assert: assert,
-      encapsulatedIn: 'store'
-    })
+  assert.equal(subject.get('isOnline'), true, 'isOnline true when navigator is online');
+  stop();
+  goOffline().then(() => {
+    assert.equal(subject.get('isOffline'), true, 'isOffline true when navigator is offline');
+    assert.equal(subject.get('isOnline'), false, 'isOnline false when navigator is offline');
+    start();
   });
-
-  let job = Ember.Object.create({});
-  subject.addToQueue(job, store, null);
 });
 
-test('#addToQueue with queue @ baseMixin ', (assert) => {
+test('#addToQueue adds job to queue @ store ', (assert) => {
   assert.expect(1);
 
-  let store = storeMock.create({});
+  let store = getStoreMock();
+  store.EDOQueue = getQueueMock(assert, 'store');
 
   let job = Ember.Object.create({});
-
-  subject.reopen({
-    EDOQueue: queueMock.create({
-      assert: assert,
-      encapsulatedIn: 'baseMixin'
-    })
-  });
 
   subject.addToQueue(job, store, null);
 });
 
+test('#addToQueue adds job to queue @ baseMixin ', (assert) => {
+  assert.expect(1);
 
-test('creating jobs @ baseMixin ', (assert) => {
+  let job = Ember.Object.create({});
+  let store = getStoreMock();
+  subject.EDOQueue = getQueueMock(assert,'baseMixin');
+
+  subject.addToQueue(job, store, null);
+});
+
+
+test('it creates jobs', (assert) => {
   assert.expect(2);
 
-  let store = storeMock.create({
-    EDOQueue: queueMock.create({
-      assert: assert,
-      encapsulatedIn: 'store'
-    })
-  });
-  
+  let store = getStoreMock();
+  store.EDOQueue = getQueueMock(assert, store);
+
   subject.createOnlineJob("find", [store, {modelName : 'bar'}, null, null], null);
   subject.createOfflineJob("find", [store, {modelName : 'bar'}, null, null], store);
 });

@@ -5,52 +5,91 @@ import Ember from 'ember';
 import OfflineMixin from 'ember-data-offline/mixins/offline';
 import Queue from 'ember-data-offline/queue';
 import { module, test } from 'qunit';
-import { goOnline, goOffline } from '../../helpers/offline';
+import { getStoreMock, getQueueMock } from '../../helpers/base';
+import moment from 'moment';
 
-const { Object: emberObject } = Ember;
 
-var AdapterMock;
-var LSAdapterMock = emberObject.create({
+var subject;
+
+var singleResultMock = Ember.Object.create({
+  name : 'foo'
+});
+
+var typeClassMock = Ember.Object.create({
+  modelName : 'bar'
+});
+
+var adapterMock = Ember.Object.create({
+  findAll(){
+    this.get('assert').ok(true, 'findAll was invoked @ adapter');
+    return Ember.RSVP.Promise.resolve([singleResultMock]);
+  },
 });
 
 module('Unit | Mixin | offline',  {
     beforeEach: function(){
-      AdapterMock = Ember.Object.extend(OfflineMixin, {
-       offlineAdapter: LSAdapterMock,
-       container: {
-         lookup: function(name) {
-           return {
-             queue: Queue.create({}),
-           };
-         },
-       },
-      });
-      goOnline();
+      subject = Ember.Object.extend( {
+        __adapterName__: "OFFLINE",
+        findAll(){
+          this.get('assert').ok(true, 'findAll was invoked @ adapter');
+          return Ember.RSVP.Promise.resolve(Ember.A([singleResultMock]));
+        },
+        find(){
+          this.get('assert').ok(true, 'find was invoked @ adapter');
+          return Ember.RSVP.Promise.resolve(singleResultMock));
+        },
+        _namespaceForType(){
+          this.get('assert').ok(true, '_namespaceForType was invoked @ adapter');
+          return Ember.RSVP.Promise.resolve({
+            __data_offline_meta__ : {
+              fetchedAt: moment().subtract(13, 'hours').calendar() //outdated because ttl = 12 hours
+            }
+          });
+        }
+      }).extend(OfflineMixin).create();
+
     },
     afterEach: function(){
-      AdapterMock = null;
-      goOnline();
+      subject = null;
     }
 });
 
-test('it works', function(assert) {
+
+test('findAll',(assert) => {
   assert.expect(2);
 
-  var subject = AdapterMock.create();
-  assert.ok(subject);
-  assert.ok(subject.get('isOnline'), true);
+  let store = getStoreMock();
+
+  subject.set('EDOQueue', getQueueMock(assert, 'store'));
+  subject.set('assert', assert);
+
+  //2 asserts : adapter.findAll + equal
+  stop();
+  subject.findAll(store, typeClassMock, 'sinceToken', { _id: 'foo'}, true).then((result)=>{
+    assert.equal(result.get('firstObject'), singleResultMock, 'returns result');
+    start();
+  });
+
+  //TODO TEST WITH fromJom parameter
+  // stop();
+  // subject.findAll(store, typeClassMock, 'sinceToken', { _id: 'foo'}, 0).then((result)=>{
+  //   assert.equal(result.get('firstObject'), singleResultMock, 'returns result');
+  //   start();
+  // });
 });
 
-test('it checks online', function(assert) {
-  assert.expect(3);
+test('find', (assert)=>{
+  assert.expect(2);
 
-  var subject = AdapterMock.create();
+  let store = getStoreMock();
 
-  assert.equal(subject.get('isOnline'), true, 'isOnline true when navigator is online');
+  subject.set('EDOQueue', getQueueMock(assert, 'store'));
+  subject.set('assert', assert);
+
+  //2 asserts : adapter.findAll + equal
   stop();
-  goOffline().then(() => {
-    assert.equal(subject.get('isOffline'), true, 'isOffline true when navigator is offline');
-    assert.equal(subject.get('isOnline'), false, 'isOnline false when navigator is offline');
+  subject.find(store, typeClassMock, 'sinceToken', { _id: 'foo'}, true).then((result)=>{
+    assert.equal(result.get('firstObject'), singleResultMock, 'returns result');
     start();
   });
 });

@@ -82,7 +82,7 @@ test('createRecord', function(assert) {
     return click('#add-user');
   });
 
-  waitForRecordingModel('user', 3);
+  waitForRecordingModel('user', 4);
 
   andThen(() => {
     return window.localforage.getItem('foo').then(result => {

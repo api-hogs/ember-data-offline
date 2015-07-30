@@ -37,6 +37,7 @@
     "ember-disable-prototype-extensions": "^1.0.0",
     "ember-disable-proxy-controllers": "^1.0.0",
     "ember-export-application-global": "^1.0.2",
+    "ember-localforage-adapter": "git+https://github.com/igorrKurr/ember-localforage-adapter.git",
     "ember-moment": "2.0.1",
     "ember-try": "0.0.7"
   },
@@ -52,8 +53,7 @@
     "synchronization"
   ],
   "dependencies": {
-    "ember-cli-babel": "^5.0.0",
-    "ember-localforage-adapter": "git+https://github.com/igorrKurr/ember-localforage-adapter.git"
+    "ember-cli-babel": "^5.0.0"
   },
   "ember-addon": {
     "configPath": "tests/dummy/config"

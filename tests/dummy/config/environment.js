@@ -20,6 +20,10 @@ module.exports = function(environment) {
     }
   };
 
+  // ENV['ember-data-offline'] = {
+  //   enabled: false
+  // };
+
   if (environment === 'development') {
     // ENV['ember-cli-mirage'] = { enabled: false };
 

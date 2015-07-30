@@ -6,7 +6,6 @@ var defaults = {
 
 export default Ember.Object.extend({
   withCustom: Ember.computed('custom', function() {
-    console.log('UUUUUUUUU', this.get('custom'))
     return Ember.merge(defaults, this.get('custom'));
   }),
   isEnabled: Ember.computed('withCustom', function() {

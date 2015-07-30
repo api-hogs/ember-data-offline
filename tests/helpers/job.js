@@ -1,6 +1,7 @@
 import Ember from 'ember';
 import LocalstorageJob from 'ember-data-offline/jobs/localforage';
 import RESTJob from 'ember-data-offline/jobs/rest';
+import moment from 'moment';
 
 const { RSVP } = Ember;
 
@@ -36,6 +37,11 @@ var storeMock = Ember.Object.extend({
   },
   metadataFor(){
     return Ember.Object.create();
+  },
+  lookupAdapter() {
+    return Ember.Object.create({
+      recordTTL : moment.duration(12, 'hours')
+    });
   }
 });
 
@@ -212,5 +218,7 @@ let onlineAdapter = adapterСlass.create({
 };
 export {
   localstorageJobMock,
-  restJobMock
+  restJobMock,
+  storeMock,
+  snapshotMock
 };

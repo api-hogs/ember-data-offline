@@ -12,6 +12,7 @@ Router.map(function() {
   });
   this.route('companies');
   this.route('offices');
+  this.route('stress');
 });
 
 export default Router;

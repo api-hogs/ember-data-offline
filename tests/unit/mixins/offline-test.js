@@ -11,15 +11,15 @@ import {
 } from '../../helpers/base';
 import moment from 'moment';
 
-
 var subject, store, typeClass, snapshot, expectedResult, expectedResultFromPayload;
+
+store = getStoreMock();
+typeClass = getTypeMock();
 
 module('Unit | Mixin | offline',  {
     beforeEach: function(){
 
-      store = getStoreMock();
       snapshot = getSnapshotMock();
-      typeClass = getTypeMock();
       expectedResult = getResultMock();
       expectedResultFromPayload = getResultFromPayloadMock();
 
@@ -37,13 +37,16 @@ module('Unit | Mixin | offline',  {
     },
     afterEach: function(){
       subject = null;
+      snapshot = null;
+      expectedResult = null;
+      expectedResultFromPayload = null;
     }
 });
 
 
-test('findAll',(assert) => {
-  assert.expect(2);
 
+test('findAll', (assert)=>{
+  assert.expect(2);
   subject.set('assert', assert);
 
   //2 asserts : adapter.findAll + equal
@@ -169,7 +172,6 @@ test('deleteRecord', (assert) => {
 
   subject.set('assert', assert);
 
-  //2 asserts : adapter.deleteRecord + equal
   stop();
   subject.deleteRecord(store, typeClass, snapshot, true).then((result) => {
     assert.ok(result);

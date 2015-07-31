@@ -3,13 +3,11 @@
 
 import Ember from 'ember';
 import OfflineMixin from 'ember-data-offline/mixins/offline';
-import Queue from 'ember-data-offline/queue';
 import { module, test } from 'qunit';
 import {
   getStoreMock, getQueueMock, getSnapshotMock, getAdapterMock,
   getTypeMock, getResultMock, getResultFromPayloadMock
 } from '../../helpers/base';
-import moment from 'moment';
 
 var subject, store, typeClass, snapshot, expectedResult, expectedResultFromPayload;
 

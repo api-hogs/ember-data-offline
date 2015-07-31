@@ -127,6 +127,11 @@ var getAdapterMock = function(adapterName){
       //simulate if param id equals 2 then return empty record
       return (arguments[2] === 'no_record') ? Ember.RSVP.Promise.resolve(Ember.A()) : Ember.RSVP.Promise.resolve(Ember.A([getResultMock()]));
     },
+    findQuery(){
+      this.get('assert').ok(true, `findQuery was invoked @ ${this.get('__adapterName__')} adapter`);
+      //simulate if param id equals 2 then return empty record
+      return Ember.RSVP.Promise.resolve(Ember.A([getResultMock()]));
+    },
     findMany(){
       this.get('assert').ok(true, `findMany was invoked @ ${this.get('__adapterName__')} adapter`);
       //simulate if param id equals 2 then return empty record

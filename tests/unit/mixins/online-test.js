@@ -46,7 +46,7 @@ test('findAll', (assert)=>{
 });
 
 test('find', (assert)=>{
-  assert.expect(5);
+  assert.expect(4);
 
   subject.set('assert',assert);
 
@@ -60,7 +60,7 @@ test('find', (assert)=>{
 
   subject.set('EDOQueue', getQueueMock(assert,'onlineMixin'));
   store.set('isOfflineEnabled',true);
-  //asserts 3: find call + queue.add + equal
+  //asserts 2: find call + equal
   stop();
   subject.find(store, typeClass, 'foo', snapshot, false).then((record)=>{
     assert.equal(record.name,expectedResult.name);

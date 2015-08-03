@@ -1,4 +1,5 @@
 <h2>Companies</h2>
+<button class="btn btn-warning" {{action 'reload'}}>Reload</button>
 <ul>
   {{#each model as |company|}}
     <li>{{company.name}} in <i>{{company.office.city.name}}</i> at address <b>{{company.office.address}}</b></li>

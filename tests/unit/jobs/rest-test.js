@@ -17,10 +17,11 @@ module('Unit | Job | REST',  {
 });
 
 test('rest job #find call adapter #find', function(assert) {
-  assert.expect(3);
+  assert.expect(4);
   //adapter.find was invoked.
   //store.pushPayload was invoked
   //job.perform
+  //adapter.createOfflineJob was invoked.
 
   let job = restJobMock(assert, {name : 'find', args : 'foo'});
 
@@ -32,10 +33,11 @@ test('rest job #find call adapter #find', function(assert) {
 });
 
 test('rest job #findAll call adapter #findAll', function(assert) {
-  assert.expect(3);
+  assert.expect(4);
   //adapter.find was invoked.
   //store.pushPayload was invoked
   //job.perform
+  //adapter.createOfflineJob was invoked.
 
   let job = restJobMock(assert, {name : 'find'});
 

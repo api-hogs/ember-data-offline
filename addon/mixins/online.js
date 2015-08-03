@@ -8,16 +8,8 @@ export default Ember.Mixin.create(baseMixin, {
     return this._super.apply(this, arguments);
   },
 
-  find: function(store, typeClass, id, snapshot, fromJob) {
-    let onlineResp = this._super.apply(this, arguments);
-    return onlineResp.then(resp => {
-
-      //TODO move all this to online job
-      if (!fromJob && store.get('isOfflineEnabled')) {
-        this.createOfflineJob('find', [store, typeClass, id], store);
-      }
-      return resp;
-    });
+  find: function() {
+    return this._super.apply(this, arguments);
   },
 
   findQuery: function(store, type, query, recordArray, fromJob) {

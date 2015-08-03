@@ -37,6 +37,9 @@ export default DS.Store.extend({
   forceFetchAll(modelName) {
     this.adapterFor(modelName).createOnlineJob('findAll', [this, this.modelFor(modelName)]);
   },
+  forceFetchRecord(modelName, id) {
+    this.adapterFor(modelName).createOnlineJob('find', [this, this.modelFor(modelName), id]);
+  },
 
   adapterFor() {
     if (!mainConfig.get('isEnabled')) {

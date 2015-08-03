@@ -7,6 +7,9 @@ export default Ember.Route.extend({
   actions: {
     updateUser() {
       this.get('currentModel').save();
+    },
+    reload(id) {
+      this.store.forceFetchRecord('user', id);
     }
   }
 });

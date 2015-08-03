@@ -34,6 +34,10 @@ export default DS.Store.extend({
   syncLoads: syncLoads.create(),
   EDOQueue: Queue.create(),
   isOfflineEnabled: mainConfig.get('isEnabled'),
+  forceFetchAll(modelName) {
+    this.adapterFor(modelName).createOnlineJob('findAll', [this, this.modelFor(modelName)]);
+  },
+
   adapterFor() {
     if (!mainConfig.get('isEnabled')) {
       return this._super.apply(this, arguments);

@@ -15,7 +15,6 @@ export default Ember.Object.extend(jobMixin, {
 
   findAll(store, typeClass, sinceToken) {
     let adapterResp = this.get('adapter').findAll(store, typeClass, sinceToken);
-    // store.set(`syncLoads.findAll.${typeClass.modelName}`, false);
 
     adapterResp.then(adapterPayload => {
       new Ember.RSVP.Promise(resolve => {
@@ -24,8 +23,6 @@ export default Ember.Object.extend(jobMixin, {
       }).then(() => {
         this.get('adapter').createOfflineJob('findAll', [store, typeClass, sinceToken, null, true], store);
       });
-
-      // store.set(`syncLoads.findAll.${typeClass.modelName}`, true);
     });
 
     return adapterResp;

@@ -15,7 +15,7 @@ export default Ember.Object.extend(jobMixin, {
 
   findAll(store, typeClass, sinceToken) {
     let adapterResp = this.get('adapter').findAll(store, typeClass, sinceToken);
-    // store.set(`syncLoads.findAll.${typeClass.modelName}`, false);
+    store.set(`syncLoads.findAll.${typeClass.modelName}`, false);
 
     adapterResp.then(adapterPayload => {
       new Ember.RSVP.Promise(resolve => {
@@ -23,24 +23,27 @@ export default Ember.Object.extend(jobMixin, {
         return resolve();
       }).then(() => {
         this.get('adapter').createOfflineJob('findAll', [store, typeClass, sinceToken, null, true], store);
+        store.set(`syncLoads.findAll.${typeClass.modelName}`, true);
       });
 
-      // store.set(`syncLoads.findAll.${typeClass.modelName}`, true);
     });
 
     return adapterResp;
   },
 
-  find(store, typeClass, id, snapshot) {
-    let adapterResp = this.get('adapter').find(store, typeClass, id, snapshot);
+  find(store, typeClass, id) {
+    let adapterResp = this.get('adapter').find(store, typeClass, id);
     store.set(`syncLoads.find.${typeClass.modelName}`, false);
 
     adapterResp.then(adapterPayload => {
-      if (!Ember.isEmpty(adapterPayload)) {
+      new Ember.RSVP.Promise(resolve => {
         store.pushPayload(typeClass.modelName, adapterPayload);
-
+        return resolve();
+      }).then(() => {
+        this.get('adapter').createOfflineJob('find', [store, typeClass, id, null, true], store);
         store.set(`syncLoads.find.${typeClass.modelName}`, true);
-      }
+      });
+
     });
 
     return adapterResp;

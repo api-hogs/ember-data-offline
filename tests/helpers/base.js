@@ -56,6 +56,7 @@ var getStoreMock = function() {
     },
     lookupAdapter() {
       return Ember.Object.create({
+        collectionTTL : moment.duration(12, 'hours'),
         recordTTL : moment.duration(12, 'hours')
       });
     }

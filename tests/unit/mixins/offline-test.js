@@ -44,20 +44,27 @@ module('Unit | Mixin | offline',  {
 
 
 test('findAll', (assert)=>{
-  assert.expect(2);
+  assert.expect(5);
   subject.set('assert', assert);
 
   //2 asserts : adapter.findAll + equal
   stop();
-  subject.findAll(store, typeClass, 'sinceToken', [snapshot], true).then((result)=>{
-    assert.equal(result[0].name, expectedResult.name);
+  subject.findAll(store, typeClass, 'sinceToken', [snapshot], true).then((results)=>{
+    assert.equal(results[0].name, expectedResult.name);
     start();
   });
-  //TODO TEST WITH fromJom parameter
+
+  subject.set('EDOQueue', getQueueMock(assert, 'offlineMixin'));
+  //2 asserts : adapter.findAll + createOnlineJob + equal
+  stop();
+  subject.findAll(store, typeClass, 'sinceToken', [snapshot], false).then((results)=>{
+      assert.equal(results[0].name, expectedResult.name);
+      start();
+  });
 });
 
 test('find', (assert)=>{
-  assert.expect(4);
+  assert.expect(7);
 
   subject.set('assert', assert);
 
@@ -74,18 +81,25 @@ test('find', (assert)=>{
     assert.equal(result.id, 'no_record');
     start();
   });
-  //TODO TEST WITH fromJom parameter
+
+  subject.set('EDOQueue', getQueueMock(assert, 'offlineMixin'));
+  //3 asserts : adapter.find + createOnlineJob + equal
+  stop();
+  subject.find(store, typeClass, 'foo', snapshot, false).then((result)=>{
+      assert.equal(result.name, expectedResult.name);
+      start();
+  });
 });
 
 test('query', (assert)=>{
-  assert.expect(5);
+  assert.expect(8);
 
   subject.set('assert', assert);
 
   //2 asserts : adapter.query + equal
   stop();
-  subject.query(store, typeClass, {name : 'foo'}, [snapshot], true).then((result)=>{
-    assert.equal(result[0].name, expectedResult.name);
+  subject.query(store, typeClass, {name : 'foo'}, [snapshot], true).then((results)=>{
+    assert.equal(results[0].name, expectedResult.name);
     start();
   });
 
@@ -93,33 +107,48 @@ test('query', (assert)=>{
 
   //3 asserts : adapter.query + onlineAdapter.findQuery + equal
   stop();
-  subject.query(store, typeClass, 'no_record', [snapshot], true).then((result)=>{
-    assert.equal(result[0].name, expectedResultFromPayload.name);
+  subject.query(store, typeClass, 'no_record', [snapshot], true).then((results)=>{
+    assert.equal(results[0].name, expectedResultFromPayload.name);
     start();
   });
-  //TODO TEST WITH fromJom parameter=false
+
+  subject.set('EDOQueue', getQueueMock(assert, 'offlineMixin'));
+  //3 asserts : adapter.query + createOnlineJob + equal
+  stop();
+  subject.query(store, typeClass, {name : 'foo'}, [snapshot], false).then((results)=>{
+      assert.equal(results[0].name, expectedResult.name);
+      start();
+  });
+
 });
 
 
 test('findMany', (assert)=>{
-  assert.expect(4);
+  assert.expect(7);
 
   subject.set('assert', assert);
 
   //2 asserts : adapter.findMany + equal
   stop();
-  subject.findMany(store, typeClass, ['foo'], [snapshot], true).then((result)=>{
-    assert.equal(result[0].name, expectedResult.name);
+  subject.findMany(store, typeClass, ['foo'], [snapshot], true).then((results)=>{
+    assert.equal(results[0].name, expectedResult.name);
     start();
   });
 
   //2 asserts : adapter.findMany  + equal
   stop();
-  subject.findMany(store, typeClass, ['no_record'], [snapshot], true).then((result)=>{
-    assert.equal(result[0].id, 'no_record', "returns stub");
+  subject.findMany(store, typeClass, ['no_record'], [snapshot], true).then((results)=>{
+    assert.equal(results[0].id, 'no_record', "returns stub");
     start();
   });
-  //TODO TEST WITH fromJom parameter=false
+
+  subject.set('EDOQueue', getQueueMock(assert, 'offlineMixin'));
+  //3 asserts : adapter.findMany + createOnlineJob + equal
+  stop();
+  subject.findMany(store, typeClass, ['foo'], [snapshot], false).then((results)=>{
+    assert.equal(results[0].name, expectedResult.name);
+    start();
+  });
 });
 
 

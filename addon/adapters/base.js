@@ -33,7 +33,6 @@ export default DS.RESTAdapter.extend(onlineMixin, {
           json.id = json[primaryKey];
         }
         snapshot.eachRelationship((name, relationship) => {
-          console.log('DDDD', name, relationship);
           if (relationship.kind === 'hasMany' && Ember.isEmpty(json[name])) {
             json[name] = [];
           }

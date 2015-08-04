@@ -1,0 +1,24 @@
+{
+  "name": "ember-data-offline",
+  "description": "Ember data extension to allow offline persistance and caching",
+  "version": "0.0.1",
+  "options": {
+    "external": {
+      "data": [
+        {
+          "base": "http://emberjs.com/api/",
+          "json": "http://builds.emberjs.com/tags/v1.13.1/ember-docs.json"
+        },
+        {
+          "base": "http://emberjs.com/api/",
+          "json": "http://builds.emberjs.com/tags/v1.13.1/ember-data-docs.json"
+        }
+      ]
+    },
+    "linkNatives": "true",
+    "paths": [
+      "./addon"
+    ],
+    "outdir": "./output"
+  }
+}

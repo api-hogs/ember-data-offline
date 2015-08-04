@@ -20,7 +20,6 @@ export default Ember.Object.extend(baseMixin, {
     let store = this.get('store');
     let self = this;
 
-
     if (this.get('isOffline')) {
       let job = Ember.Object.extend(jobMixin).create({
         task() {
@@ -36,9 +35,9 @@ export default Ember.Object.extend(baseMixin, {
         store.EDOQueue.add(job);
       }
 
+      //TODO redesign this
       if (params && params.modelName) {
         let modelName = params.modelName;
-        let adapter = store.adapterFor(modelName);
         let job = Ember.Object.extend(jobMixin).create({
           task() {
             let _method = method.toLowerCase();

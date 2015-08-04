@@ -39,7 +39,7 @@ export default Ember.Object.extend({
     return pendingJob || retryJob;
   },
 
-  pendingJobObserver: Ember.observer('pendingJobs.[]','activeJobs.[]', function() {
+  pendingJobObserver: Ember.observer('pendingJobs.[]', 'activeJobs.[]', function() {
     if (this.get('pendingJobs.length') <= 0) {
       return;
     }
@@ -49,6 +49,11 @@ export default Ember.Object.extend({
         this.runJob(job);
       }
     }
+  }),
+
+  failureJobsObserver: Ember.observer('failureJobs.[]', function() {
+    let job = this.get('failureJobs.lastObject');
+    console.log('DDDDDD', job);
   }),
 
   add: function(job, onDemandKey) {

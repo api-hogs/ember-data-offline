@@ -22,10 +22,10 @@ export default Ember.Route.extend({
         let data = {
           firstName: 'Aaron'
         };
-        this.EDORequest.exec(url, 'PUT', data, {
-          modelName: 'user',
-          id: '1'
-        })
+        this.EDORequest.exec(url, 'PUT', data, () => {
+          this.set('currentModel.firstObject.firstName', 'Aaron');
+          this.get('currentModel.firstObject').save();
+        });
       },
       deleteUser(user) {
         user.destroyRecord();

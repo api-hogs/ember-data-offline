@@ -1,3 +1,6 @@
+/**
+@module ember-data-offline
+**/
 import Ember from 'ember';
 import baseMixin from 'ember-data-offline/mixins/base';
 import debug from 'ember-data-offline/utils/debug';
@@ -5,6 +8,12 @@ import extractTargetRecordFromPayload from 'ember-data-offline/utils/extract-onl
 import { isExpiredOne, isExpiredMany, isExpiredAll } from 'ember-data-offline/utils/expired';
 import { updateMeta } from 'ember-data-offline/utils/meta';
 
+/**
+@class Offline
+@extends Ember.Mixin
+@uses Base
+@constructor
+**/
 export default Ember.Mixin.create(baseMixin, {
   shouldReloadAll(store, snapshots) {
     let modelName = snapshots.type.modelName;
@@ -37,12 +46,33 @@ export default Ember.Mixin.create(baseMixin, {
     return false;
   },
 
+  /**
+  Returns the metadata for a given. Returned metadata consists information about
+  last fetched and last updated time.
+
+  @method metadataForType
+  @param typeClass {DS.Model}
+  @returns metadata {Object}
+  **/
   metadataForType(typeClass) {
     return this._namespaceForType(typeClass).then(namespace => {
       return namespace["__data_offline_meta__"];
     });
   },
 
+  /**
+  Overrides the method of an extended adapter (offline). Fetches a JSON array for all of the records for a given type
+  from offline adapter. If fetched records are expired then tries to create online job of fetching the records
+  from online adapter and persisting them offline. Returns a promise for the resulting payload.
+
+  @method findAll
+  @param store {DS.Store}
+  @param typeClass {DS.Model}
+  @param sinceToken {String}
+  @param snapshots {Array}
+  @param fromJob {boolean}
+  @return promise {Promise}
+  **/
   findAll: function(store, typeClass, sinceToken, snapshots, fromJob) {
     debug('findAll offline', typeClass.modelName);
     return this._super.apply(this, arguments).then(records => {
@@ -58,6 +88,18 @@ export default Ember.Mixin.create(baseMixin, {
     });
   },
 
+  /**
+  Overrides the method of an extended adapter (offline). Fetches a JSON for a given type and ID
+  from offline adapter. If fetched record is expired then tries to create online job of fetching the record
+  from online adapter and persisting it offline. Returns a promise for the resulting payload.
+  @method find
+  @param store {DS.Store}
+  @param typeClass {DS.Model}
+  @param id {String}
+  @param snapshot {DS.Snapshot}
+  @param fromJob {boolean}
+  @return promise {Promise}
+  **/
   find: function(store, typeClass, id, snapshot, fromJob) {
     return this._super.apply(this, arguments).then(record => {
       if (!fromJob) {
@@ -75,6 +117,19 @@ export default Ember.Mixin.create(baseMixin, {
     });
   },
 
+  /**
+  Overrides the method of an extended adapter (offline). Fetches a JSON array for the records that match a particular query
+  from offline adapter. If fetched records are expired then tries to create online job of fetching the records
+  from online adapter and persisting them offline. Returns a promise for the resulting payload.
+
+  @method query
+  @param store {DS.Store}
+  @param typeClass {DS.Model}
+  @param query {Object}
+  @param recordArray {Array}
+  @param fromJob {boolean}
+  @return promise {Promise}
+  **/
   query: function(store, typeClass, query, recordArray, fromJob) {
     return this._super.apply(this, arguments).then(records => {
       //TODO think how to remove this dirty hasck
@@ -92,6 +147,19 @@ export default Ember.Mixin.create(baseMixin, {
     });
   },
 
+  /**
+  Overrides the method of an extended adapter (offline). Fetches a JSON array for  a given type and IDs
+  from offline adapter. If fetched records are expired then tries to create online job of fetching the records
+  from online adapter and persisting them offline. Returns a promise for the resulting payload.
+
+  @method findMany
+  @param store {DS.Store}
+  @param typeClass {DS.Model}
+  @param ids {Array}
+  @param snapshots {Array}
+  @param fromJob {boolean}
+  @return promise {Promise}
+  **/
   findMany: function(store, typeClass, ids, snapshots, fromJob) {
     // debug('findMany offline', type.modelName);
     return this._super.apply(this, arguments).then(records => {
@@ -112,6 +180,17 @@ export default Ember.Mixin.create(baseMixin, {
     });
   },
 
+  /**
+  Called by the store when a newly created record is saved via the `save` method on a model record instance.
+
+  Creates an online job for creating record and calls the implementation method of parrent offline adapter.
+  @method createRecord
+  @param store {DS.Store}
+  @param type {DS.Model}
+  @param snapshot {DS.Snapshot}
+  @param fromJob {boolean}
+  @return promise {Promise}
+  **/
   createRecord(store, type, snapshot, fromJob) {
     updateMeta(snapshot);
 
@@ -126,7 +205,18 @@ export default Ember.Mixin.create(baseMixin, {
 
     return this._super.apply(this, [store, type, snapshot]);
   },
+  /**
+  Called by the store when an existing record is saved
+  via the `save` method on a model record instance.
 
+  Creates an online job for updating record and calls the implementation method of parrent offline adapter.
+  @method createRecord
+  @param store {DS.Store}
+  @param type {DS.Model}
+  @param snapshot {DS.Snapshot}
+  @param fromJob {boolean}
+  @return promise {Promise}
+  **/
   updateRecord(store, type, snapshot, fromJob) {
     if (!fromJob) {
       this.createOnlineJob('updateRecord', [store, type, snapshot, true]);

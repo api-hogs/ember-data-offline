@@ -1,90 +1,62 @@
-/* global localstorage */
 import Ember from 'ember';
 import baseMixin from 'ember-data-offline/mixins/base';
 import jobMixin from 'ember-data-offline/mixins/job';
 
-export default Ember.Object.createWithMixin(baseMixin, {
-  init: function() {
-    this.set('offlineAdapter', this);
-    this.set('onlineAdapter', this);
-  },
+// var mapHttpToAdapter = {
+//   'post': 'createRecord',
+//   'put': 'updateRecord',
+//   'patch': 'updateRecord',
+//   'delete': 'deleteRecord',
+// };
 
-  createOfflineJob(url, onlineResp, store) {
-    let caller = this;
-    let job = Ember.Object.extend(jobMixin).create({
-      task() {
-        caller.persistOffline(url, onlineResp);
+// var getAdapterAction = function(verb) {
+//   return mapHttpToAdapter[verb.toLowerCase()];
+// };
+
+export default Ember.Object.extend(baseMixin, {
+  store: Ember.inject.service(),
+
+  exec(url, method, data, params) {
+    let store = this.get('store');
+    let self = this;
+
+
+    if (this.get('isOffline')) {
+      let job = Ember.Object.extend(jobMixin).create({
+        task() {
+          return self.ajax(url, method, data);
+        }
+      });
+      store.EDOQueue.add(job);
+
+      if (params && typeof params === 'function') {
+        let job = Ember.Object.extend(jobMixin).create({
+          task: params
+        });
+        store.EDOQueue.add(job);
       }
-    });
-    this.addToQueue(job, store);
-  },
 
-  createOnlineJob(url, method, data, store) {
-    let caller = this;
-    let job = Ember.Object.extend(jobMixin).create({
-      task() {
-        caller.ajax(url, method, data);
+      if (params && params.modelName) {
+        let modelName = params.modelName;
+        let adapter = store.adapterFor(modelName);
+        let job = Ember.Object.extend(jobMixin).create({
+          task() {
+            let _method = method.toLowerCase();
+            if (_method === 'put' || _method === 'patch') {
+              store.findRecord(modelName, params.id).then(record => {
+                if (!Ember.isEmpty(record)) {
+                  record.setProperties(data);
+                  record.save();
+                }
+              });
+            }
+          }
+        });
+        store.EDOQueue.add(job);
       }
-    });
-    this.addToQueue(job, store);
-  },
-
-  get(url, store) {
-    this.make(url, 'get', null, store);
-  },
-
-  post(url, data, store) {
-    this.make(url, 'post', data, store);
-  },
-
-  put(url, data, store) {
-    this.make(url, 'put', data, store);
-  },
-
-  delete(url, store) {
-    this.make(url, 'delete', null, store);
-  },
-
-  //fetch stands for online requests and peek for offline ones
-
-  make(url, method, data, store) {
-    return Ember.RSVP.resolve().then(() => {
-      if (this.get('isOnline')) {
-        this.fetch(url, method, data, store);
-      } else {
-        this.peek(url, method, data, store);
-      }
-    }).catch(console.log.bind(console));
-  },
-
-  fetch(url, method, data, store) {
-    let onlineResp = this.ajax(url, method, data);
-    this.createOfflineJob(url, onlineResp, store);
-    return onlineResp;
-  },
-
-  peek(url, method, data, store) {
-    let offlineResp = this.requestOffline(url, method, data);
-    this.createOnlineJob(url, method, data, store);
-    return offlineResp;
-  },
-
-  requestOffline(url, method, data) {
-    let _method = method.toLowerCase();
-    if (_method === 'get') {
-      localstorage.getItem(url);
-    } else if (_method === 'post' || _method === 'put' || _method === 'patch') {
-      localstorage.setItem(url, data);
-    } else if (_method === 'delete') {
-      localstorage.removeItem(url);
     }
-    return Ember.RSVP.Promise.resolve();
-  },
 
-  persistOffline(key, onlineResp) {
-    onlineResp.then((data) => {
-      localstorage.setItem(key, data);
-    });
+    return this.ajax(url, method, data);
   },
 
   _defaultParamsForOnline: Ember.computed({
@@ -103,6 +75,7 @@ export default Ember.Object.createWithMixin(baseMixin, {
       return defaults;
     }
   }),
+
   ajax: function(url, method, data) {
     let opts = {
       url: url,

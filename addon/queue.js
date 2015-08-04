@@ -26,7 +26,7 @@ export default Ember.Object.extend({
     this.get('activeJobs').pushObject(job);
     Ember.run.later(() => {
       this.process(job);
-    }, this.get('delay'));
+    }, job.get('delay') || this.get('delay'));
   },
 
   isJobExist(job) {
@@ -70,6 +70,7 @@ export default Ember.Object.extend({
       this.get('activeJobs').removeObject(job);
       this.get('retryJobs').removeObject(job);
     }, () => {
+
       this.get('activeJobs').removeObject(job);
       queue.get('retryJobs').removeObject(job);
 

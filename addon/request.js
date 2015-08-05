@@ -8,7 +8,6 @@ export default Ember.Object.extend(baseMixin, {
 
   exec(url, method, data, params) {
     let store = this.get('store');
-    let self = this;
 
     if (this.get('isOffline')) {
       let job = ajaxJob.create({

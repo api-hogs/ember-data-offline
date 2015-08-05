@@ -1,66 +1,70 @@
-import Ember from 'ember';
-import { module, test } from 'qunit';
-import startApp from '../helpers/start-app';
-import { assertRecordMeta, assertCollectionMeta } from '../helpers/assert-meta';
-import { getLFObjectInfo } from '../helpers/lf-utils';
+/*TODO move this to special category of tests like load test 
+ * or do not run on trevis somehow
+ * for now run manually*/
 
-var App, store;
+// import Ember from 'ember';
+// import { module, test } from 'qunit';
+// import startApp from '../helpers/start-app';
+// import { assertRecordMeta, assertCollectionMeta } from '../helpers/assert-meta';
+// import { getLFObjectInfo } from '../helpers/lf-utils';
 
-module('Acceptance: Stress Test', {
-  beforeEach: function() {
-    Ember.run(() => {
-      window.localforage.clear();
-    });
-    App = startApp();
+// var App, store;
 
-    server.createList('user', 1000);
-    server.createList('car', 1000);
-    server.createList('company', 1000);
-    server.createList('office', 1000);
-    server.createList('city', 1000);
+// module('Acceptance: Stress Test', {
+//   beforeEach: function() {
+//     Ember.run(() => {
+//       window.localforage.clear();
+//     });
+//     App = startApp();
 
-    store = App.__container__.lookup('service:store');
-  },
-  afterEach: function() {
-    Ember.run(App, 'destroy');
-  }
-});
+//     server.createList('user', 1000);
+//     server.createList('car', 1000);
+//     server.createList('company', 1000);
+//     server.createList('office', 1000);
+//     server.createList('city', 1000);
 
-test('findAll', function(assert) {
-  assert.expect(10);
+//     store = App.__container__.lookup('service:store');
+//   },
+//   afterEach: function() {
+//     Ember.run(App, 'destroy');
+//   }
+// });
 
-  visit('/stress');
+// test('findAll', function(assert) {
+//   assert.expect(10);
 
-  waitForRecordingModel('car', 3);
+//   visit('/stress');
 
-  andThen(() => {
-    return window.localforage.getItem('foo').then(result => {
-      assert.equal(getLFObjectInfo(result.car.records).length, 1000);
-      assertCollectionMeta(result.car, assert);
+//   waitForRecordingModel('car', 3);
 
-      assert.equal(getLFObjectInfo(result.city.records).length, 1000);
-      assertCollectionMeta(result.city, assert);
+//   andThen(() => {
+//     return window.localforage.getItem('foo').then(result => {
+//       assert.equal(getLFObjectInfo(result.car.records).length, 1000);
+//       assertCollectionMeta(result.car, assert);
 
-      assert.equal(getLFObjectInfo(result.company.records).length, 1000);
-      assertCollectionMeta(result.company, assert);
-    });
-  });
+//       assert.equal(getLFObjectInfo(result.city.records).length, 1000);
+//       assertCollectionMeta(result.city, assert);
 
-  waitForRecordingModel('user');
+//       assert.equal(getLFObjectInfo(result.company.records).length, 1000);
+//       assertCollectionMeta(result.company, assert);
+//     });
+//   });
 
-  andThen(() => {
-    return window.localforage.getItem('foo').then(result => {
-      assert.equal(getLFObjectInfo(result.user.records).length, 1000);
-      assertCollectionMeta(result.user, assert);
-    });
-  });
+//   waitForRecordingModel('user');
 
-  waitForRecordingModel('office');
+//   andThen(() => {
+//     return window.localforage.getItem('foo').then(result => {
+//       assert.equal(getLFObjectInfo(result.user.records).length, 1000);
+//       assertCollectionMeta(result.user, assert);
+//     });
+//   });
 
-  andThen(() => {
-    return window.localforage.getItem('foo').then(result => {
-      assert.equal(getLFObjectInfo(result.office.records).length, 1000);
-      assertCollectionMeta(result.office, assert);
-    });
-  });
-});
+//   waitForRecordingModel('office');
+
+//   andThen(() => {
+//     return window.localforage.getItem('foo').then(result => {
+//       assert.equal(getLFObjectInfo(result.office.records).length, 1000);
+//       assertCollectionMeta(result.office, assert);
+//     });
+//   });
+// });

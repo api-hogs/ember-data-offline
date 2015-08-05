@@ -1,6 +1,7 @@
 import Ember from 'ember';
 import baseMixin from 'ember-data-offline/mixins/base';
 import jobMixin from 'ember-data-offline/mixins/job';
+import ajaxJob from 'ember-data-offline/jobs/ajax';
 
 // var mapHttpToAdapter = {
 //   'post': 'createRecord',
@@ -21,10 +22,9 @@ export default Ember.Object.extend(baseMixin, {
     let self = this;
 
     if (this.get('isOffline')) {
-      let job = Ember.Object.extend(jobMixin).create({
-        task() {
-          return self.ajax(url, method, data);
-        }
+      let job = ajaxJob.create({
+        ajax: this.ajax,
+        params: [url, method, data]
       });
       store.EDOQueue.add(job);
 

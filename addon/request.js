@@ -3,17 +3,6 @@ import baseMixin from 'ember-data-offline/mixins/base';
 import jobMixin from 'ember-data-offline/mixins/job';
 import ajaxJob from 'ember-data-offline/jobs/ajax';
 
-// var mapHttpToAdapter = {
-//   'post': 'createRecord',
-//   'put': 'updateRecord',
-//   'patch': 'updateRecord',
-//   'delete': 'deleteRecord',
-// };
-
-// var getAdapterAction = function(verb) {
-//   return mapHttpToAdapter[verb.toLowerCase()];
-// };
-
 export default Ember.Object.extend(baseMixin, {
   store: Ember.inject.service(),
 
@@ -23,6 +12,8 @@ export default Ember.Object.extend(baseMixin, {
 
     if (this.get('isOffline')) {
       let job = ajaxJob.create({
+        retryCount: 20,
+        retryDelay: 1800000,
         ajax: this.ajax,
         params: [url, method, data]
       });
@@ -31,25 +22,6 @@ export default Ember.Object.extend(baseMixin, {
       if (params && typeof params === 'function') {
         let job = Ember.Object.extend(jobMixin).create({
           task: params
-        });
-        store.EDOQueue.add(job);
-      }
-
-      //TODO redesign this
-      if (params && params.modelName) {
-        let modelName = params.modelName;
-        let job = Ember.Object.extend(jobMixin).create({
-          task() {
-            let _method = method.toLowerCase();
-            if (_method === 'put' || _method === 'patch') {
-              store.findRecord(modelName, params.id).then(record => {
-                if (!Ember.isEmpty(record)) {
-                  record.setProperties(data);
-                  record.save();
-                }
-              });
-            }
-          }
         });
         store.EDOQueue.add(job);
       }

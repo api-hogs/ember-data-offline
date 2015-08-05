@@ -115,11 +115,6 @@ export default Ember.Object.extend({
     }
   }),
 
-  failureJobsObserver: Ember.observer('failureJobs.[]', function() {
-    let job = this.get('failureJobs.lastObject');
-    console.log('DDDDDD', job);
-  }),
-
   /**
   Adds job to queue. if onDemandKey param was passed, then job will be stored as 'onDemand'
   and will be processed on demand.
@@ -171,7 +166,7 @@ export default Ember.Object.extend({
         queue.get('retryJobs').pushObject(job);
         Ember.run.later(() => {
           queue.process(job);
-        }, queue.get('retryOnFailureDelay'));
+        }, job.get('retryDelay') || queue.get('retryOnFailureDelay'));
       } else {
         queue.get('retryJobs').removeObject(job);
         queue.get('failureJobs').pushObject(job);

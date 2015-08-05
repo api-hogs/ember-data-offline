@@ -9,6 +9,8 @@ import { isExpiredOne, isExpiredMany, isExpiredAll } from 'ember-data-offline/ut
 import { updateMeta } from 'ember-data-offline/utils/meta';
 
 /**
+Ofline mixin redefines all adapter methods for finding, creation, deletion to to make request to offline storage.
+
 @class Offline
 @extends Ember.Mixin
 @uses Base
@@ -181,9 +183,9 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   /**
-  Called by the store when a newly created record is saved via the `save` method on a model record instance.
-
-  Creates an online job for creating record and calls the implementation method of parrent offline adapter.
+  Called  when a newly created record is saved via the `save` method on a model record instance.
+  If this method was called from Queue(fromJob) then it would create an online job for creation record.
+  Calls the implementation method of parrent offline adapter.
   @method createRecord
   @param store {DS.Store}
   @param type {DS.Model}
@@ -206,11 +208,12 @@ export default Ember.Mixin.create(baseMixin, {
     return this._super.apply(this, [store, type, snapshot]);
   },
   /**
-  Called by the store when an existing record is saved
+  Called when an existing record is saved
   via the `save` method on a model record instance.
 
-  Creates an online job for updating record and calls the implementation method of parrent offline adapter.
-  @method createRecord
+  If this method was called from Queue(fromJob) then it would create an online job for updating record.
+  Calls the implementation method of parrent offline adapter.
+  @method updateRecord
   @param store {DS.Store}
   @param type {DS.Model}
   @param snapshot {DS.Snapshot}
@@ -225,7 +228,17 @@ export default Ember.Mixin.create(baseMixin, {
     updateMeta(snapshot);
     return this._super.apply(this, [store, type, snapshot]);
   },
-
+  /**
+  Called when a record is deleted.
+  If this method was called from Queue(fromJob) then it would create an online job for deletion record.
+  Calls the implementation method of parrent offline adapter.
+  @method deleteRecord
+  @param store {DS.Store}
+  @param type {DS.Model}
+  @param snapshot {DS.Snapshot}
+  @param fromJob {boolean}
+  @return promise {Promise}
+  **/
   deleteRecord(store, type, snapshot, fromJob) {
     if (!fromJob) {
       this.createOnlineJob('deleteRecord', [store, type, snapshot, true]);

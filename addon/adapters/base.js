@@ -1,3 +1,6 @@
+/**
+@module ember-data-offline
+**/
 import DS from 'ember-data';
 import Ember from 'ember';
 import offlineMixin from 'ember-data-offline/mixins/offline';
@@ -5,7 +8,15 @@ import onlineMixin from 'ember-data-offline/mixins/online';
 import LFAdapter from 'ember-localforage-adapter/adapters/localforage';
 import LFSerializer from 'ember-localforage-adapter/serializers/localforage';
 import isObjectEmpty from 'ember-data-offline/utils/is-object-empty';
+/**
+This is an example of usage of Online and Offline mixins.
+It simplifies setup proccess.  By default it use RESTAdapter and LocalForageAdapter,
+but you can use your own adapters that you like.
 
+@class BaseAdapter
+@extends DS.RESTAdapter
+@uses onlineMixin
+**/
 export default DS.RESTAdapter.extend(onlineMixin, {
   __adapterName__: "ONLINE",
   offlineAdapter: null,

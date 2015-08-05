@@ -85,7 +85,7 @@ export default Ember.Object.extend({
     this.get('activeJobs').pushObject(job);
     Ember.run.later(() => {
       this.process(job);
-    }, this.get('delay'));
+    }, job.get('delay') || this.get('delay'));
   },
   /**
   Checks if the job is exist in a queue.
@@ -102,7 +102,6 @@ export default Ember.Object.extend({
     });
     return pendingJob || retryJob;
   },
-
 
   pendingJobObserver: Ember.observer('pendingJobs.[]','activeJobs.[]', function() {
     if (this.get('pendingJobs.length') <= 0) {
@@ -158,6 +157,7 @@ export default Ember.Object.extend({
       this.get('activeJobs').removeObject(job);
       this.get('retryJobs').removeObject(job);
     }, () => {
+
       this.get('activeJobs').removeObject(job);
       queue.get('retryJobs').removeObject(job);
 
@@ -166,7 +166,7 @@ export default Ember.Object.extend({
         queue.get('retryJobs').pushObject(job);
         Ember.run.later(() => {
           queue.process(job);
-        }, queue.get('retryOnFailureDelay'));
+        }, job.get('retryDelay') || queue.get('retryOnFailureDelay'));
       } else {
         queue.get('retryJobs').removeObject(job);
         queue.get('failureJobs').pushObject(job);

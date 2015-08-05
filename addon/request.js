@@ -1,90 +1,32 @@
-/* global localstorage */
 import Ember from 'ember';
 import baseMixin from 'ember-data-offline/mixins/base';
 import jobMixin from 'ember-data-offline/mixins/job';
+import ajaxJob from 'ember-data-offline/jobs/ajax';
 
-export default Ember.Object.createWithMixin(baseMixin, {
-  init: function() {
-    this.set('offlineAdapter', this);
-    this.set('onlineAdapter', this);
-  },
+export default Ember.Object.extend(baseMixin, {
+  store: Ember.inject.service(),
 
-  createOfflineJob(url, onlineResp, store) {
-    let caller = this;
-    let job = Ember.Object.extend(jobMixin).create({
-      task() {
-        caller.persistOffline(url, onlineResp);
+  exec(url, method, data, params) {
+    let store = this.get('store');
+
+    if (this.get('isOffline')) {
+      let job = ajaxJob.create({
+        retryCount: 20,
+        retryDelay: 1800000,
+        ajax: this.ajax,
+        params: [url, method, data]
+      });
+      store.EDOQueue.add(job);
+
+      if (params && typeof params === 'function') {
+        let job = Ember.Object.extend(jobMixin).create({
+          task: params
+        });
+        store.EDOQueue.add(job);
       }
-    });
-    this.addToQueue(job, store);
-  },
-
-  createOnlineJob(url, method, data, store) {
-    let caller = this;
-    let job = Ember.Object.extend(jobMixin).create({
-      task() {
-        caller.ajax(url, method, data);
-      }
-    });
-    this.addToQueue(job, store);
-  },
-
-  get(url, store) {
-    this.make(url, 'get', null, store);
-  },
-
-  post(url, data, store) {
-    this.make(url, 'post', data, store);
-  },
-
-  put(url, data, store) {
-    this.make(url, 'put', data, store);
-  },
-
-  delete(url, store) {
-    this.make(url, 'delete', null, store);
-  },
-
-  //fetch stands for online requests and peek for offline ones
-
-  make(url, method, data, store) {
-    return Ember.RSVP.resolve().then(() => {
-      if (this.get('isOnline')) {
-        this.fetch(url, method, data, store);
-      } else {
-        this.peek(url, method, data, store);
-      }
-    }).catch(console.log.bind(console));
-  },
-
-  fetch(url, method, data, store) {
-    let onlineResp = this.ajax(url, method, data);
-    this.createOfflineJob(url, onlineResp, store);
-    return onlineResp;
-  },
-
-  peek(url, method, data, store) {
-    let offlineResp = this.requestOffline(url, method, data);
-    this.createOnlineJob(url, method, data, store);
-    return offlineResp;
-  },
-
-  requestOffline(url, method, data) {
-    let _method = method.toLowerCase();
-    if (_method === 'get') {
-      localstorage.getItem(url);
-    } else if (_method === 'post' || _method === 'put' || _method === 'patch') {
-      localstorage.setItem(url, data);
-    } else if (_method === 'delete') {
-      localstorage.removeItem(url);
     }
-    return Ember.RSVP.Promise.resolve();
-  },
 
-  persistOffline(key, onlineResp) {
-    onlineResp.then((data) => {
-      localstorage.setItem(key, data);
-    });
+    return this.ajax(url, method, data);
   },
 
   _defaultParamsForOnline: Ember.computed({
@@ -103,6 +45,7 @@ export default Ember.Object.createWithMixin(baseMixin, {
       return defaults;
     }
   }),
+
   ajax: function(url, method, data) {
     let opts = {
       url: url,

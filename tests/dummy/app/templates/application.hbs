@@ -1,21 +1,31 @@
 <nav class="navbar navbar-default navbar-static-top">
-    <ul class="nav navbar-nav">
-      {{#link-to 'users' tagName="li"}}
-        {{#link-to 'users'}}
-           Users 
+  <div class="container-fluid">
+      <ul class="nav navbar-nav">
+        {{#link-to 'users' tagName="li"}}
+          {{#link-to 'users'}}
+             Users 
+          {{/link-to}}
         {{/link-to}}
-      {{/link-to}}
-      {{#link-to 'companies' tagName="li"}}
-        {{#link-to 'companies'}}
-          Companies
+        {{#link-to 'companies' tagName="li"}}
+          {{#link-to 'companies'}}
+            Companies
+          {{/link-to}}
         {{/link-to}}
-      {{/link-to}}
-      {{#link-to 'offices' tagName="li"}}
-        {{#link-to 'offices'}}
-          Offices
+        {{#link-to 'offices' tagName="li"}}
+          {{#link-to 'offices'}}
+            Offices
+          {{/link-to}}
         {{/link-to}}
-      {{/link-to}}
-    </ul>
+      </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li>
+            <button {{action 'toggleOffline'}} class="btn btn-sm {{if isOffline  'btn-danger' 'btn-success'}}">
+              {{if isOffline 'Offline' 'Online'}}
+            </button>
+          </li>
+        </ul>
+    
+  </div>
 </nav>
 <div class="container-fluid">
   {{outlet}}

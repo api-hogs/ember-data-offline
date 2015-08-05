@@ -11,8 +11,8 @@ export default Ember.Object.extend(baseMixin, {
 
     if (this.get('isOffline')) {
       let job = ajaxJob.create({
-        retryCount: 20,
-        retryDelay: 1800000,
+        retryCount: 60,
+        retryDelay: 30000,
         ajax: this.ajax,
         params: [url, method, data]
       });
@@ -20,6 +20,7 @@ export default Ember.Object.extend(baseMixin, {
 
       if (params && typeof params === 'function') {
         let job = Ember.Object.extend(jobMixin).create({
+          delay: 1,
           task: params
         });
         store.EDOQueue.add(job);

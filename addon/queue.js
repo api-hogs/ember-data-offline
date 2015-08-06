@@ -3,9 +3,9 @@
 */
 import Ember from 'ember';
 /**
-## Using Queue
-
-### Example
+Queue is just super easy task runner and used to make kind of
+background proccessing mechanism and basically we use it to synchronize
+data flows from online api and local storage.
 
 @class Queue
 @constructor
@@ -25,6 +25,7 @@ export default Ember.Object.extend({
   **/
   retryOnFailureDelay: 5000,
   /**
+  Time, in milliseconds, needed to run the job.
   @property delay
   @type {Number}
   **/

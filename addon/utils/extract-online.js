@@ -1,6 +1,20 @@
+/**
+!! This is not a class. It's a ES6 module.
+@module utils
+@class ExtractOnline
+**/
 import Ember from 'ember';
 const { Logger } = Ember;
 
+/**
+Used to extract record from the payload received from your data source.
+
+@method extractTargetRecordFromPayload
+@param store {DS.Store}
+@param typeClass {DS.Model}
+@param recordToExtractFrom  {Object} payload from which the record will be extracted
+@return extracted target {Object}
+**/
 var extractTargetRecordFromPayload = function extractTargetRecordFromPayload(store, typeClass, recordToExtractFrom) {
   let modelName = typeClass.modelName;
   let payload = store.serializerFor(modelName).normalizePayload(recordToExtractFrom);

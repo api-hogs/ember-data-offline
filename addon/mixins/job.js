@@ -1,16 +1,15 @@
 /**
-  @module ember-data-offline
+  @module mixins
 */
 import Ember from 'ember';
 const { computed, RSVP } = Ember;
 
 /**
-Base class for creating jobs.
+Base class for creating lightweight jobs.
 
-{Job} is an abstract class and is not meant to be used directly. The following classes extend {Job}.
-
-{Localforage}
-{Rest}
+Job is an abstract class and is not meant to be used directly. The following classes extend Job:
+{{#crossLink "Localforage"}}{{/crossLink}}
+{{#crossLink "Rest"}}{{/crossLink}}
 
 @class Job
 @constructor

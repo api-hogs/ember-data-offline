@@ -1,5 +1,5 @@
 /**
-@module ember-data-offline
+@module mixins
 **/
 
 import Ember from 'ember';

@@ -1,5 +1,5 @@
 /**
-@module ember-data-offline
+@module mixins
 **/
 import Ember from 'ember';
 import baseMixin from 'ember-data-offline/mixins/base';
@@ -9,7 +9,7 @@ import { isExpiredOne, isExpiredMany, isExpiredAll } from 'ember-data-offline/ut
 import { updateMeta } from 'ember-data-offline/utils/meta';
 
 /**
-Ofline mixin redefines all adapter methods for finding, creation, deletion to to make request to offline storage.
+Ofline mixin redefines all adapter methods for finding, creation, deletion to make request to offline storage.
 
 @class Offline
 @extends Ember.Mixin
@@ -97,7 +97,7 @@ export default Ember.Mixin.create(baseMixin, {
   @method find
   @param store {DS.Store}
   @param typeClass {DS.Model}
-  @param id {String}
+  @param id {String|Number}
   @param snapshot {DS.Snapshot}
   @param fromJob {boolean}
   @return promise {Promise}

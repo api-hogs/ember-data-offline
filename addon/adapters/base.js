@@ -16,6 +16,7 @@ but you can use your own adapters that you like.
 @class BaseAdapter
 @extends DS.RESTAdapter
 @uses onlineMixin
+@constructor
 **/
 export default DS.RESTAdapter.extend(onlineMixin, {
   __adapterName__: "ONLINE",

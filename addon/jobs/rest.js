@@ -1,5 +1,5 @@
 /**
-@module ember-data-offline
+@module jobs
 **/
 import Ember from 'ember';
 import jobMixin from 'ember-data-offline/mixins/job';
@@ -8,9 +8,11 @@ import { persistOne } from 'ember-data-offline/utils/persist-offline';
 import { eraseOne } from 'ember-data-offline/utils/erase-offline';
 import extractTargetRecordFromPayload from 'ember-data-offline/utils/extract-online';
 /**
+Lightweight online job for pushing the data from online adapter to store and syncing offline data with the data from the store.
 @class Rest
 @extends Ember.Object
 @uses Job
+@constructor
 **/
 export default Ember.Object.extend(jobMixin, {
   /**
@@ -57,7 +59,7 @@ export default Ember.Object.extend(jobMixin, {
   @method find
   @param store {DS.Store}
   @param typeClass {DS.Model}
-  @param id {String}
+  @param id {String|Number}
   @return promise {Promise}
   **/
   find(store, typeClass, id) {

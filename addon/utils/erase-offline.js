@@ -1,5 +1,12 @@
 /**
+!! This is not a class. It's a ES6 module.
+@module utils
+@class EraseOne
+**/
+
+/**
 Erases the given record (snapshot) from store.
+
 @method eraseOne
 @param adapter {DS.Adapter}
 @param store {DS.Store}

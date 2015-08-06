@@ -1,6 +1,6 @@
 
 /**
-@module ember-data-offline
+@module jobs
 **/
 import Ember from 'ember';
 import jobMixin from 'ember-data-offline/mixins/job';
@@ -9,6 +9,7 @@ import persistOffline from 'ember-data-offline/utils/persist-offline';
 @class Localforage
 @extends Ember.Object
 @uses Job
+@constructor
 **/
 export default Ember.Object.extend(jobMixin, {
   /**
@@ -37,7 +38,7 @@ export default Ember.Object.extend(jobMixin, {
   @method find
   @param store {DS.Store}
   @param typeClass {DS.Model}
-  @param id {String}
+  @param id {String|Number}
   **/
   find(store, typeClass, id) {
     let adapter = this.get('adapter');

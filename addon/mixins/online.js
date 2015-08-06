@@ -1,5 +1,5 @@
 /**
-@module ember-data-offline
+@module mixins
 **/
 import Ember from 'ember';
 import baseMixin from 'ember-data-offline/mixins/base';
@@ -13,6 +13,7 @@ but with running offline job to make offline data actual.
 @class Online
 @extends Ember.Mixin
 @uses Base
+@constructor
 **/
 export default Ember.Mixin.create(baseMixin, {
   /**

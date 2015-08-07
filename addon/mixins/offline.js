@@ -17,35 +17,17 @@ Ofline mixin redefines all adapter methods for finding, creation, deletion to ma
 @constructor
 **/
 export default Ember.Mixin.create(baseMixin, {
-  shouldReloadAll(store, snapshots) {
-    let modelName = snapshots.type.modelName;
-    let lastTime = this.get(`lastTimeFetched.all$${modelName}`);
-    if (Ember.isEmpty(lastTime)) {
-      return true;
-    }
-    let timeDelta = (lastTime - new Date()) / 1000 / 60 / 60;
-    if (timeDelta > this.get('recordTTL')) {
-      return true;
-    }
+  shouldReloadAll() {
     return false;
   },
   shouldBackgroundReloadAll: function() {
-    return false;
+    return true;
   },
-  shouldReloadRecord(store, snapshot) {
-    let modelName = snapshot.type.modelName;
-    let lastTime = this.get(`lastTimeFetched.one$${modelName}$${snapshot.id}`);
-    if (Ember.isEmpty(lastTime)) {
-      return true;
-    }
-    let timeDelta = (lastTime - new Date()) / 1000 / 60 / 60;
-    if (timeDelta > this.get('recordTTL')) {
-      return true;
-    }
+  shouldReloadRecord() {
     return false;
   },
   shouldBackgroundReloadRecord() {
-    return false;
+    return true;
   },
 
   /**

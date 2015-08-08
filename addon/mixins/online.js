@@ -7,8 +7,7 @@ import debug from 'ember-data-offline/utils/debug';
 
 
 /**
-Online mixin redefines all adapter methods for finding, creation, deletion to to make request to online api,
-but with running offline job to make offline data actual.
+Online mixin redefines all adapter persistance methods to make request to online storage.
 
 @class Online
 @extends Ember.Mixin
@@ -17,8 +16,7 @@ but with running offline job to make offline data actual.
 **/
 export default Ember.Mixin.create(baseMixin, {
   /**
-  Fetches a JSON array for all of the records for a given type
-  from online adapter. Returns a promise for the resulting payload.
+  Fetches a JSON array for all of the records for a given type from online adapter.
   @method findAll
   @param store {DS.Store}
   @param typeClass {DS.Model}
@@ -29,7 +27,7 @@ export default Ember.Mixin.create(baseMixin, {
     return this._super.apply(this, arguments);
   },
   /**
-  Fetches a JSON from online adapter Returns a promise for the resulting payload.
+  Fetches a JSON array for all of the records for a given type from online adapter.
   @method find
   @return promise {Promise}
   **/
@@ -37,8 +35,7 @@ export default Ember.Mixin.create(baseMixin, {
     return this._super.apply(this, arguments);
   },
   /**
-  Fetches a JSON array for the records that match a particular query from online adapter.
-  If this method was called from Queue(fromJob) then it would create offline job for persisting fetched records offline.
+  Fetches a JSON array for all of the records for a given type from online adapter.
   @method findQuery
   @param store {DS.Store}
   @param type {DS.Model}
@@ -57,8 +54,7 @@ export default Ember.Mixin.create(baseMixin, {
     });
   },
   /**
-  Fetches a JSON array for  a given type and IDs from online adapter.
-  If this method was called from Queue(fromJob) then it would create offline job for persisting fetched records offline.
+  Fetches a JSON array for all of the records for a given type from online adapter.
   @method findMany
   @param store {DS.Store}
   @param typeClass {DS.Model}
@@ -79,8 +75,7 @@ export default Ember.Mixin.create(baseMixin, {
     });
   },
   /**
-  Called when a newly created record is saved via the `save` method on a model record instance.
-  Calls the implementation method of parrent offline adapter.
+  Saves the record via the parent offline adapter.
   @method createRecord
   @return promise {Promise}
   **/
@@ -88,8 +83,7 @@ export default Ember.Mixin.create(baseMixin, {
     return this._super.apply(this, arguments);
   },
   /**
-  Called when an existing record is saved via the `save` method on a model record instance.
-  Calls the implementation method of parrent offline adapter.
+  Updates the record via the parent offline adapter.
   @method updateRecord
   @return promise {Promise}
   **/
@@ -98,8 +92,7 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   /**
-  Called when a record is deleted.
-  Calls the implementation method of parrent offline adapter.
+  Deletes the record via the parent offline adapter.
   @method deleteRecord
   @return promise {Promise}
   **/

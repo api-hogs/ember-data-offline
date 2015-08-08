@@ -1,5 +1,4 @@
 /**
-!! This is not a class. It's a ES6 module.
 @module utils
 @class ExtractOnline
 **/
@@ -7,7 +6,7 @@ import Ember from 'ember';
 const { Logger } = Ember;
 
 /**
-Used to extract record from the payload received from your data source.
+Extracts the record from the payload of your backend.
 
 @method extractTargetRecordFromPayload
 @param store {DS.Store}

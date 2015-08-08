@@ -9,7 +9,7 @@ import { isExpiredOne, isExpiredMany, isExpiredAll } from 'ember-data-offline/ut
 import { updateMeta } from 'ember-data-offline/utils/meta';
 
 /**
-Ofline mixin redefines all adapter methods for finding, creation, deletion to make request to offline storage.
+Offline mixin redefines all adapter persistance methods to make request to offline storage.
 
 @class Offline
 @extends Ember.Mixin
@@ -31,8 +31,8 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   /**
-  Returns the metadata for a given. Returned metadata consists information about
-  last fetched and last updated time.
+  Returns the metadata for a given model. Returned metadata contains information about
+  latest fetch and update times.
 
   @method metadataForType
   @param typeClass {DS.Model}
@@ -45,9 +45,10 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   /**
-  Overrides the method of an extended adapter (offline). Fetches a JSON array for all of the records for a given type
-  from offline adapter. If fetched records are expired then tries to create online job of fetching the records
-  from online adapter and persisting them offline. Returns a promise for the resulting payload.
+  Overrides the method of an extended adapter (offline). Fetches a JSON array
+  for all of the records for a given type from offline adapter. If fetched
+  records are expired, it tries to create an online job to fetch the records
+  from the online adapter and save them locally.
 
   @method findAll
   @param store {DS.Store}
@@ -73,9 +74,9 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   /**
-  Overrides the method of an extended adapter (offline). Fetches a JSON for a given type and ID
-  from offline adapter. If fetched record is expired then tries to create online job of fetching the record
-  from online adapter and persisting it offline. Returns a promise for the resulting payload.
+  Overrides the method of an extended adapter (offline). Fetches a JSON array for all of the records for a given type
+  from offline adapter. If fetched expired records and then tries to create an online job to fetch the records
+  from the online adapter and save them locally.
   @method find
   @param store {DS.Store}
   @param typeClass {DS.Model}
@@ -102,9 +103,9 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   /**
-  Overrides the method of an extended adapter (offline). Fetches a JSON array for the records that match a particular query
-  from offline adapter. If fetched records are expired then tries to create online job of fetching the records
-  from online adapter and persisting them offline. Returns a promise for the resulting payload.
+  Overrides the method of an extended adapter (offline). Fetches a JSON array for all of the records for a given type
+  from offline adapter. If fetched expired records and then tries to create an online job to fetch the records
+  from the online adapter and save them locally.
 
   @method query
   @param store {DS.Store}
@@ -132,9 +133,9 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   /**
-  Overrides the method of an extended adapter (offline). Fetches a JSON array for  a given type and IDs
-  from offline adapter. If fetched records are expired then tries to create online job of fetching the records
-  from online adapter and persisting them offline. Returns a promise for the resulting payload.
+  Overrides the method of an extended adapter (offline). Fetches a JSON array for all of the records for a given type
+  from offline adapter. If fetched expired records and then tries to create an online job to fetch the records
+  from the online adapter and save them locally.
 
   @method findMany
   @param store {DS.Store}
@@ -165,9 +166,8 @@ export default Ember.Mixin.create(baseMixin, {
   },
 
   /**
-  Called  when a newly created record is saved via the `save` method on a model record instance.
-  If this method was called from Queue(fromJob) then it would create an online job for creation record.
-  Calls the implementation method of parrent offline adapter.
+  Overrides the method of an extended adapter (offline).
+  If tries to create an online job to create the record and save it locally.
   @method createRecord
   @param store {DS.Store}
   @param type {DS.Model}
@@ -190,11 +190,8 @@ export default Ember.Mixin.create(baseMixin, {
     return this._super.apply(this, [store, type, snapshot]);
   },
   /**
-  Called when an existing record is saved
-  via the `save` method on a model record instance.
-
-  If this method was called from Queue(fromJob) then it would create an online job for updating record.
-  Calls the implementation method of parrent offline adapter.
+  Overrides the method of an extended adapter (offline).
+  If tries to create an online job to update the record and save it locally.
   @method updateRecord
   @param store {DS.Store}
   @param type {DS.Model}
@@ -211,9 +208,8 @@ export default Ember.Mixin.create(baseMixin, {
     return this._super.apply(this, [store, type, snapshot]);
   },
   /**
-  Called when a record is deleted.
-  If this method was called from Queue(fromJob) then it would create an online job for deletion record.
-  Calls the implementation method of parrent offline adapter.
+  Overrides the method of an extended adapter (offline).
+  If tries to create an online job to delete the record and remove it locally.
   @method deleteRecord
   @param store {DS.Store}
   @param type {DS.Model}

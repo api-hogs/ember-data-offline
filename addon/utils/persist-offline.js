@@ -1,6 +1,4 @@
 /**
-!! This is not a class. It's a ES6 module.
-The main goal of this module is to provide methods for persistng data offline. This methods are used by Localforage class.
 @module utils
 @class PersistOffline
 **/
@@ -45,7 +43,6 @@ var _persistArray = function(array, adapter, typeClass, withMeta) {
   });
 };
 /**
-Persists a record of a given type and with given id into the passed adapter.
 @method persistOne
 @param adaper {DS.Adapter}
 @param store {DS.Store}
@@ -64,7 +61,6 @@ var persistOne = function persistOne(adapter, store, typeClass, id) {
 };
 
 /**
-Persists all records of a given type into the passed adapter.
 @method persistAll
 @param adaper {DS.Adapter}
 @param store {DS.Store}
@@ -75,7 +71,6 @@ var persistAll = function persistAll(adapter, store, typeClass) {
   _persistArray(fromStore, adapter, typeClass, true);
 };
 /**
-Persists all records of a given type into the passed adapter.
 @method persistMany
 @param adaper {DS.Adapter}
 @param store {DS.Store}
@@ -87,7 +82,6 @@ var persistMany = function persistMany(adapter, store, typeClass) {
   _persistArray(fromStore, adapter, typeClass);
 };
 /**
-Persists all records of a given type and which matches a query into the passed adapter. Info about query is taken form onlineResp param.
 @deprecated
 @method persistQuery
 @param adaper {DS.Adapter}
@@ -111,7 +105,6 @@ var persistQuery = function persistQuery(adapter, store, typeClass, onlineResp) 
 
 export { persistOne, persistAll, persistMany, persistQuery };
 /**
-Executes a method for a given method parameter with a given arguments (adapter, store, typeClass, onlineResp).
 @method persistOffline
 @param adaper {DS.Adapter}
 @param store {DS.Store}

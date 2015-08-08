@@ -15,7 +15,7 @@ const { Mixin, $, on,  computed, get, isPresent } = Ember;
 **/
 export default Mixin.create({
   /**
-  Shows if adapter is offline.
+  Availability of the backend.
   @property isOffline
   @type {boolean}
   **/
@@ -33,7 +33,8 @@ export default Mixin.create({
   **/
   offlineJob: offlineJob,
   /**
-  The period of time during which record is considered to be not expired.
+  Record cache expiration time. After expiration the record will be requested again
+  rather than fetched from local storage.
   @property recordTTL
   @type {Object}
   **/
@@ -41,7 +42,7 @@ export default Mixin.create({
   /**
   Used by adapter to get queue.
 
-  Returns the working queue from an adapter. If there is no queue in adapter then returns queue from passed store.
+  Returns the syncronization job queue of an adapter or a store.
   @private
   @method _workingQueue
   @param store {DS.Store}
@@ -56,8 +57,8 @@ export default Mixin.create({
   },
 
   /**
-  Adds job to queue. If onDemandKey param was passed, then job will be stored as 'onDemand'
-  and will be processed on demand.
+  Adds a job to the queue. If 'onDemandKey' param was passed, the job will be
+  processed on-demand.
 
   @method addToQueue
   @param job {Job} job to add to queue.
@@ -69,10 +70,8 @@ export default Mixin.create({
   },
 
   /**
-  Used by classes which use this class.
-
-  Creates the online job and addes it to queue. If onDemandKey param was passed, then job will be stored as 'onDemand'
-  and will be processed on demand.
+  Creates and adds an online job to the queue. If 'onDemandKey' param was passed, the job will be
+  processed on-demand.
 
   @method createOnlineJob
   @param method {String} the name of method which will be runned by job.
@@ -90,10 +89,8 @@ export default Mixin.create({
     this.addToQueue(job, store, onDemandKey);
   },
   /**
-  Used by classes which use this class.
-
-  Creates the offline job and addes it to queue. If onDemandKey param was passed, then job will be stored as 'onDemand'
-  and will be processed on demand.
+  Creates and adds an offline job to the queue. If 'onDemandKey' param was passed, the job will be
+  processed on-demand.
 
   @method createOfflineJob
   @param method {String} the name of method which will be runned by job.

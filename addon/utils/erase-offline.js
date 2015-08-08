@@ -1,5 +1,4 @@
 /**
-!! This is not a class. It's a ES6 module.
 @module utils
 @class EraseOne
 **/

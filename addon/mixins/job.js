@@ -5,9 +5,9 @@ import Ember from 'ember';
 const { computed, RSVP } = Ember;
 
 /**
-Base class for creating lightweight jobs.
+An abstract job.
 
-Job is an abstract class and is not meant to be used directly. The following classes extend Job:
+Examples:
 {{#crossLink "Localforage"}}{{/crossLink}}
 {{#crossLink "Rest"}}{{/crossLink}}
 
@@ -23,7 +23,7 @@ export default Ember.Mixin.create({
   retryCount: 0,
 
   /**
-  Shows if there are retry attempts.
+  Shows if there are retry attempts left.
   @property needRetry
   @type {boolean}
   **/
@@ -38,7 +38,7 @@ export default Ember.Mixin.create({
   },
 
   /**
-  Called by the Queue to perform the job.
+  Called to perform the job.
   @method perform
   @return {Ember.Promise}
   **/

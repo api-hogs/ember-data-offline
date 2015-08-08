@@ -1,13 +1,12 @@
 /**
-!! This is not a class. It's a ES6 module.
-The main goal of this module is to provide the methods for manipulation with metadata such as time of last fetching or updating.
+Methods for manipulations with record metadata (fetch and update timestamps).
 @module utils
 @class Meta
 **/
 import Ember from 'ember';
 
 /**
-Adds the meta info to the given snapshot.
+Adds the metadata to the given snapshot.
 @method addMeta
 @param snapshot {DS.snapshot}
 @param infoToAdd {Object}
@@ -17,8 +16,8 @@ var addMeta = function addMeta(snapshot, infoToAdd) {
   snapshot.record.set('__data_offline_meta__', Ember.merge(snapshot.record.get('__data_offline_meta__') || {}, infoToAdd));
 };
 /**
-Adds the 'updatedAt' information into the meta to the given snapshot. 'fetchedAt' property stores the information
-about last updated time of record (data) and  is used for checking if the data is expired.
+Adds the 'updatedAt' field to the metadata of a given snapshot. The 'fetchedAt' property stores the information
+about the last update time of a record and is used for expirations checks.
 @method addUpdatedAtToMeta
 @param snapshot {DS.snapshot}
 **/
@@ -28,8 +27,8 @@ var addUpdatedAtToMeta = function addUpdatedAtToMeta(snapshot) {
   });
 };
 /**
-Adds the 'fetchedAt' information into the meta to the given snapshot. 'fetchedAt' property stores the information
-about last fetched time of record (data) and  is used for checking if the data is expired.
+Adds the 'fetchedAt' field to the metadata of a given snapshot. The 'fetchedAt' property stores the information
+about the last fetch time of record and is used for expiration checks.
 @method addFetchedAtToMeta
 @param snapshot {DS.snapshot}
 **/
@@ -40,7 +39,7 @@ var addFetchedAtToMeta = function addFetchedAtToMeta(snapshot, fetchedAt) {
   });
 };
 /**
-Updates the meta info about last fetched and last updated time.
+Updates the last fetch and update timestamps in the metadata.
 @method updateMeta
 @param snapshot {DS.snapshot}
 **/

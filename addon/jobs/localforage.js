@@ -6,6 +6,8 @@ import Ember from 'ember';
 import jobMixin from 'ember-data-offline/mixins/job';
 import persistOffline from 'ember-data-offline/utils/persist-offline';
 /**
+An implementation of a syncronization job for the Localforage storage.
+
 @class Localforage
 @extends Ember.Object
 @uses Job
@@ -13,7 +15,8 @@ import persistOffline from 'ember-data-offline/utils/persist-offline';
 **/
 export default Ember.Object.extend(jobMixin, {
   /**
-  Executes task. Before executiong you need to set the method, which should be executed, and the params for method.
+  A method called by default to execute the job.
+  The method to be called as well as it's arguments can be customized.
   @method task
   @return promise {Promise}
   **/
@@ -25,7 +28,7 @@ export default Ember.Object.extend(jobMixin, {
   },
 
   /**
-  Task for saving records offline after findAll operation.
+  Saves the loaded records to the local storage.
   @method findAll
   @param store {DS.Store}
   @param typeClass {DS.Model}
@@ -34,7 +37,7 @@ export default Ember.Object.extend(jobMixin, {
     persistOffline(this.get('adapter'), store, typeClass, null, 'findAll');
   },
   /**
-  Task for saving record offline after find operation.
+  Saves the loaded record to the local storage.
   @method find
   @param store {DS.Store}
   @param typeClass {DS.Model}
@@ -45,7 +48,7 @@ export default Ember.Object.extend(jobMixin, {
     persistOffline(adapter, store, typeClass, id, "find");
   },
   /**
-  Task for saving records offline after findQuery operation.
+  Saves the loaded record to the local storage.
   @method findQuery
   @param store {DS.Store}
   @param typeClass {DS.Model}
@@ -58,7 +61,7 @@ export default Ember.Object.extend(jobMixin, {
   },
 
   /**
-  Task for saving records offline after findMany operation.
+  Saves the loaded records to the local storage.
   @method findMany
   @param store {DS.Store}
   @param typeClass {DS.Model}
@@ -69,7 +72,7 @@ export default Ember.Object.extend(jobMixin, {
     persistOffline(adapter, store, typeClass, ids, 'findMany');
   },
   /**
-  Task for saving record offline after createRecord operation.
+  Saves the loaded record to the local storage.
 
   @method createRecord
   @param store {DS.Store}
@@ -83,7 +86,7 @@ export default Ember.Object.extend(jobMixin, {
     });
   },
   /**
-  Task for updating record offline after updateRecord operation.
+  Updates the record in the local storage.
 
   @method updateRecord
   @param store {DS.Store}
@@ -97,7 +100,7 @@ export default Ember.Object.extend(jobMixin, {
     });
   },
   /**
-  Task for deleting record offline after deleteRecord operation.
+  Deletes the record from the local storage.
 
   @method deleteRecord
   @param store {DS.Store}

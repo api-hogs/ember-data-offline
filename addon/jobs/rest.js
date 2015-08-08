@@ -8,7 +8,7 @@ import { persistOne } from 'ember-data-offline/utils/persist-offline';
 import { eraseOne } from 'ember-data-offline/utils/erase-offline';
 import extractTargetRecordFromPayload from 'ember-data-offline/utils/extract-online';
 /**
-Lightweight online job for pushing the data from online adapter to store and syncing offline data with the data from the store.
+A job that syncronizes the local storage with the backend.
 @class Rest
 @extends Ember.Object
 @uses Job
@@ -16,7 +16,8 @@ Lightweight online job for pushing the data from online adapter to store and syn
 **/
 export default Ember.Object.extend(jobMixin, {
   /**
-  Executes task. Before executiong you need to set the method, which should be executed, and the params for method.
+  A method called by default to execute the job.
+  The method to be called as well as it's arguments can be customized.
   @method task
   @return promise {Promise}
   **/
@@ -27,9 +28,7 @@ export default Ember.Object.extend(jobMixin, {
     return this.get('adapter')[this.get('method')].apply(this.get('adapter'), this.get('params'));
   },
   /**
-  Pushes the raw of data from an adapter's findAll method to the store and creates
-  the offline job for syncing offline data with the data from the store.
-  Returns a promise for the resulting payload.
+  Saves the data received from the backend to the local storage.
   @method findAll
   @param store {DS.Store}
   @param typeClass {DS.Model}
@@ -53,9 +52,7 @@ export default Ember.Object.extend(jobMixin, {
   },
 
   /**
-  Pushes the record form an adapter's find method to the store and creates
-  the offline job for syncing offline data with the data from the store.
-  Returns a promise for the resulting payload.
+  Saves the data received from the backend to the local storage.
   @method find
   @param store {DS.Store}
   @param typeClass {DS.Model}
@@ -81,9 +78,7 @@ export default Ember.Object.extend(jobMixin, {
   },
 
   /**
-  Pushes the raw of data form an adapter's find method to the store and creates
-  the offline job for syncing offline data with the data from the store.
-  Returns a promise for the resulting payload.
+  Saves the data received from the backend to the local storage.
   @method findQuery
   @param store {DS.Store}
   @param type {DS.Model}
@@ -102,8 +97,7 @@ export default Ember.Object.extend(jobMixin, {
     return adapterResp;
   },
   /**
-  Pushes the raw of data form an adapter's find method into the store and creates
-  the offline job for syncing offline data with the data from the store.
+  Saves the data received from the backend to the local storage.
   @method findMany
   @param store {DS.Store}
   @param typeClass {DS.Model}
@@ -120,9 +114,8 @@ export default Ember.Object.extend(jobMixin, {
     return adapterResp;
   },
   /**
-  Pushes a newly created record into the store and creates
-  the offline job for saving this record into offline storage.
-  @method findMany
+  Saves the data received from the backend to the local storage.
+  @method createRecord
   @param store {DS.Store}
   @param type {DS.Model}
   @param snapshot {DS.Snapshot}
@@ -147,9 +140,8 @@ export default Ember.Object.extend(jobMixin, {
       .catch(apiHandler);
   },
   /**
-  Calls the updateRecord method on adapter.
-  Returns a promise for the resulting payload.
-  @method findMany
+  Saves the data received from the backend to the local storage.
+  @method updateRecord
   @param store {DS.Store}
   @param type {DS.Model}
   @param snapshot {DS.Snapshot}
@@ -161,9 +153,8 @@ export default Ember.Object.extend(jobMixin, {
     return adapter.updateRecord(store, type, snapshot, fromJob);
   },
   /**
-  Calls the deleteRecord method on adapter.
-  Returns a promise for the resulting payload.
-  @method findMany
+  Removes the deleted record from the local storage.
+  @method deleteRecord
   @param store {DS.Store}
   @param type {DS.Model}
   @param snapshot {DS.Snapshot}

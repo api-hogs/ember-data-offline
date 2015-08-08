@@ -3,9 +3,7 @@
 */
 import Ember from 'ember';
 /**
-Queue is just super easy task runner and used to make kind of
-background proccessing mechanism and basically we use it to synchronize
-data flows from online api and local storage.
+A queue of syncronization jobs.
 
 @class Queue
 @constructor
@@ -18,14 +16,13 @@ export default Ember.Object.extend({
   **/
   name: 'normal',
   /**
-  In situation when the job perfoming fails the queue will try process the job again but with delay
-  which is setted by retryOnFailureDelay param in milliseconds.
+  Interval between job retries.
   @property retryOnFailureDelay
   @type {Number}
   **/
   retryOnFailureDelay: 5000,
   /**
-  Time, in milliseconds, needed to run the job.
+  Job execution delay.
   @property delay
   @type {Number}
   **/
@@ -49,19 +46,19 @@ export default Ember.Object.extend({
   **/
   pendingJobs: null,
   /**
-  An array of failure jobs in a queue.
+  An array of failed jobs in a queue.
   @property failureJobs
   @type {Ember.Array}
   **/
   failureJobs: null,
   /**
-  An array of retry jobs in a queue.
+  An array of retried jobs in a queue.
   @property retryJobs
   @type {Ember.Array}
   **/
   retryJobs: null,
   /**
-  Saves the jobs that will be processed on demand.
+  An array of on-demand jobs.
   @property onDemandJobs
   @type {Ember.Object}
   **/
@@ -89,7 +86,7 @@ export default Ember.Object.extend({
     }, job.get('delay') || this.get('delay'));
   },
   /**
-  Checks if the job is exist in a queue.
+  Checks if the job exists in a queue.
   @method isJobExist
   @param Job {Job}
   @return {boolean}
@@ -117,8 +114,7 @@ export default Ember.Object.extend({
   }),
 
   /**
-  Adds job to queue. if onDemandKey param was passed, then job will be stored as 'onDemand'
-  and will be processed on demand.
+  Adds a job to the queue. If 'onDemandKey' param was passed, the job will be processed on demand.
 
   @method add
   @param Job {Job}  job to add
@@ -135,7 +131,7 @@ export default Ember.Object.extend({
   },
 
   /**
-  Removes the job from queue.
+  Removes the job from the queue.
 
   @method remove
   @param Job {Job}  job to remove
@@ -145,9 +141,8 @@ export default Ember.Object.extend({
   },
 
   /**
-  Performs the job. After successful processing removes the job from list of active and retry jobs.
-  If job has failed, it should be automatically retried with a delay if retry attempts will be available
-  (every job has a retry count which decrements by 1 after  every retry attempt).
+  Performs the job. After successful processing removes the job from lists of active and retried jobs.
+  If a job fails, it will be automatically retried with a delay, until it succeeds or runs out of retries.
 
   @method process
   @param Job {Job} job to process

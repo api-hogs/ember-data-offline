@@ -46,6 +46,8 @@ export default appAdapter.extend({
 });
 ```
 
+For more information, please, take look at dummy app.
+
 ## Details
 
 All syncornizations between local storage and backend are queued and performed sequentially.

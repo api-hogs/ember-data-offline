@@ -1,6 +1,7 @@
 # Ember-data-offline
 [![Build Status](https://travis-ci.org/api-hogs/ember-data-offline.svg?branch=master)](https://travis-ci.org/api-hogs/ember-data-offline)
 [![npm version](https://badge.fury.io/js/ember-data-offline.svg)](http://badge.fury.io/js/ember-data-offline)
+[![Ember Observer Score](http://emberobserver.com/badges/ember-data-offline.svg)](http://emberobserver.com/addons/ember-data-offline)
 
 Ember-data-offline is an addon that extends ember-data to work in offline mode.
 

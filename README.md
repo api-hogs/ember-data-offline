@@ -16,6 +16,8 @@ ember install ember-data-offline
 First, define your application adapter with offline support:
 
 ```javascript
+//app/adapters/application.js
+
 import baseAdapter from 'ember-data-offline/adapters/base';
 
 export default baseAdapter.extend({
@@ -26,6 +28,8 @@ export default baseAdapter.extend({
 Then define a model and a serializer for it:
 
 ```javascript
+//app/serializers/application.js
+
 import DS from 'ember-data';
 
 export default DS.RESTSerializer.extend({
@@ -36,16 +40,9 @@ If your primary key is different from `'id'`, you have to specify it in the adap
 
 ```javascript
 // in adapter:
+
 export default appAdapter.extend({
   serializerPrimaryKey: '_id',
-});
-
-// in serializer:
-import DS from 'ember-data';
-import offlineIdMixin from 'ember-data-offline/mixins/localstorage-id'; //thing that you need!
-
-export default DS.RESTSerializer.extend(offlineIdMixin, {
-  primaryKey: '_id', //usual ember-data stuff
 });
 ```
 

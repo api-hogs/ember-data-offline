@@ -40,6 +40,12 @@ export default Mixin.create({
   **/
   recordTTL: moment.duration(12, 'hours'),
   /**
+  Property that shows if you need to replace your record from record, extracted from payload or not
+  @property skipCreateReplacing
+  @type Boolean
+  **/
+  skipCreateReplacing: false,
+  /**
   Used by adapter to get queue.
 
   Returns the syncronization job queue of an adapter or a store.

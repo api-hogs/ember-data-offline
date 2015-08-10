@@ -130,8 +130,10 @@ export default Ember.Object.extend(jobMixin, {
 
     return adapter.createRecord(store, type, snapshot, fromJob)
       .then(result => {
-        eraseOne(adapter.get('offlineAdapter'), store, type, snapshot);
-        store.pushPayload(type.modelName, result);
+        if (!adapter.get('skipCreateReplacing')) {
+          eraseOne(adapter.get('offlineAdapter'), store, type, snapshot);
+          store.pushPayload(type.modelName, result);
+        }
         let recordId = extractTargetRecordFromPayload(store, type, result).id;
         persistOne(adapter.get('offlineAdapter'), store, type, recordId);
 

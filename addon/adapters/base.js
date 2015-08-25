@@ -21,11 +21,15 @@ export default DS.RESTAdapter.extend(onlineMixin, {
   offlineAdapter: null,
 
   initRunner: Ember.on('init', function() {
-
     let adapter = this;
     let container = this.container;
 
     let serializer = LFSerializer.extend({
+      normalize(typeClass) {
+        let store = container.lookup('service:store');
+        let modelSerializer = store.serializerFor(typeClass.modelName);
+        return modelSerializer.normalize.apply(modelSerializer, arguments);
+      },
       serialize(snapshot, options) {
         let json = this._super.apply(this, arguments);
         let store = snapshot.record.store;

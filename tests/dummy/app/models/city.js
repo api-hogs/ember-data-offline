@@ -3,5 +3,5 @@ const { Model, attr, belongsTo } = DS;
 
 export default Model.extend({
   name: attr('string'),
-  office: belongsTo('office', {async: true})
+  office: belongsTo('office')
 });

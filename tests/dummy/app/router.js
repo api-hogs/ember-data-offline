@@ -6,12 +6,13 @@ var Router = Ember.Router.extend({
 });
 
 Router.map(function() {
-  this.resource('users', {path: '/'}, function() {
+  this.route('users', {path: '/'}, function() {
     this.route('index', {path: '/'});
     this.route('user', {path: '/users/:id'});
   });
   this.route('companies');
   this.route('offices');
+  this.route('cities');
   this.route('stress');
 });
 

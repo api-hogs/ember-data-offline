@@ -52,7 +52,10 @@ export default Ember.Object.extend(baseMixin, {
       url: url,
       type: method
     };
-    let params = Ember.merge(this._defaultParamsForOnline, opts);
+
+    let defaults = this.get('_defaultParamsForOnline');
+
+    let params = Ember.merge(defaults, opts);
     if (data) {
       params.data = data;
     }

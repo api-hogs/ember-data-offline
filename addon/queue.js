@@ -80,10 +80,12 @@ export default Ember.Object.extend({
   @param Job {Job}
   **/
   runJob(job) {
+    //TODO Think about to build in queue in ember(ed) runloop
     this.get('activeJobs').pushObject(job);
+    let delay = job.get('adapter.throttle') || job.get('delay') || this.get('delay');
     Ember.run.later(() => {
       this.process(job);
-    }, job.get('delay') || this.get('delay'));
+    }, delay);
   },
   /**
   Checks if the job exists in a queue.

@@ -8,28 +8,35 @@ export default Ember.Object.extend(baseMixin, {
   retryCount: 60,
   retryDelay: 30000,
 
-  exec(url, method, data, params) {
-    let store = this.get('store');
+  exec(opts, syncs) {
+    let params = Ember.merge(this._defaultParams(), opts);
 
-    if (this.get('isOffline')) {
-      let job = ajaxJob.create({
-        retryCount: this.get('retryCount'),
-        retryDelay: this.get('retryDelay'),
-        ajax: this.ajax,
-        params: [url, method, data]
-      });
-      store.EDOQueue.add(job);
-
-      if (params && typeof params === 'function') {
-        let job = Ember.Object.extend(jobMixin).create({
-          delay: 1,
-          task: params
-        });
-        store.EDOQueue.add(job);
-      }
+    if (this.get('isOnline')) {
+      return Ember.$.ajax(params);
     }
 
-    return this.ajax(url, method, data);
+    return this._offlineScenario(params, syncs);
+  },
+
+  _offlineScenario(params, syncs) {
+    let store = this.get('store');
+
+    let job = ajaxJob.create({
+      retryCount: this.get('retryCount'),
+      retryDelay: this.get('retryDelay'),
+      params: params
+    });
+    store.EDOQueue.add(job);
+
+    if (syncs && typeof syncs === 'function') {
+      let job = Ember.Object.extend(jobMixin).create({
+        delay: 1,
+        task: syncs
+      });
+      store.EDOQueue.add(job);
+    }
+
+    return Ember.RSVP.Promise.resolve();
   },
 
   _defaultParams() {
@@ -37,30 +44,10 @@ export default Ember.Object.extend(baseMixin, {
       type: "GET"
     };
 
-    return Ember.merge(defaults/*this.sessionParams()*/);
+    return Ember.merge(defaults, this.sessionParams());
   },
 
   sessionParams() {
-    let session = this.container.lookup('simple-auth-sesion:main');
-    if (!session || !session.get('isAuthenticated')) {
-      return {};
-    }
-    return {
-      headers: {
-        "Authorization": 'UserId: ' + session.get('secure.userId'),
-      }
-    };
-  },
-
-  ajax: function(url, method, data) {
-    let opts = {
-      url: url,
-      type: method
-    };
-    let params = Ember.merge(this._defaultParamsForOnline(), opts);
-    if (data) {
-      params.data = data;
-    }
-    return Ember.$.ajax(params);
+    return {};
   },
 });

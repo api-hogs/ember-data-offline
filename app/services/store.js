@@ -4,6 +4,7 @@ import syncLoads from 'ember-data-offline/logics/sync-loads';
 import Queue from 'ember-data-offline/queue';
 import Config from 'ember-data-offline/config';
 import config from '../config/environment';
+import eraseOne from 'ember-data-offline/utils/erase-offline';
 
 var mainConfig = Config.create({
   custom: Ember.getWithDefault(config, 'ember-data-offline', {})
@@ -39,6 +40,14 @@ export default DS.Store.extend({
   },
   forceFetchRecord(modelName, id) {
     this.adapterFor(modelName).createOnlineJob('find', [this, this.modelFor(modelName), id]);
+  },
+  eraseRecord(record) {
+    let modelName = record._internalModel.modelName;
+    return eraseOne(this.adapterFor(modelName), this, this.modelFor(modelName), record._createSnapshot());
+  },
+  syncRecord(record) {
+    this.forceFetchAll(record._internalModel.modelName);
+    this.eraseRecord(record);
   },
 
   adapterFor() {

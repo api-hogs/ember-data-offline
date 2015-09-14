@@ -37,17 +37,19 @@ export default DS.Store.extend({
   isOfflineEnabled: mainConfig.get('isEnabled'),
   forceFetchAll(modelName) {
     this.adapterFor(modelName).createOnlineJob('findAll', [this, this.modelFor(modelName)]);
+    return this.peekAll(modelName);
   },
   forceFetchRecord(modelName, id) {
     this.adapterFor(modelName).createOnlineJob('find', [this, this.modelFor(modelName), id]);
+    return this.peekRecord(modelName, id);
   },
   eraseRecord(record) {
     let modelName = record._internalModel.modelName;
     return eraseOne(this.adapterFor(modelName), this, this.modelFor(modelName), record._createSnapshot());
   },
   syncRecord(record) {
-    this.forceFetchAll(record._internalModel.modelName);
     this.eraseRecord(record);
+    this.forceFetchAll(record._internalModel.modelName);
   },
 
   adapterFor() {

@@ -1,6 +1,6 @@
 {
   "name": "ember-data-offline",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Ember data extension to allow offline persistance and caching",
   "directories": {
     "doc": "doc",

@@ -17,6 +17,20 @@ var eraseOne = function(adapter, store, type, snapshot) {
   store.deleteRecord(recordToDelete);
   adapter.deleteRecord(store, type, snapshot, true);
 };
+var eraseAll = function(adapter, store, type) {
+  store.unloadAll(type.modelName);
+  adapter.queue.attach((resolve, reject) => {
+    adapter._namespaceForType(type).then(() => {
+      adapter.persistData(type, []).then(() => {
+        resolve();
+      }, (err) => {
+        reject(err);
+      });
+    }, (err) => {
+      reject(err);
+    });
+  });
+};
 
-export { eraseOne };
+export { eraseOne, eraseAll };
 export default eraseOne;

@@ -2,8 +2,6 @@
 @module utils
 @class ExtractOnline
 **/
-import Ember from 'ember';
-const { Logger } = Ember;
 
 /**
 Extracts the record from the payload of your backend.
@@ -22,7 +20,6 @@ var extractTargetRecordFromPayload = function extractTargetRecordFromPayload(sto
     return serializer.modelNameFromPayloadKey(key) === modelName;
   })[0];
   if (!modelNameInPayload) {
-    Logger.error("You try to persist payload that doesn't have any properties for model:", typeClass, "Please check your API response or serializer");
     return null;
   }
   return payload[modelNameInPayload];

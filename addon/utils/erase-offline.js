@@ -20,8 +20,8 @@ var eraseOne = function(adapter, store, type, snapshot) {
 var eraseAll = function(adapter, store, type) {
   store.unloadAll(type.modelName);
   adapter.queue.attach((resolve, reject) => {
-    adapter._namespaceForType(typeClass).then(namespace => {
-      adapter.persistData(typeClass, []).then(() => {
+    adapter._namespaceForType(type).then(() => {
+      adapter.persistData(type, []).then(() => {
         resolve();
       }, (err) => {
         reject(err);

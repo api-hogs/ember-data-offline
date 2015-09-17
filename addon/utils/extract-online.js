@@ -2,7 +2,6 @@
 @module utils
 @class ExtractOnline
 **/
-import Ember from 'ember';
 
 /**
 Extracts the record from the payload of your backend.
